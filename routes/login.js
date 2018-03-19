@@ -4,6 +4,7 @@ var router = express.Router();
 const admin = require('../firebase_init');
 
 const auth = admin.auth();
+const database = admin.database();
 
 /* GET login page. */
 router.get('/', function(req, res, next) {
@@ -15,7 +16,15 @@ router.post('/', (req, res, next) => {
   console.log(token);
   auth.verifyIdToken(token)
     .then((decodedToken) => {
-      res.send("VALIDATED");
+      const uid = decodedToken.uid;
+      const ref = database.ref('users');
+      ref.once("value")
+        .then((snapshot) => {
+          const userId = snapshot.child(uid).child('userId').val();
+          res.redirect(307, '/users/' + userId);
+        }).catch((err) => {
+          console.error("Error: ", err);
+        });
     }).catch((err) => {
       console.error("Error: ", err);
     });
