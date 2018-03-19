@@ -37775,13 +37775,39 @@ __WEBPACK_IMPORTED_MODULE_0_jquery___default()(() => {
       const user = result.user;
       const uid = user.uid;
       console.log(token);
-      //uidがFirebaseのものと一致したら、uidとTokenをDBに保存
+      //Tokenをfirebaseに確認、一致したら正しいログインとみなす
       //main pageにリダイレクト
 
       startLogin(uid, token);
     });
   });
+
+  __WEBPACK_IMPORTED_MODULE_0_jquery___default()("button#login").click((event) => {
+    console.log("Login clicked");
+    auth.currentUser.getIdToken(true)
+      .then((idToken) => {
+        startAuth(idToken);
+      }).catch((err) => {
+        console.error("Error: ", err);
+      });
+  });
 });
+
+const startAuth = (token) => {
+  let form = document.createElement('form');
+  form.method = 'POST';
+  form.action = '/login';
+
+  let input_token = document.createElement('input');
+  input_token.setAttribute('type', 'hidden');
+  input_token.setAttribute('name', 'token');
+  input_token.setAttribute('value', token);
+  form.appendChild(input_token);
+
+  document.body.appendChild(form);
+
+  form.submit();
+}
 
 const startLogin = (uid, token) => {
 

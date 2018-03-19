@@ -27,7 +27,33 @@ $(() => {
       startLogin(uid, token);
     });
   });
+
+  $("button#login").click((event) => {
+    console.log("Login clicked");
+    auth.currentUser.getIdToken(true)
+      .then((idToken) => {
+        startAuth(idToken);
+      }).catch((err) => {
+        console.error("Error: ", err);
+      });
+  });
 });
+
+const startAuth = (token) => {
+  let form = document.createElement('form');
+  form.method = 'POST';
+  form.action = '/login';
+
+  let input_token = document.createElement('input');
+  input_token.setAttribute('type', 'hidden');
+  input_token.setAttribute('name', 'token');
+  input_token.setAttribute('value', token);
+  form.appendChild(input_token);
+
+  document.body.appendChild(form);
+
+  form.submit();
+}
 
 const startLogin = (uid, token) => {
 
