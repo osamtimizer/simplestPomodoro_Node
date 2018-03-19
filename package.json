@@ -1,0 +1,21 @@
+{
+  "name": "node-simplest",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "nodemon ./bin/www"
+  },
+  "dependencies": {
+    "body-parser": "~1.18.2",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "express": "~4.15.5",
+    "firebase": "^4.11.0",
+    "firebase-admin": "^5.10.0",
+    "jade": "~1.11.0",
+    "jquery": "^3.3.1",
+    "morgan": "~1.9.0",
+    "pug": "^2.0.1",
+    "serve-favicon": "~2.4.5"
+  }
+}

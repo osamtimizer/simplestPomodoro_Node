@@ -1,0 +1,4 @@
+**/node_modules/**
+*/.*
+.simplestpomodoro.json
+.db.js
