@@ -80,7 +80,7 @@ router.post('/', (req, res, next) => {
             res.redirect(307, "users/" + snapshot.child(uid + '/userId').val());
           } else {
             console.log(typeof(count));
-            count = snapshot.child('userCount').val();
+            count = snapshot.child('userCount').child('count').val();
             console.log("Count: ", count);
             console.log(typeof(count));
 
@@ -90,7 +90,6 @@ router.post('/', (req, res, next) => {
               displayName: userRecord.displayName,
               email: userRecord.email,
               providerId: userRecord.providerData[0].providerId,
-              token: token
             });
 
             const updated_count = count + 1;
