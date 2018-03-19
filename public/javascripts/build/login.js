@@ -37765,6 +37765,17 @@ __WEBPACK_IMPORTED_MODULE_1_firebase___default.a.initializeApp(config);
 const auth = __WEBPACK_IMPORTED_MODULE_1_firebase___default.a.auth();
 
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()(() => {
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      //redirect to user page
+      user.getIdToken(/* forceRefresh */ true).then((idToken) => {
+        startAuth(idToken);
+      }).catch((err) => {
+        console.error("Error: ", err);
+      });
+    }
+  });
+
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()("button#auth").click((event) => {
     console.log("Button clicked");
     let provider = new __WEBPACK_IMPORTED_MODULE_1_firebase___default.a.auth.GoogleAuthProvider();

@@ -11,8 +11,14 @@ router.get('/', function(req, res, next) {
   res.send("GET");
 });
 
+router.get('/:userId', (req, res, next) => {
+  res.redirect("/login");
+});
+
 //caution: Promise operation must be chained.
 
+//TODO:This route is based on REST API, but userId isn't required because this request has token, it means that Server can identify the user accessing here.
+//TODO:Or, some validation filter/middleware should be written in app.js
 router.post('/:userId', (req, res) => {
   //fetch user info from DB
   //Token is required from Client.
@@ -20,6 +26,11 @@ router.post('/:userId', (req, res) => {
   //const uid = req.body.uid;
   const token = req.body.token;
   const userId = req.params.userId;
+
+  if ( token === undefined) {
+    res.redirect("login");
+  }
+  else {
 
   //validate Token from firebase.
   console.log('Token from client:"' + token + '"');
@@ -41,6 +52,7 @@ router.post('/:userId', (req, res) => {
       console.error("Error: ", err);
       res.render("login");
     });
+  }
 
 });
 
