@@ -2,3 +2,5 @@
 */.*
 .simplestpomodoro.json
 .db.js
+**/build/*.js
+**/build/*.css

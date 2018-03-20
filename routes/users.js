@@ -34,7 +34,6 @@ router.post('/:userId', (req, res) => {
 
   //validate Token from firebase.
   console.log('Token from client:"' + token + '"');
-  console.log(typeof(token));
   auth.verifyIdToken(token)
     .then((decodedToken) => {
       const uid = decodedToken.uid;

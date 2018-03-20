@@ -36,7 +36,7 @@ $(() => {
       //Tokenをfirebaseに確認、一致したら正しいログインとみなす
       //main pageにリダイレクト
 
-      //startLogin(uid, token);
+      startLogin(uid, token);
     });
   });
 

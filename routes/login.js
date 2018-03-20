@@ -20,6 +20,7 @@ router.post('/', (req, res, next) => {
       const ref = database.ref('users');
       ref.once("value")
         .then((snapshot) => {
+          //TODO: check whether uid exists on firebaseDB
           const userId = snapshot.child(uid).child('userId').val();
           res.redirect(307, '/users/' + userId);
         }).catch((err) => {
