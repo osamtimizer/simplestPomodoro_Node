@@ -3,10 +3,7 @@ extends layout
 block content
   header
     p#username Welcome, #{username}!
-    button.logout logout
-  div.main#contents
+    button#logout logout
+  div#main
     p#main_content This is main content
-
   script(src="/javascripts/build/users.js")
-
-  include footer
