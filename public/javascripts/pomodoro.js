@@ -12,6 +12,7 @@ firebase.initializeApp(config);
 const auth = firebase.auth();
 const database= firebase.database();
 
+//CONSTANTS
 const BREAK_TERM = false;
 const WORKING_TERM = true;
 const INITIAL_TERM_COUNT = 4;
@@ -39,15 +40,13 @@ $(() => {
           isWorking = snapshot.child('pomodoro').child('isWorking').val();
           refreshTimer();
         } else {
-          //add pomodoro node
-          remain = 25 * 60 * 1000;
-          terms = 4;
-          isWorking = true;
+          //create pomodoro node
           database.ref('users/' + user.uid + '/pomodoro').set({
             remain: remain,
             terms: terms,
             isWorking: isWorking
           });
+          refreshTimer();
 
         }
       }).catch((err) => {
@@ -66,7 +65,7 @@ $(() => {
   $("button.stop").click((event) => {
     $("button.start").prop("disabled", false);
     clearInterval(timer);
-    refreshDB();
+    refreshPomodoroStatus();
   });
 });
 
@@ -77,7 +76,7 @@ const startCount = () => {
     if (isWorking) {
       remain = WORKING_DURATION_MIN * MIN_MS;
       refreshTimer();
-      refreshDB();
+      refreshPomodoroStatus();
       return;
 
     } else {
@@ -91,7 +90,8 @@ const startCount = () => {
       }
 
       refreshTimer();
-      refreshDB();
+      refreshPomodoroStatus();
+      addPomodoroResult();
       return;
     }
   }
@@ -100,7 +100,7 @@ const startCount = () => {
   refreshTimer();
 };
 
-const refreshDB = () => {
+const refreshPomodoroStatus = () => {
   auth.onAuthStateChanged((user) => {
     if (user) {
       const pomodoroRef = database.ref('users/' + user.uid +'/pomodoro/');
@@ -111,6 +111,33 @@ const refreshDB = () => {
       });
     } else {
       //nothing todo
+    }
+  });
+}
+
+const addPomodoroResult = () => {
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      const date = new Date().toISOString().slice(0, -14);
+      const resultRef = database.ref('users/' + user.uid + '/result');
+      resultRef.once("value").then((snapshot) => {
+        if (snapshot.hasChild(date)) {
+          const count = snapshot.child(date).child('count').val();
+          const updated_count = count + 1;
+          const resultTodayRef = database.ref('users/' + user.uid + '/result/' + date);
+          resultTodayRef.set({
+            count: updated_count
+          })
+        } else {
+          const resultTodayRef = database.ref('users/' + user.uid + '/result/' + date);
+          resultTodayRef.set({
+            count: 1
+          })
+        }
+      }).catch((err) => {
+        console.error("Error: ", err);
+      });
+
     }
   });
 }

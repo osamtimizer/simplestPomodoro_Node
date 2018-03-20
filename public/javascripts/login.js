@@ -28,7 +28,6 @@ $(() => {
     console.log("start auth");
     firebase.auth().signInWithPopup(provider).then((result) => {
       //using token, start registration
-      //TODO:This token is acccessToken, Server requires another token.
       const token = result.credential.accessToken;
       const user = result.user;
       const uid = user.uid;

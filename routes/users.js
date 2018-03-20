@@ -89,6 +89,11 @@ router.post('/', (req, res, next) => {
               displayName: userRecord.displayName,
               email: userRecord.email,
               providerId: userRecord.providerData[0].providerId,
+              pomodoro: {
+                isWorking: true,
+                remain: 25 * 60 * 1000,
+                terms: 4
+              }
             });
 
             const updated_count = count + 1;
