@@ -9,5 +9,21 @@ let config = {
 };
 firebase.initializeApp(config);
 
+const auth = firebase.auth();
+
 $(() => {
+  $("button#logout").click((event) => {
+    let user = auth.currentUser;
+    if (user) {
+      auth.signOut().then(() => {
+        console.log("Sign out");
+        //redirect
+        location.href="/login";
+      }).catch((err) => {
+        console.error("Error: ", err);
+      });
+    } else {
+      location.href="/login";
+    }
+  });
 });
