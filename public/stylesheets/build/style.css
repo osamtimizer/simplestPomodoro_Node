@@ -10,7 +10,28 @@ header {
   top: 0px;
   left: 0px;
   width: 100%;
+  min-width: 960px;
   height: 50px;
+  display: flex;
+  background-color: #A9F5D0; }
+
+button.logout {
+  margin: 20px 0 10px 0;
+  position: fixed;
+  right: 30px;
+  color: #AAAAAA; }
+
+#contents {
+  width: 960px;
+  margin: 0 auto; }
+
+footer.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0px;
+  width: 100%;
+  min-width: 960px;
+  height: 100px;
   background-color: #A9F5D0; }
 
 p#username {
