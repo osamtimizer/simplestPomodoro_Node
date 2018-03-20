@@ -67,6 +67,12 @@ $(() => {
     clearInterval(timer);
     refreshPomodoroStatus();
   });
+
+  $(window).on('beforeunload', (event) => {
+    RefreshPomodoroStatus();
+    return "Are you sure want to leave this page?";
+  });
+
 });
 
 const startCount = () => {
@@ -101,18 +107,17 @@ const startCount = () => {
 };
 
 const refreshPomodoroStatus = () => {
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      const pomodoroRef = database.ref('users/' + user.uid +'/pomodoro/');
-      pomodoroRef.set({
-        remain: remain,
-        terms: terms,
-        isWorking: isWorking
-      });
-    } else {
-      //nothing todo
-    }
-  });
+  const user = auth.currentUser;
+  if (user) {
+    const pomodoroRef = database.ref('users/' + user.uid +'/pomodoro/');
+    pomodoroRef.set({
+      remain: remain,
+      terms: terms,
+      isWorking: isWorking
+    });
+  } else {
+    //nothing todo
+  }
 }
 
 const addPomodoroResult = () => {
