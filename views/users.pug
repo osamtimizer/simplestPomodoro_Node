@@ -1,13 +1,17 @@
 extends layout
 
 block content
-  include sidemenu
-  nav.navbar.navbar-default
-    div.container
-      div.navbar-header
-        button.navbar-toggle toggle
-        p#username Welcome, #{username}!
-        button#logout logout
+  nav.navbar.navbar-default(role="navigation")
+    div.navbar-heder
+      button.navbar-toggle.collapsed(type="button" data-toggle="collapse" data-target="#navbarContents")
+        span.icon-bar
+        span.icon-bar
+        span.icon-bar
+      a.navbar-brand(href='#') SimplestPomodoro
+    div.collapse.navbar-collapse#navbarContents
+      ul.nav.navbar-nav
+        li#active: a#username(href="#") Welcome, #{username}!
+        li: a#logout(href="#") logout
   div#main
     p#main_content This is main content
     include pomodoro
