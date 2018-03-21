@@ -26,4 +26,8 @@ $(() => {
       location.href="/login";
     }
   });
+
+  $(window).on('beforeunload', () => {
+    return "test";
+  });
 });

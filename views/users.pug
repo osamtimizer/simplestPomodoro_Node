@@ -1,9 +1,13 @@
 extends layout
 
 block content
-  header
-    p#username Welcome, #{username}!
-    button#logout logout
+  include sidemenu
+  nav.navbar.navbar-default
+    div.container
+      div.navbar-header
+        button.navbar-toggle toggle
+        p#username Welcome, #{username}!
+        button#logout logout
   div#main
     p#main_content This is main content
     include pomodoro

@@ -4,3 +4,4 @@
 .db.js
 **/build/*.js
 **/build/*.css
+/public/stylesheets/bootflat/*
