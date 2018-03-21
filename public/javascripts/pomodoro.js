@@ -149,7 +149,7 @@ const addPomodoroResult = () => {
 
 const refreshTimer = () => {
   $("p.time").text(new Date(remain).toISOString().slice(14, -5));
-  $("p.term").text("Terms" + terms.toString());
+  $("p.term").text("Term: " + terms.toString());
   if (isWorking) {
     $("p.currentStatus").text("Status: Working");
   } else {
