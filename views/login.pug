@@ -1,6 +1,8 @@
 extends layout
 
 block content
+  include header
   button.btn.btn-embossed.btn-primary#login login
   button#auth authentication
   script(src="javascripts/build/login.js")
+  include footer

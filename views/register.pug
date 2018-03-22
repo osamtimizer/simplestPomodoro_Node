@@ -1,4 +1,6 @@
 extends layout
 
 block content
-  p register
+  include header
+  button#auth.btn.btn-center(type="button"): img(src="/images/google_signin_buttons/web/1x/btn_google_signin_dark_normal_web.png")
+  include footer

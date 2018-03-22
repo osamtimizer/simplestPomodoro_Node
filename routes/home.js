@@ -13,7 +13,10 @@ router.get('/', function(req, res, next) {
     .then((decodedToken) => {
       username = decodedToken.name;
       console.log(decodedToken);
-      res.render('home', {username: username});
+      res.render('home', {
+        username: username,
+        user: true
+      });
     }).catch((err) => {
       console.error(err);
     });
