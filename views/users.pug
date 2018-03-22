@@ -9,8 +9,11 @@ block content
         span.icon-bar
       a.navbar-brand(href='#') SimplestPomodoro
     div.collapse.navbar-collapse#navbarContents
-      ul.nav.navbar-nav
+      ul.nav.navbar-nav.navbar-left
         li#active: a#username(href="#") Welcome, #{username}!
+      ul.nav.navbar-nav.navbar-right
+        li: a#atcitivy(href="#") activity
+        li: a#settings(href="#") settings
         li: a#logout(href="#") logout
   div#main
     p#main_content Timer
