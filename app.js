@@ -4,11 +4,20 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var session = require('express-session');
+
+const admin = require('./firebase_init');
+const auth = admin.auth();
+const database = admin.database();
 
 var index = require('./routes/index');
+var register = require('./routes/register');
 var users = require('./routes/users');
 var login = require('./routes/login');
 var home = require('./routes/home');
+var activity = require('./routes/activity');
+
+
 
 var app = express();
 
@@ -21,13 +30,47 @@ app.set('view engine', 'pug');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(cookieParser('secret'));
 app.use(express.static(path.join(__dirname, 'public')));
 
+var key = {
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  name: 'simplestpomodoro',
+  cookie: {
+    maxAge: 30 * 60 * 1000
+  }
+};
+
+//session is required
+app.use(session(key));
+
 app.use('/', index);
+app.use('/register', register);
 app.use('/users', users);
 app.use('/login', login);
-app.use('/home', home);
+
+app.use('/home', (req, res, next) => {
+  if(req.session.user) {
+    auth.verifyIdToken(req.session.user.token)
+      .then((decodedToken) => {
+        next();
+      }).catch((err) => {
+        console.error(err);
+      });
+  } else {
+    res.redirect('/login');
+  }
+}, home);
+
+app.use('/activity', (req, res, next) => {
+  if(req.session.user) {
+    next();
+  } else {
+    res.redirect('/login');
+  }
+}, activity);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

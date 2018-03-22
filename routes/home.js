@@ -6,9 +6,17 @@ const admin = require('../firebase_init');
 const auth = admin.auth();
 const database = admin.database();
 
-/* GET users listing. */
+/* GET main page. */
 router.get('/', function(req, res, next) {
-  res.render('home');
+  let username = "";
+  auth.verifyIdToken(req.session.user.token)
+    .then((decodedToken) => {
+      username = decodedToken.name;
+      console.log(decodedToken);
+      res.render('home', {username: username});
+    }).catch((err) => {
+      console.error(err);
+    });
 });
 
 module.exports = router;

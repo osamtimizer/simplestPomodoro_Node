@@ -27,15 +27,9 @@ $(() => {
     let provider = new firebase.auth.GoogleAuthProvider();
     console.log("start auth");
     firebase.auth().signInWithPopup(provider).then((result) => {
-      //using token, start registration
-      const token = result.credential.accessToken;
-      const user = result.user;
-      const uid = user.uid;
-      console.log(token);
-      //Tokenをfirebaseに確認、一致したら正しいログインとみなす
-      //main pageにリダイレクト
-
-      startLogin(uid, token);
+      //TODO:consider when user wants to register.
+    }).catch((err) => {
+      console.error(err);
     });
   });
 

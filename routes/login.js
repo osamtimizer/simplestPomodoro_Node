@@ -22,7 +22,8 @@ router.post('/', (req, res, next) => {
         .then((snapshot) => {
           //TODO: check whether uid exists on firebaseDB
           const userId = snapshot.child(uid).child('userId').val();
-          res.redirect(307, '/users/' + userId);
+          req.session.user = { token: token };
+          res.redirect('/home');
         }).catch((err) => {
           console.error("Error: ", err);
         });
