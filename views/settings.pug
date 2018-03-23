@@ -2,6 +2,9 @@ extends layout
 
 block content
   include header
-  div#main
-    p settings
+  div.container#main
+    div.form-group
+      label.col-sm-4.control-label(for="displayName") Display Name
+      div.col-sm-8
+        input.form-control#displayName(type="text" placeholder="Enter displayName")
   include footer
