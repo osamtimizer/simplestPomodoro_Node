@@ -8,6 +8,7 @@ module.exports = {
     pomodoro: './public/javascripts/pomodoro.js',
     register: './public/javascripts/register.js',
     activity: './public/javascripts/activity.js',
+    settings: './public/javascripts/settings.js',
     login: './public/javascripts/login.js'
   },
   output: {
