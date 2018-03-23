@@ -2,7 +2,8 @@ extends layout
 
 block content
   include header
-    div#main
-      canvas#myChart
+    div.container
+      div.col-lg-4.col-xs-12
+        canvas#myChart
   include footer
   script(src='/javascripts/build/activity.js')
