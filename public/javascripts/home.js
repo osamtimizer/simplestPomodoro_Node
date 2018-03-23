@@ -28,7 +28,10 @@ $(() => {
     }
   });
 
+  //TODO:when user close the window, remain time should be sent to server...
+  /*
   $(window).on('beforeunload', () => {
     return "test";
   });
+  */
 });
