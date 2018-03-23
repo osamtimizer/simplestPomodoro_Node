@@ -6,6 +6,7 @@ module.exports = {
     index: './public/javascripts/index.js',
     users: './public/javascripts/users.js',
     pomodoro: './public/javascripts/pomodoro.js',
+    register: './public/javascripts/register.js',
     login: './public/javascripts/login.js'
   },
   output: {
