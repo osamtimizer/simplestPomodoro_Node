@@ -1,4 +1,8 @@
 extends layout
 
 block content
-  h1 activity
+  include header
+    div#main
+      canvas#myChart
+  include footer
+  script(src='/javascripts/build/activity.js')

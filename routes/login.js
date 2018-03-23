@@ -22,7 +22,13 @@ router.post('/', (req, res, next) => {
         .then((snapshot) => {
           //TODO: check whether uid exists on firebaseDB
           const userId = snapshot.child(uid).child('userId').val();
+          console.log("add session to client");
           req.session.user = { token: token };
+          req.session.save((err) => {
+            if(err) {
+              console.log(err);
+            }
+          });
           res.redirect('/home');
         }).catch((err) => {
           console.error("Error: ", err);

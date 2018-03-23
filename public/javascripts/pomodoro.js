@@ -33,6 +33,8 @@ $(() => {
     if (user) {
       console.log("user is logged in");
       const ref = database.ref('users/' + user.uid);
+      $("button.start").prop("disabled", false);
+      $("button.stop").prop("disabled", false);
       ref.once("value").then((snapshot) => {
         if (snapshot.hasChild('pomodoro')) {
           remain = snapshot.child('pomodoro').child('remain').val();

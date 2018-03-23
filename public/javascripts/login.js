@@ -14,7 +14,7 @@ $(() => {
   auth.onAuthStateChanged((user) => {
     if (user) {
       //redirect to user page
-      user.getIdToken(/* forceRefresh */ true).then((idToken) => {
+      user.getIdToken(true).then((idToken) => {
         startAuth(idToken);
       }).catch((err) => {
         console.error("Error: ", err);

@@ -17,8 +17,6 @@ var login = require('./routes/login');
 var home = require('./routes/home');
 var activity = require('./routes/activity');
 
-
-
 var app = express();
 
 // view engine setup
@@ -43,34 +41,38 @@ var key = {
   }
 };
 
-//session is required
 app.use(session(key));
 
-app.use('/', index);
-app.use('/register', register);
-app.use('/users', users);
-app.use('/login', login);
-
-app.use('/home', (req, res, next) => {
+//middlewares
+const authentication = (req, res, next) => {
   if(req.session.user) {
+    console.log("Middleware: authentication is called");
     auth.verifyIdToken(req.session.user.token)
       .then((decodedToken) => {
+        console.log("Middleware: token is valid");
+        console.log("username", decodedToken.name);
         next();
       }).catch((err) => {
         console.error(err);
       });
   } else {
+    console.log("no session");
     res.redirect('/login');
   }
-}, home);
+};
 
-app.use('/activity', (req, res, next) => {
-  if(req.session.user) {
-    next();
-  } else {
-    res.redirect('/login');
-  }
-}, activity);
+//session is required
+
+app.use('/', index);
+app.use('/register', register);
+app.use('/login', login);
+
+app.use(authentication);
+
+//These routes require authentication.
+app.use('/users', users);
+app.use('/home', home);
+app.use('/activity', activity);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -89,5 +91,6 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
 
 module.exports = app;
