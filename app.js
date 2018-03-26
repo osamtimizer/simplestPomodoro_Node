@@ -1,7 +1,7 @@
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
-var logger = require('morgan');
+var logger = require('./logger');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
@@ -26,7 +26,8 @@ app.set('view engine', 'pug');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+//app.use(logger('dev'));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser('secret'));
@@ -45,6 +46,8 @@ var key = {
 app.use(session(key));
 
 //middlewares
+
+//Auth session
 const authentication = (req, res, next) => {
   console.log(req.session);
   if(req.session.user) {
@@ -63,7 +66,14 @@ const authentication = (req, res, next) => {
   }
 };
 
-//session is required
+//logging
+const accessLog = (req, res, next) => {
+  const access = logger.access;
+  access.info("Access received");
+  next();
+};
+
+app.use(accessLog);
 
 app.use('/', index);
 app.use('/register', register);
