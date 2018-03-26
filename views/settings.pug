@@ -3,8 +3,13 @@ extends layout
 block content
   include header
   div.container#main
+    div.alert.alert-success.col-12
+      button.close(type="button" data-dismiss="alert") ×
+      strong success!
     div.form-group
       label.col-sm-4.control-label(for="displayName") Display Name
       div.col-sm-8
         input.form-control#displayName(type="text" placeholder="Enter displayName")
+        button.btn.btn-primary#submit(type="submit") Submit
   include footer
+  script(src='/javascripts/build/settings.js')
