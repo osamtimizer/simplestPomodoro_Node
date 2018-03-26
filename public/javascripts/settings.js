@@ -14,12 +14,13 @@ const auth = firebase.auth();
 $(() => {
   $("button#submit").click((event) => {
     console.log("submit clicked");
-    $(".alert").css("visibility", "visible")
-      .animate({opacity:1}, 500);
+    $("div.alert").addClass('show');
+    $("div.alert").removeClass('hide');
   });
-  $(".close").on('click', (event) => {
+
+  $("a.close").click((event) => {
     console.log("close clicked");
-    $(".alert").css("visibility", "hidden");
-    return false;
+    $("div.alert").removeClass('show');
+    $("div.alert").addClass('hide');
   });
 });
