@@ -46,6 +46,7 @@ app.use(session(key));
 
 //middlewares
 const authentication = (req, res, next) => {
+  console.log(req.session);
   if(req.session.user) {
     console.log("Middleware: authentication is called");
     auth.verifyIdToken(req.session.user.token)
