@@ -2,10 +2,11 @@ extends layout
 
 block content
   include header
+  div.alert.alert-success.alert-dismissable.hide.col-12
+    a.close(href="#") &times;
+    strong success!
   div.container#main
-    div.alert.alert-success.col-12
-      button.close(type="button" data-dismiss="alert") ×
-      strong success!
+    div.blank
     div.form-group
       label.col-sm-4.control-label(for="displayName") Display Name
       div.col-sm-8

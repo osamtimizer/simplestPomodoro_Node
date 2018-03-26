@@ -14,6 +14,19 @@ div {
   &#btn-reset {
     margin: 10px 0 0 0;
   }
+
+  &.hide{
+    opacity: 0;
+    transition: .7s;
+  }
+
+  &.show {
+    opacity: 1;
+  }
+
+  &.blank {
+    height: 100px;
+  }
 }
 
 canvas#myChart {
@@ -24,9 +37,9 @@ button#duration {
 }
 
 .alert {
-  padding: 0 0 0 0;
+  height: 50px;
   width: 100%;
-  visibility: hidden;
+  position: absolute;
 }
 
 nav.navbar-default {
