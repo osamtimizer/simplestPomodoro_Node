@@ -7,11 +7,20 @@ a {
   color: #00B7FF;
 }
 
-div#main {
+div {
+  &#main {
   padding: 10px;
+  }
+  &#btn-reset {
+    margin: 10px 0 0 0;
+  }
 }
 
 canvas#myChart {
+}
+
+button#duration {
+  width: 150px;
 }
 
 nav.navbar-default {
