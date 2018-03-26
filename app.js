@@ -47,7 +47,7 @@ app.use(session(key));
 
 //middlewares
 
-//Auth session
+//middleware:Auth session
 const authentication = (req, res, next) => {
   console.log(req.session);
   if(req.session.user) {
@@ -66,10 +66,20 @@ const authentication = (req, res, next) => {
   }
 };
 
-//logging
+//middleware:logging
 const accessLog = (req, res, next) => {
   const access = logger.access;
-  access.info("Access received");
+  const system = logger.system;
+
+  const ip = req.ip;
+  const url = decodeURI(req.url);
+  const method = req.method;
+  const params = JSON.stringify(req.params);
+  let log = `IP:${ip}, Url:${url}, Method:${method}, Params:${params}`;
+
+  access.info(log);
+  system.info(log);
+
   next();
 };
 
