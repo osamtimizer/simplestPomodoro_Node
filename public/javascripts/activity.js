@@ -22,6 +22,7 @@ $(() => {
       const uid = user.uid;
       console.log(uid);
       const today = moment();
+      $('input[type="date"]').val(today.format(DATE_YMD_FORMAT));
       const one_week = moment.duration(6, 'days');
       const startDate = moment(today - one_week);
       const endDate = moment(today + moment.duration(1, 'days'));
@@ -67,6 +68,21 @@ $(() => {
         console.error(err);
       });
     }
+  });
+
+  //event handlers
+  $('input[type="date"]').on("change", (event) => {
+    console.log("VALUE CHANGED");
+    //TODO:refresh canvas
+  });
+  $("a#week").click((event) => {
+    $("button#duration").text("Duration:Week");
+  });
+  $("a#month").click((event) => {
+    $("button#duration").text("Duration:Month");
+  });
+  $("a#year").click((event) => {
+    $("button#duration").text("Duration:Year");
   });
 
 });

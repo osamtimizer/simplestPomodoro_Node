@@ -3,6 +3,9 @@ div#contents.pomodoro
     p.term Term:
     p.currentStatus Status:
     p.time 00:00
+  div#btn-timer
     button.btn.btn-primary.btn-wide.start(disabled="true") start
     button.btn.btn-default.btn-wide.stop(disabled="true") stop
+  div#btn-reset
+    button.btn.btn-danger.reset reset Timer
 script(src='/javascripts/build/pomodoro.js')
