@@ -32,6 +32,14 @@ let currentTask;
 let tasks;
 
 $(() => {
+  //initialization
+  tasks = [
+    "work",
+    "MyTask",
+    "private"
+  ];
+  refreshTask();
+
   auth.onAuthStateChanged((user) => {
     console.log("onAuthStateChanged is called");
     if (user) {
@@ -102,19 +110,43 @@ $(() => {
   $("input#newTask").on('keydown', (event) => {
     if (event.keyCode === 13) {
       const task = $("input#newTask").val();
-      $("ul.dropdown-menu").prepend('<li><a href="#" class="dropdown-item" id="' + task  + '">' + task + ' </li>');
+      if (!task.match(/\S/g)) {
+        //TODO:Show Alert
+        console.log("Warning: Task name must be some string, not empty");
+        return;
+      }
+      if(tasks.indexOf(task) >= 0 ) {
+        //task already exists.
+        //TODO:Show Alert
+        console.log("Warning: Task name already exists.");
+        return;
+      } else {
+        tasks.push(task);
+        refreshTask();
+      }
       $("input#newTask").val("");
     }
   });
 
-  $("input#submitNewTask").on('click.bs.dropdown.data-api', (event) => {
-
+  $("button#submitNewTask").on('click.bs.dropdown.data-api', (event) => {
+    event.stopPropagation();
     //TODO: if task name is already registered, show alert and reject this operation.
     //HINT: task names should be managed as json or some other good type, not li items.
     const task = $("input#newTask").val();
-    $("ul.dropdown-menu").prepend('<li><a href="#" class="dropdown-item" id="' + task  + '">' + task + ' </li>');
-    event.stopPropagation();
-
+    if (!task.match(/\S/g)) {
+      //TODO:Show Alert
+      console.log("Warning: Task name must be some string, not empty");
+      return;
+    }
+    if(tasks.indexOf(task) >= 0 ) {
+      //task already exists.
+      //TODO:Show Alert
+      console.log("Warning: Task name already exists.");
+      return;
+    } else {
+      tasks.push(task);
+      refreshTask();
+    }
     $("input#newTask").val("");
   });
 
@@ -204,6 +236,18 @@ const addPomodoroResult = () => {
       console.error("Error: ", err);
     });
 
+  }
+}
+
+const refreshTask = () => {
+  console.log("refreshTask");
+  //Remove All Tasks
+  $("li.task").remove();
+  //Add Registered Tasks
+  for (let item in tasks) {
+    const task = tasks[item];
+    const template = String.raw`<li class="task"><a href="#" class="dropdown-item task" id="${task}">${task}</li>`;
+    $("ul.dropdown-menu").prepend(template);
   }
 }
 
