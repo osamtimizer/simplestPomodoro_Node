@@ -137,13 +137,15 @@ $(() => {
   $("button#submitNewTask").on('click.bs.dropdown.data-api', addNewTaskEventHandler);
 
 
-  $(document).on("click", "button.close.task", (event) => {
-    console.log("button.close.task is clicked");
+  //should be deligation. For more information, google "babbling deligate"
+  $(document).on("click", "span.close.task", (event) => {
+    console.log("span.close.task is clicked");
     console.log(event.currentTarget);
     const selectedTask = $(event.currentTarget).parent().text();
     //TODO:selectedTask should be sliced.
     console.log(selectedTask);
     $(event.currentTarget).parent().remove();
+    event.stopPropagation();
   });
 
   //Usage: This expression provides function to watch elements added dinamically.
@@ -275,7 +277,7 @@ const refreshTask = () => {
   //Add Registered Tasks
   for (let item in tasks) {
     const task = tasks[item];
-    const template = String.raw`<li class="task"><a href="#" class="dropdown-item task" id="${task}">${task}<button type="button" class="close task">&times;</button></a></li>`;
+    const template = String.raw`<li class="task"><a href="#" class="dropdown-item task" id="${task}">${task}<span type="button" class="close task">&times;</span></a></li>`;
     $("ul.dropdown-menu").prepend(template);
   }
 
