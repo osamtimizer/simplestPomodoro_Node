@@ -21,6 +21,14 @@ const DURATIONS = {
   year: moment.duration(365, 'days')
 };
 
+const CANVAS_TYPES = {
+  bar: 'bar',
+  line: 'line'
+};
+
+//chart obj must be here otherwise drawing of chart will have some issues.
+let myChart;
+
 $(() => {
   auth.onAuthStateChanged((user) => {
     if (user) {
@@ -36,35 +44,10 @@ $(() => {
           console.log("return value from fetch method: ", result);
 
 
-          /*
-          let labels = [];
-          let data = [];
-
-          for(var i = startDate; i.isBefore(endDate); i.add(1, 'days')) {
-            console.log(i.format(DATE_YMD_FORMAT));
-            labels.push(i.format(DATE_YMD_FORMAT));
-
-            let isFound = false;
-            result.forEach((item) => {
-              if (i.format(DATE_YMD_FORMAT) === item.date) {
-                data.push(item.count);
-                isFound = true;
-              }
-            });
-            if (!isFound) {
-              data.push(0);
-            }
-          }
-          */
-
-
-          //draw chart
-          //If you want to add graph on the canvas, just add item to "datasets"
-
           return parseResult(result, startDate, endDate);
 
         }).then((parsedResult) => {
-          refreshCanvas(parsedResult.labels, parsedResult.data);
+          refreshCanvas(parsedResult.labels, parsedResult.data, CANVAS_TYPES.bar);
         }).catch((err) => {
           console.error(err);
         });
@@ -73,26 +56,134 @@ $(() => {
 
   //event handlers
   $('input[type="date"]').on("change", (event) => {
-    console.log("VALUE CHANGED");
     //TODO:refresh canvas
+    let duration;
+    const targetDate = moment($('input[type="date"]').val());
+    const user = auth.currentUser;
+    if (user) {
+      const uid = user.uid;
+
+      switch($("button#duration").text()) {
+          case "Duration:Week":
+            duration = DURATIONS.week;
+            break;
+          case "Duration:Month":
+            duration = DURATIONS.month;
+            break;
+          case "Duration:Year":
+            duration = DURATIONS.year;
+            break;
+        default:
+            duration = DURATIONS.week;
+            break;
+      }
+
+      console.log("input date change event");
+      console.log(uid);
+      console.log(targetDate);
+      console.log(duration);
+      refreshActivityPage(uid, targetDate, duration).then(() => {
+      }).catch((err) => {
+        console.error(err);
+      });
+    }
   });
+
   $("a#week").click((event) => {
     $("button#duration").text("Duration:Week");
     const targetDate = moment($('input[type="date"]').val());
-    const user = auth.getCurrentUser();
+    const user = auth.currentUser;
     if (user) {
       const uid = user.uid;
+      const duration = DURATIONS.week;
+      const startDate = moment(targetDate - duration);
+      const endDate = moment(targetDate + moment.duration(1, 'days'));
+
+      fetchAppropriateActivity(user.uid, targetDate, duration)
+        .then((result) => {
+          console.log("return value from fetch method: ", result);
+          return parseResult(result, startDate, endDate);
+
+        }).then((parsedResult) => {
+          refreshCanvas(parsedResult.labels, parsedResult.data, CANVAS_TYPES.bar);
+        }).catch((err) => {
+          console.error(err);
+        });
     }
   });
 
   $("a#month").click((event) => {
     $("button#duration").text("Duration:Month");
+    const targetDate = moment($('input[type="date"]').val());
+    const user = auth.currentUser;
+    if (user) {
+      const uid = user.uid;
+      const duration = DURATIONS.month;
+      refreshActivityPage(uid, targetDate, duration).then(() => {
+        //nothing todo
+        console.log("refresh activity");
+      }).catch((err) => {
+        console.error(err);
+      });
+      /*
+      const startDate = moment(targetDate - duration);
+      const endDate = moment(targetDate + moment.duration(1, 'days'));
+
+      fetchAppropriateActivity(user.uid, targetDate, duration)
+        .then((result) => {
+          console.log("return value from fetch method: ", result);
+          return parseResult(result, startDate, endDate);
+
+        }).then((parsedResult) => {
+          refreshCanvas(parsedResult.labels, parsedResult.data, CANVAS_TYPES.line);
+        }).catch((err) => {
+          console.error(err);
+        });
+        */
+    }
   });
   $("a#year").click((event) => {
     $("button#duration").text("Duration:Year");
-  });
+    const targetDate = moment($('input[type="date"]').val());
+    const user = auth.currentUser;
+    if (user) {
+      const uid = user.uid;
+      const duration = DURATIONS.year;
+      const startDate = moment(targetDate - duration);
+      const endDate = moment(targetDate + moment.duration(1, 'days'));
 
+      fetchAppropriateActivity(user.uid, targetDate, duration)
+        .then((result) => {
+          console.log("return value from fetch method: ", result);
+          return parseResult(result, startDate, endDate);
+
+        }).then((parsedResult) => {
+          refreshCanvas(parsedResult.labels, parsedResult.data, CANVAS_TYPES.line);
+        }).catch((err) => {
+          console.error(err);
+        });
+    }
+  });
 });
+
+const refreshActivityPage = (uid, targetDate, duration) => {
+  return new Promise((resolve, reject) => {
+    console.log("refreshActivityPage");
+    const startDate = moment(targetDate - duration);
+    const endDate = moment(targetDate + moment.duration(1, 'days'));
+    const chartType = duration === DURATIONS.year ? CANVAS_TYPES.line : CANVAS_TYPES.bar;
+    fetchAppropriateActivity(uid, targetDate, duration)
+      .then((result) => {
+        console.log("return value from fetch method: ", result);
+        return parseResult(result, startDate, endDate);
+
+      }).then((parsedResult) => {
+        refreshCanvas(parsedResult.labels, parsedResult.data, chartType);
+      }).catch((err) => {
+        console.error(err);
+      });
+  });
+}
 
 const fetchAppropriateActivity = (uid, targetDate, duration) => {
   return new Promise((resolve, reject) => {
@@ -134,10 +225,17 @@ const fetchAppropriateActivity = (uid, targetDate, duration) => {
   });
 }
 
-const refreshCanvas = (labels, data) => {
+const refreshCanvas = (labels, data, canvas_type) => {
   const context = $('#myChart')[0].getContext('2d');
-  const myChart = new Chart(context, {
-    type: 'bar',
+  if (myChart) {
+    myChart.destroy();
+  }
+
+  //draw chart
+  //If you want to add graph on the canvas, add item to "datasets"
+
+  myChart = new Chart(context, {
+    type: canvas_type,
     data: {
       labels: labels,
       datasets: [{
