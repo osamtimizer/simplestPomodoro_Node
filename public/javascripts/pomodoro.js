@@ -22,17 +22,18 @@ const WORKING_DURATION_MIN = 25;
 const BREAK_SMALL_DURATION_MIN = 5;
 const BREAK_LARGE_DURATION_MIN = 30;
 const ONE_SEC_MS = 1000;
+const INITIAL_TASK_NAME = "Work";
 
 let timerStatus = false;
 let isWorking = true;
 let terms = INITIAL_TERM_COUNT;
 let remain = WORKING_DURATION_MIN * MIN_MS;
+let currentTask = INITIAL_TASK_NAME;
 let timer;
-let currentTask;
 let tasks;
 
 $(() => {
-  //initialization
+
   tasks = [
     "work",
     "MyTask",
@@ -46,23 +47,27 @@ $(() => {
       console.log("user is logged in");
       const ref = database.ref('users/' + user.uid);
       $("button.start").prop("disabled", false);
-      $("button.stop").prop("disabled", false);
+      $("button.stop").prop("disabled", true);
       ref.once("value").then((snapshot) => {
+        //init pomodoro timer
         if (snapshot.hasChild('pomodoro')) {
           remain = snapshot.child('pomodoro').child('remain').val();
           terms = snapshot.child('pomodoro').child('terms').val();
           isWorking = snapshot.child('pomodoro').child('isWorking').val();
+          currentTask = snapshot.child('pomodoro').child('currentTask').val();
           refreshTimer();
         } else {
           //create pomodoro node
           database.ref('users/' + user.uid + '/pomodoro').set({
             remain: remain,
             terms: terms,
-            isWorking: isWorking
+            isWorking: isWorking,
+            currentTask: currentTask
           });
           refreshTimer();
-
         }
+
+
       }).catch((err) => {
         console.error("Error: ", err);
       });
@@ -107,47 +112,23 @@ $(() => {
   $("input#newTask").on('click.bs.dropdown.data-api', (event) => {
     event.stopPropagation();
   });
+
   $("input#newTask").on('keydown', (event) => {
-    if (event.keyCode === 13) {
-      const task = $("input#newTask").val();
-      if (!task.match(/\S/g)) {
-        //TODO:Show Alert
-        console.log("Warning: Task name must be some string, not empty");
-        return;
-      }
-      if(tasks.indexOf(task) >= 0 ) {
-        //task already exists.
-        //TODO:Show Alert
-        console.log("Warning: Task name already exists.");
-        return;
-      } else {
-        tasks.push(task);
-        refreshTask();
-      }
-      $("input#newTask").val("");
+    if(event.keyCode === 13) {
+      console.log("Enter pushed");
+      addNewTaskEventHandler(event);
     }
   });
+  $("button#submitNewTask").on('click.bs.dropdown.data-api', addNewTaskEventHandler);
 
-  $("button#submitNewTask").on('click.bs.dropdown.data-api', (event) => {
-    event.stopPropagation();
-    //TODO: if task name is already registered, show alert and reject this operation.
-    //HINT: task names should be managed as json or some other good type, not li items.
-    const task = $("input#newTask").val();
-    if (!task.match(/\S/g)) {
-      //TODO:Show Alert
-      console.log("Warning: Task name must be some string, not empty");
-      return;
-    }
-    if(tasks.indexOf(task) >= 0 ) {
-      //task already exists.
-      //TODO:Show Alert
-      console.log("Warning: Task name already exists.");
-      return;
-    } else {
-      tasks.push(task);
-      refreshTask();
-    }
-    $("input#newTask").val("");
+  //Usage: This expression provides function to watch elements added dinamically.
+  $("ul.dropdown-menu").on("click", "a.task", (event) => {
+    console.log("a.task called");
+    currentTask = $(event.currentTarget).text();
+    console.log(currentTask);
+    const escaped = $('<span />').text(currentTask).html();
+    $("button#task").html(escaped + '<span class="caret"/>');
+    //TODO:Show alert and Reset Timer
   });
 
 
@@ -194,6 +175,30 @@ const startCount = () => {
   }
   refreshTimer();
 };
+
+const addNewTaskEventHandler = (event) => {
+  event.stopPropagation();
+  //TODO: if task name is already registered, show alert and reject this operation.
+  //HINT: task names should be managed as json or some other good type, not li items.
+  const task = $("input#newTask").val();
+  if (task.length >= 20) {
+    //TODO:Show Alert
+    console.log("Warning: Task name must be less than 20.");
+  }
+  else if (!task.match(/\S/g)) {
+    //TODO:Show Alert
+    console.log("Warning: Task name must be some string, not empty");
+  }
+  else if(tasks.indexOf(task) >= 0 ) {
+    //task already exists.
+    //TODO:Show Alert
+    console.log("Warning: Task name already exists.");
+  } else {
+    tasks.push(task);
+    refreshTask();
+    $("input#newTask").val("");
+  }
+}
 
 const refreshPomodoroStatus = () => {
   const user = auth.currentUser;
@@ -246,7 +251,7 @@ const refreshTask = () => {
   //Add Registered Tasks
   for (let item in tasks) {
     const task = tasks[item];
-    const template = String.raw`<li class="task"><a href="#" class="dropdown-item task" id="${task}">${task}</li>`;
+    const template = String.raw`<li class="task"><a href="#" class="dropdown-item task" id="${task}">${task}</a></li>`;
     $("ul.dropdown-menu").prepend(template);
   }
 }
@@ -269,12 +274,14 @@ const refreshButtonview = () => {
     $("button.start").prop("disabled", true);
     $("button.start").removeClass("btn-primary");
     $("button.start").addClass("btn-default");
+    $("button.stop").prop("disabled", false);
     $("button.stop").removeClass("btn-default");
     $("button.stop").addClass("btn-primary");
   } else {
     $("button.start").prop("disabled", false);
     $("button.start").removeClass("btn-default");
     $("button.start").addClass("btn-primary");
+    $("button.stop").prop("disabled", true);
     $("button.stop").removeClass("btn-primary");
     $("button.stop").addClass("btn-default");
   }
