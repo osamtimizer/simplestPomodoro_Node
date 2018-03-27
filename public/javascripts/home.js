@@ -11,6 +11,7 @@ firebase.initializeApp(config);
 
 const auth = firebase.auth();
 
+//TODO:merge this page and pomodoro
 $(() => {
   $("a#logout").click((event) => {
     console.log("logout")

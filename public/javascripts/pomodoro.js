@@ -28,6 +28,8 @@ let isWorking = true;
 let terms = INITIAL_TERM_COUNT;
 let remain = WORKING_DURATION_MIN * MIN_MS;
 let timer;
+let currentTask;
+let tasks;
 
 $(() => {
   auth.onAuthStateChanged((user) => {
@@ -94,6 +96,29 @@ $(() => {
     refreshButtonview();
   });
 
+  $("input#newTask").on('click.bs.dropdown.data-api', (event) => {
+    event.stopPropagation();
+  });
+  $("input#newTask").on('keydown', (event) => {
+    if (event.keyCode === 13) {
+      const task = $("input#newTask").val();
+      $("ul.dropdown-menu").prepend('<li><a href="#" class="dropdown-item" id="' + task  + '">' + task + ' </li>');
+      $("input#newTask").val("");
+    }
+  });
+
+  $("input#submitNewTask").on('click.bs.dropdown.data-api', (event) => {
+
+    //TODO: if task name is already registered, show alert and reject this operation.
+    //HINT: task names should be managed as json or some other good type, not li items.
+    const task = $("input#newTask").val();
+    $("ul.dropdown-menu").prepend('<li><a href="#" class="dropdown-item" id="' + task  + '">' + task + ' </li>');
+    event.stopPropagation();
+
+    $("input#newTask").val("");
+  });
+
+
   $(window).on('beforeunload', (event) => {
     RefreshPomodoroStatus();
     return "Are you sure want to leave this page?";
@@ -129,6 +154,12 @@ const startCount = () => {
   }
 
   remain -= ONE_SEC_MS * 100;
+
+  if (isWorking) {
+    $("title").text("Working: " + moment(remain).format("mm:ss"));
+  } else {
+    $("title").text("Break: " + moment(remain).format("mm:ss"));
+  }
   refreshTimer();
 };
 
