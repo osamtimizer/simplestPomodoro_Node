@@ -37,11 +37,17 @@ button {
     width: 150px;
   }
   &#task {
-    width: 250px;
+    width: 330px;
   }
   &#submitNewTask {
     margin: 5px;
   }
+}
+
+.scrollable-menu {
+  height: auto;
+  max-height: 500px;
+  overflow-x: hidden;
 }
 
 .alert {

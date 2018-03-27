@@ -34,13 +34,6 @@ let tasks;
 
 $(() => {
 
-  tasks = [
-    "work",
-    "MyTask",
-    "private"
-  ];
-  refreshTask();
-
   auth.onAuthStateChanged((user) => {
     console.log("onAuthStateChanged is called");
     if (user) {
@@ -55,6 +48,7 @@ $(() => {
           terms = snapshot.child('pomodoro').child('terms').val();
           isWorking = snapshot.child('pomodoro').child('isWorking').val();
           currentTask = snapshot.child('pomodoro').child('currentTask').val();
+          console.log(currentTask);
           refreshTimer();
         } else {
           //create pomodoro node
@@ -67,7 +61,28 @@ $(() => {
           refreshTimer();
         }
 
+        if (snapshot.hasChild('tasks')) {
+          console.log("tasks found");
+          const fetchedTasks = snapshot.child('tasks').val();
+          tasks = fetchedTasks;
+          console.log("Fetched tasks: ", tasks);
+        } else {
+          console.log("create tasks on DB");
+          tasks = [
+            "Work",
+            "MyTask",
+            "Private"
+          ];
 
+          database.ref('users/' + user.uid + '/tasks').set({
+            0: "Work",
+            1: "MyTask",
+            2: "Private",
+          });
+          console.log("no personal tasks.Pushed tasks: ", tasks);
+        }
+      }).then(() => {
+        refreshTask();
       }).catch((err) => {
         console.error("Error: ", err);
       });
@@ -127,6 +142,7 @@ $(() => {
     currentTask = $(event.currentTarget).text();
     console.log(currentTask);
     const escaped = $('<span />').text(currentTask).html();
+    console.log("escaped text: ", escaped);
     $("button#task").html(escaped + '<span class="caret"/>');
     //TODO:Show alert and Reset Timer
   });
@@ -178,7 +194,6 @@ const startCount = () => {
 
 const addNewTaskEventHandler = (event) => {
   event.stopPropagation();
-  //TODO: if task name is already registered, show alert and reject this operation.
   //HINT: task names should be managed as json or some other good type, not li items.
   const task = $("input#newTask").val();
   if (task.length >= 20) {
@@ -194,7 +209,8 @@ const addNewTaskEventHandler = (event) => {
     //TODO:Show Alert
     console.log("Warning: Task name already exists.");
   } else {
-    tasks.push(task);
+    const escaped = $('<span />').text(task).html();
+    tasks.push(escaped);
     refreshTask();
     $("input#newTask").val("");
   }
@@ -253,6 +269,14 @@ const refreshTask = () => {
     const task = tasks[item];
     const template = String.raw`<li class="task"><a href="#" class="dropdown-item task" id="${task}">${task}</a></li>`;
     $("ul.dropdown-menu").prepend(template);
+  }
+
+  if (tasks.indexOf(currentTask)) {
+    const escaped = $('<span />').text(currentTask).html();
+    console.log("escaped: ", escaped);
+    $("button#task").html(escaped + '<span class="caret"/>');
+  } else {
+    console.log("No task matched in tasks");
   }
 }
 
