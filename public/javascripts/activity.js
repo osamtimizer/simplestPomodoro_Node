@@ -35,9 +35,8 @@ $(() => {
         .then((result) => {
           console.log("return value from fetch method: ", result);
 
-          //TODO: this method should be async
-          //const parsedResult = parseResult(result, startDate, endDate);
 
+          /*
           let labels = [];
           let data = [];
 
@@ -56,12 +55,16 @@ $(() => {
               data.push(0);
             }
           }
+          */
 
 
           //draw chart
           //If you want to add graph on the canvas, just add item to "datasets"
 
-          refreshCanvas(labels, data);
+          return parseResult(result, startDate, endDate);
+
+        }).then((parsedResult) => {
+          refreshCanvas(parsedResult.labels, parsedResult.data);
         }).catch((err) => {
           console.error(err);
         });
@@ -148,32 +151,34 @@ const refreshCanvas = (labels, data) => {
 
 const parseResult = (result, startDate, endDate) => {
 
-  let labels = [];
-  let data = [];
-  let parsedResult;
-  console.log("result: ", result);
+  return new Promise((resolve, reject) => {
+    let labels = [];
+    let data = [];
+    let parsedResult;
+    console.log("result: ", result);
 
+    for(var i = startDate; i.isBefore(endDate); i.add(1, 'days')) {
+      console.log("parseResult: i:", i.format(DATE_YMD_FORMAT));
+      labels.push(i.format(DATE_YMD_FORMAT));
 
-  for(var i = startDate; i.isBefore(endDate); i.add(1, 'days')) {
-    console.log("parseResult: i:", i.format(DATE_YMD_FORMAT));
-    labels.push(i.format(DATE_YMD_FORMAT));
-
-    let isFound = false;
-    result.forEach((item) => {
-      if (i.format(DATE_YMD_FORMAT) === item.date) {
-        data.push(item.count);
-        isFound = true;
+      let isFound = false;
+      result.forEach((item) => {
+        if (i.format(DATE_YMD_FORMAT) === item.date) {
+          data.push(item.count);
+          isFound = true;
+        }
+      });
+      if (!isFound) {
+        data.push(0);
       }
-    });
-    if (!isFound) {
-      data.push(0);
+
+      parsedResult = {
+        labels: labels,
+        data: data
+      };
     }
 
-    parsedResult = {
-      labels: labels,
-      data: data
-    };
-  }
+    resolve(parsedResult);
 
-  return parsedResult;
+  });
 }
