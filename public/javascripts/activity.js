@@ -16,6 +16,7 @@ const database = firebase.database();
 
 const DATE_YMD_FORMAT = "YYYY-MM-DD";
 const DURATIONS = {
+  day: moment.duration(1, 'days'),
   week: moment.duration(6, 'days'),
   month: moment.duration(30, 'days'),
   year: moment.duration(365, 'days')
@@ -33,30 +34,15 @@ $(() => {
   auth.onAuthStateChanged((user) => {
     if (user) {
       const uid = user.uid;
-      console.log(uid);
       const today = moment();
       $('input[type="date"]').val(today.format(DATE_YMD_FORMAT));
-      const one_week = moment.duration(6, 'days');
-      const startDate = moment(today - one_week);
-      const endDate = moment(today + moment.duration(1, 'days'));
-      fetchAppropriateActivity(user.uid, today, one_week)
-        .then((result) => {
-          console.log("return value from fetch method: ", result);
-
-
-          return parseResult(result, startDate, endDate);
-
-        }).then((parsedResult) => {
-          refreshCanvas(parsedResult.labels, parsedResult.data, CANVAS_TYPES.bar);
-        }).catch((err) => {
-          console.error(err);
-        });
+      refreshActivityPage(uid, today, DURATIONS.week);
     }
   });
 
   //event handlers
   $('input[type="date"]').on("change", (event) => {
-    //TODO:refresh canvas
+    console.log("input date change event");
     let duration;
     const targetDate = moment($('input[type="date"]').val());
     const user = auth.currentUser;
@@ -77,11 +63,6 @@ $(() => {
             duration = DURATIONS.week;
             break;
       }
-
-      console.log("input date change event");
-      console.log(uid);
-      console.log(targetDate);
-      console.log(duration);
       refreshActivityPage(uid, targetDate, duration).then(() => {
       }).catch((err) => {
         console.error(err);
@@ -90,29 +71,23 @@ $(() => {
   });
 
   $("a#week").click((event) => {
+    console.log("duration change event: week");
     $("button#duration").text("Duration:Week");
     const targetDate = moment($('input[type="date"]').val());
     const user = auth.currentUser;
     if (user) {
       const uid = user.uid;
       const duration = DURATIONS.week;
-      const startDate = moment(targetDate - duration);
-      const endDate = moment(targetDate + moment.duration(1, 'days'));
 
-      fetchAppropriateActivity(user.uid, targetDate, duration)
-        .then((result) => {
-          console.log("return value from fetch method: ", result);
-          return parseResult(result, startDate, endDate);
-
-        }).then((parsedResult) => {
-          refreshCanvas(parsedResult.labels, parsedResult.data, CANVAS_TYPES.bar);
-        }).catch((err) => {
-          console.error(err);
-        });
+      refreshActivityPage(uid, targetDate, duration).then(() => {
+      }).catch((err) => {
+        console.error(err);
+      });
     }
   });
 
   $("a#month").click((event) => {
+    console.log("duration change event: month");
     $("button#duration").text("Duration:Month");
     const targetDate = moment($('input[type="date"]').val());
     const user = auth.currentUser;
@@ -121,47 +96,25 @@ $(() => {
       const duration = DURATIONS.month;
       refreshActivityPage(uid, targetDate, duration).then(() => {
         //nothing todo
-        console.log("refresh activity");
       }).catch((err) => {
         console.error(err);
       });
-      /*
-      const startDate = moment(targetDate - duration);
-      const endDate = moment(targetDate + moment.duration(1, 'days'));
-
-      fetchAppropriateActivity(user.uid, targetDate, duration)
-        .then((result) => {
-          console.log("return value from fetch method: ", result);
-          return parseResult(result, startDate, endDate);
-
-        }).then((parsedResult) => {
-          refreshCanvas(parsedResult.labels, parsedResult.data, CANVAS_TYPES.line);
-        }).catch((err) => {
-          console.error(err);
-        });
-        */
     }
   });
+
   $("a#year").click((event) => {
+    console.log("duration change event: year");
     $("button#duration").text("Duration:Year");
     const targetDate = moment($('input[type="date"]').val());
     const user = auth.currentUser;
     if (user) {
       const uid = user.uid;
       const duration = DURATIONS.year;
-      const startDate = moment(targetDate - duration);
-      const endDate = moment(targetDate + moment.duration(1, 'days'));
-
-      fetchAppropriateActivity(user.uid, targetDate, duration)
-        .then((result) => {
-          console.log("return value from fetch method: ", result);
-          return parseResult(result, startDate, endDate);
-
-        }).then((parsedResult) => {
-          refreshCanvas(parsedResult.labels, parsedResult.data, CANVAS_TYPES.line);
-        }).catch((err) => {
-          console.error(err);
-        });
+      refreshActivityPage(uid, targetDate, duration).then(() => {
+        //nothing todo
+      }).catch((err) => {
+        console.error(err);
+      });
     }
   });
 });
@@ -170,7 +123,7 @@ const refreshActivityPage = (uid, targetDate, duration) => {
   return new Promise((resolve, reject) => {
     console.log("refreshActivityPage");
     const startDate = moment(targetDate - duration);
-    const endDate = moment(targetDate + moment.duration(1, 'days'));
+    const endDate = moment(targetDate + DURATIONS.day);
     const chartType = duration === DURATIONS.year ? CANVAS_TYPES.line : CANVAS_TYPES.bar;
     fetchAppropriateActivity(uid, targetDate, duration)
       .then((result) => {
@@ -275,7 +228,6 @@ const parseResult = (result, startDate, endDate) => {
         data: data
       };
     }
-
     resolve(parsedResult);
 
   });
