@@ -32,8 +32,13 @@ div {
 canvas#myChart {
 }
 
-button#duration {
-  width: 150px;
+button {
+  &#duration {
+    width: 150px;
+  }
+  &#submitNewTask {
+    margin: 5px;
+  }
 }
 
 .alert {
@@ -44,9 +49,6 @@ button#duration {
 
 input {
   &#newTask {
-    margin: 5px;
-  }
-  &#submitNewTask {
     margin: 5px;
   }
 }

@@ -3,13 +3,12 @@ div#contents.pomodoro
     div.col-lg-12.col-xs-12.dropdown.show#task
       button.btn.btn-primary.dropdown-toggle#task(type="button" data-toggle="dropdown") Select Task
       ul.dropdown-menu(role="menu")
-        li: a.dropdown-item#work(href="#") Work
-        li: a.dropdown-item#private(href="#") Private
+        li.task: a.dropdown-item.task#work(href="#") Work
+        li.task: a.dropdown-item.task#private(href="#") Private
         li.divider
-        li: a.dropdown-item#add(href="#") Add Task...
-        li: div.form-group
+        li: div.input-group
           input#newTask(type="text")
-          input#submitNewTask(type="submit")
+          button.btn.btn-xs.btn-inverse#submitNewTask(type="button") Add Task
   div.timer
     p.term Term:
     p.currentStatus Status:
