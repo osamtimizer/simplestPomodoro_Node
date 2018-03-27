@@ -136,17 +136,25 @@ $(() => {
   });
   $("button#submitNewTask").on('click.bs.dropdown.data-api', addNewTaskEventHandler);
 
+
+  $(document).on("click", "button.close.task", (event) => {
+    console.log("button.close.task is clicked");
+    console.log(event.currentTarget);
+    const selectedTask = $(event.currentTarget).parent().text();
+    //TODO:selectedTask should be sliced.
+    console.log(selectedTask);
+    $(event.currentTarget).parent().remove();
+  });
+
   //Usage: This expression provides function to watch elements added dinamically.
   $("ul.dropdown-menu").on("click", "a.task", (event) => {
     console.log("a.task called");
-    currentTask = $(event.currentTarget).text();
-    console.log(currentTask);
-    const escaped = $('<span />').text(currentTask).html();
+    const escaped = $('<span />').text($(event.currentTarget).text().slice(0, -1)).html();
     console.log("escaped text: ", escaped);
-    $("button#task").html(escaped + '<span class="caret"/>');
+    currentTask = escaped;
+    $("button#task").html(currentTask + '<span class="caret"/>');
     //TODO:Show alert and Reset Timer
   });
-
 
   $(window).on('beforeunload', (event) => {
     RefreshPomodoroStatus();
@@ -220,7 +228,7 @@ const refreshPomodoroStatus = () => {
   const user = auth.currentUser;
   if (user) {
     const pomodoroRef = database.ref('users/' + user.uid +'/pomodoro/');
-    pomodoroRef.set({
+    pomodoroRef.update({
       remain: remain,
       terms: terms,
       isWorking: isWorking
@@ -267,16 +275,28 @@ const refreshTask = () => {
   //Add Registered Tasks
   for (let item in tasks) {
     const task = tasks[item];
-    const template = String.raw`<li class="task"><a href="#" class="dropdown-item task" id="${task}">${task}</a></li>`;
+    const template = String.raw`<li class="task"><a href="#" class="dropdown-item task" id="${task}">${task}<button type="button" class="close task">&times;</button></a></li>`;
     $("ul.dropdown-menu").prepend(template);
   }
 
   if (tasks.indexOf(currentTask)) {
+    console.log(currentTask);
     const escaped = $('<span />').text(currentTask).html();
     console.log("escaped: ", escaped);
     $("button#task").html(escaped + '<span class="caret"/>');
   } else {
     console.log("No task matched in tasks");
+  }
+
+  updateDBTasks();
+}
+
+const updateDBTasks = () => {
+  console.log("updateDBTasks");
+  const user = auth.currentUser;
+  if (user) {
+    const uid = user.uid;
+    database.ref('users/' + uid + '/tasks').set(tasks);
   }
 }
 
