@@ -138,7 +138,7 @@ $(() => {
 
 
   //should be deligation. For more information, google "babbling deligate"
-  $(document).on("click", "span.close.task", (event) => {
+  $("ul.dropdown-menu").on("click", "li.task a.task span.close.task", (event) => {
     console.log("span.close.task is clicked");
     console.log(event.currentTarget);
     const selectedTask = $(event.currentTarget).parent().text();
