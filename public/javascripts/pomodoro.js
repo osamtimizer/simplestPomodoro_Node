@@ -247,6 +247,7 @@ const addNewTaskEventHandler = (event) => {
 }
 
 const refreshDBPomodoroStatus = () => {
+  console.log("refreshDBPomodoroStatus");
   const user = auth.currentUser;
   if (user) {
     const pomodoroRef = database.ref('users/' + user.uid +'/pomodoro/');
@@ -270,18 +271,28 @@ const addPomodoroResult = () => {
     const resultRef = database.ref('users/' + user.uid + '/result');
     resultRef.once("value").then((snapshot) => {
       if (snapshot.hasChild(date)) {
-        console.log("snapshot has child");
-        const count = snapshot.child(date).child('count').val();
-        const updated_count = count + 1;
-        const resultTodayRef = database.ref('users/' + user.uid + '/result/' + date);
-        resultTodayRef.set({
-          count: updated_count
-        })
+        //TODO: count should be task name, each task should have count.
+        if (snapshot.child(date).hasChild(currentTask)) {
+          const count = snapshot.child(date).child(currentTask).val();
+          const updated_count = count + 1;
+          const resultTodayRef = database.ref('users/' + user.uid + '/result/' + date);
+          resultTodayRef.update({
+            [currentTask]: updated_count
+          })
+        } else {
+          //If appropriate obj isn't on DB, then push it.
+          const resultTodayRef = database.ref('users/' + user.uid + '/result/' + date);
+          resultTodayRef.update({
+            [currentTask]: 1
+          })
+        }
       } else {
         console.log("snapshot doesn't have child");
         const resultTodayRef = database.ref('users/' + user.uid + '/result/' + date);
-        resultTodayRef.set({
-          count: 1
+
+        const key = currentTask;
+        resultTodayRef.update({
+          [key]: 1
         })
       }
     }).catch((err) => {
