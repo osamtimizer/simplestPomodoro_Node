@@ -44,6 +44,12 @@ button {
   }
 }
 
+a {
+  &.task-selected {
+    background-color: blue;
+  }
+}
+
 .scrollable-menu {
   height: auto;
   max-height: 500px;
