@@ -2,13 +2,23 @@ extends layout
 
 block content
   include header
+    div.task.container
+      div.col-lg-12.col-xs-12.dropdown.show#task
+        button.btn.btn-primary.dropdown-toggle#task(type="button" data-toggle="dropdown")
+          |Select Task
+          span.caret
+        ul.dropdown-menu.scrollable-menu(role="menu")
+          li.task: a.dropdown-item.task#work(href="#") Work
+          li.task: a.dropdown-item.task#private(href="#") Private
     div.container
       div.col-lg-8.col-xs-12
         canvas#myChart
       div.col-lg-2.col-xs-4
         input(type="date")
       div.col-lg-2.col-xs-4.dropdown.show
-        button.btn.btn-primary.dropdown-toggle#duration(type="button" data-toggle="dropdown") Select Duration
+        button.btn.btn-primary.dropdown-toggle#duration(type="button" data-toggle="dropdown")
+          |Select Duration
+          span.caret
         ul.dropdown-menu(role="menu")
           li: a.dropdown-item#week(href="#") Week
           li: a.dropdown-item#month(href="#") Month
