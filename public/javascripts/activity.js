@@ -53,7 +53,7 @@ $(() => {
         const currentTask = snapshot.child('currentTask').val();
         console.log(currentTask);
         const tasks = [currentTask];
-        //TODO init task dropdown
+        //TODO:Current task must be selected as default.
        return refreshActivityPage(uid, today, DURATIONS.week);
       }).catch((err) => {
         console.error(err);
@@ -160,6 +160,7 @@ const buildSelectPicker = (tasks) => {
   $(".selectpicker").selectpicker('refresh');
 }
 
+//TODO: refreshActivityPage must accept tasks as input value or fetch somehow to render them.
 const refreshActivityPage = (uid, targetDate, duration) => {
   return new Promise((resolve, reject) => {
     console.log("refreshActivityPage");
