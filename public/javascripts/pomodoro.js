@@ -101,7 +101,7 @@ $(() => {
   $("button.stop").click((event) => {
     timerStatus = false;
     clearInterval(timer);
-    refreshPomodoroStatus();
+    refreshDBPomodoroStatus();
     refreshButtonview();
   });
 
@@ -116,7 +116,7 @@ $(() => {
       terms = INITIAL_TERM_COUNT;
       remain = WORKING_DURATION_MIN * MIN_MS;
       refreshTimer();
-      refreshPomodoroStatus();
+      refreshDBPomodoroStatus();
     } else {
       //nothing to do
     }
@@ -137,14 +137,22 @@ $(() => {
   $("button#submitNewTask").on('click.bs.dropdown.data-api', addNewTaskEventHandler);
 
 
-  //should be deligation. For more information, google "babbling deligate"
   $("ul.dropdown-menu").on("click", "li.task a.task span.close.task", (event) => {
     console.log("span.close.task is clicked");
     console.log(event.currentTarget);
-    const selectedTask = $(event.currentTarget).parent().text();
-    //TODO:selectedTask should be sliced.
+    const selectedTask = $(event.currentTarget).parent().text().slice(0, -1);
     console.log(selectedTask);
     $(event.currentTarget).parent().remove();
+    //TODO:Change current task
+    if (selectedTask === currentTask) {
+      console.log("Warning: This task is currently selected.");
+    } else {
+      const index = tasks.indexOf(selectedTask);
+      if (index >= 0) {
+        tasks.splice(index, 1);
+      }
+    }
+    refreshTask();
     event.stopPropagation();
   });
 
@@ -156,6 +164,9 @@ $(() => {
     currentTask = escaped;
     $("button#task").html(currentTask + '<span class="caret"/>');
     //TODO:Show alert and Reset Timer
+
+    //push currentTask to realtimeDB
+    refreshDBPomodoroStatus();
   });
 
   $(window).on('beforeunload', (event) => {
@@ -172,7 +183,7 @@ const startCount = () => {
     if (isWorking) {
       remain = WORKING_DURATION_MIN * MIN_MS;
       refreshTimer();
-      refreshPomodoroStatus();
+      refreshDBPomodoroStatus();
       return;
 
     } else {
@@ -186,7 +197,7 @@ const startCount = () => {
       }
 
       refreshTimer();
-      refreshPomodoroStatus();
+      refreshDBPomodoroStatus();
       addPomodoroResult();
       return;
     }
@@ -226,14 +237,15 @@ const addNewTaskEventHandler = (event) => {
   }
 }
 
-const refreshPomodoroStatus = () => {
+const refreshDBPomodoroStatus = () => {
   const user = auth.currentUser;
   if (user) {
     const pomodoroRef = database.ref('users/' + user.uid +'/pomodoro/');
     pomodoroRef.update({
       remain: remain,
       terms: terms,
-      isWorking: isWorking
+      isWorking: isWorking,
+      currentTask: currentTask
     });
   } else {
     //nothing todo
