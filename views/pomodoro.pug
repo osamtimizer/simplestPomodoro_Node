@@ -18,4 +18,16 @@ div#contents.pomodoro
     button.btn.btn-default.btn-wide.stop(disabled="true") stop
   div#btn-reset
     button.btn.btn-danger.reset reset Timer
+
+  div.modal.fade(tabindex="-1")
+    div.modal-dialog
+      div.modal-content
+        div.modal-header
+          button.close(type="button" data-dismiss="modal")
+            span(aria-hidden="true") &times;
+          b.modal-title#modal-label modal dialog
+        div.modal-body sample message
+        div.modal-footer
+          button.btn.btn-default(type="button" data-dismiss="modal") Close
+
 script(src='/javascripts/build/pomodoro.js')
