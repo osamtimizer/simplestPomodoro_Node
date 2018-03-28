@@ -32,7 +32,6 @@ const CANVAS_TYPES = {
 let myChart;
 
 $(() => {
-  $('.selectpicker').selectpicker();
   auth.onAuthStateChanged((user) => {
     if (user) {
       const uid = user.uid;
@@ -44,7 +43,7 @@ $(() => {
         const tasks = snapshot.val();
         return tasks;
       }).then((tasks) => {
-        refreshTaskButton(tasks);
+        buildSelectPicker(tasks);
       }).catch((err) => {
         console.error(err);
       });
@@ -139,13 +138,21 @@ $(() => {
       });
     }
   });
+
+  $("select.selectpicker").on('change', (event) => {
+    console.log("selectpicker changed");
+    console.log($(event.currentTarget).parent().find('[aria-selected="true"]'));
+    $(event.currentTarget).parent().find('[aria-selected="true"]').addClass('task-selected');
+    $(event.currentTarget).parent().find('[aria-selected="false"]').removeClass('task-selected');
+  });
+
 });
 
-const refreshTaskButton = (tasks) => {
+const buildSelectPicker = (tasks) => {
   let options = [];
   for (let item in tasks) {
     const task = tasks[item];
-    const template = String.raw`<option class="task" value="${task}">${task}</option>`;
+    const template = String.raw`<option class="task selected" value="${task}">${task}</option>`;
     options.push(template);
   }
   $(".selectpicker").html(options);
