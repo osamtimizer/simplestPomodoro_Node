@@ -36,7 +36,27 @@ $(() => {
       const uid = user.uid;
       const today = moment();
       $('input[type="date"]').val(today.format(DATE_YMD_FORMAT));
-      refreshActivityPage(uid, today, DURATIONS.week);
+      const tasksRef = database.ref('users/' + uid + '/tasks');
+      tasksRef.once('value').then((snapshot) => {
+        console.log("refresh tasks");
+        const tasks = snapshot.val();
+        return tasks;
+      }).then((tasks) => {
+        refreshTaskButton(tasks);
+      }).catch((err) => {
+        console.error(err);
+      });
+
+      const ref = database.ref('users/' + uid + '/pomodoro');
+      ref.once('value').then((snapshot) => {
+        const currentTask = snapshot.child('currentTask').val();
+        console.log(currentTask);
+        const tasks = [currentTask];
+        //TODO init task dropdown
+        refreshActivityPage(uid, today, DURATIONS.week);
+      }).catch((err) => {
+        console.error(err);
+      });
     }
   });
 
@@ -118,6 +138,15 @@ $(() => {
     }
   });
 });
+
+const refreshTaskButton = (tasks) => {
+  $("li.task").remove();
+  for (let item in tasks) {
+    const task = tasks[item];
+    const template = String.raw`<li class="task"><a href="#" class="dropdown-item task" id="${task}">${task}</a></li>`;
+    $("ul.dropdown-menu").prepend(template);
+  }
+}
 
 const refreshActivityPage = (uid, targetDate, duration) => {
   return new Promise((resolve, reject) => {
