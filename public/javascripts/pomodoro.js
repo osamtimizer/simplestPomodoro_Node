@@ -142,29 +142,38 @@ $(() => {
     console.log(event.currentTarget);
     const selectedTask = $(event.currentTarget).parent().text().slice(0, -1);
     console.log(selectedTask);
-    $(event.currentTarget).parent().remove();
     //TODO:Change current task
     if (selectedTask === currentTask) {
       console.log("Warning: This task is currently selected.");
+      //TODO:Show warning
+      alert("You cannot remove this task without selecting other task.");
     } else {
       const index = tasks.indexOf(selectedTask);
       if (index >= 0) {
+        $(event.currentTarget).parent().remove();
         tasks.splice(index, 1);
+        refreshTask();
       }
     }
-    refreshTask();
     event.stopPropagation();
   });
 
   //Usage: This expression provides function to watch elements added dinamically.
   $("ul.dropdown-menu").on("click", "a.task", (event) => {
     console.log("a.task called");
-    const escaped = $('<span />').text($(event.currentTarget).text().slice(0, -1)).html();
+
+    let targetTask = $(event.currentTarget).text();
+    if ( targetTask !== currentTask) {
+      console.log("targetTask", targetTask);
+      console.log("currentTask", currentTask);
+      targetTask = targetTask.slice(0, -1);
+    }
+    const escaped = $('<span />').text(targetTask).html();
     console.log("escaped text: ", escaped);
     currentTask = escaped;
     $("button#task").html(currentTask + '<span class="caret"/>');
     //TODO:Show alert and Reset Timer
-
+    refreshTask();
     //push currentTask to realtimeDB
     refreshDBPomodoroStatus();
   });
@@ -289,11 +298,18 @@ const refreshTask = () => {
   //Add Registered Tasks
   for (let item in tasks) {
     const task = tasks[item];
-    const template = String.raw`<li class="task"><a href="#" class="dropdown-item task" id="${task}">${task}<span type="button" class="close task">&times;</span></a></li>`;
+    let template;
+    if ( task === currentTask) {
+      template = String.raw`<li class="task"><a href="#" class="dropdown-item task currentTask" id="${task}">${task}</a></li>`;
+    } else {
+      template = String.raw`<li class="task"><a href="#" class="dropdown-item task" id="${task}">${task}<span type="button" class="close task">&times;</span></a></li>`;
+    }
     $("ul.dropdown-menu").prepend(template);
   }
 
-  if (tasks.indexOf(currentTask)) {
+  console.log("refreshTask: tasks:", tasks);
+  console.log("refreshTask: currentTask:", currentTask);
+  if (tasks.indexOf(currentTask) >= 0) {
     console.log(currentTask);
     const escaped = $('<span />').text(currentTask).html();
     console.log("escaped: ", escaped);
