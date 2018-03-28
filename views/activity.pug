@@ -1,15 +1,12 @@
 extends layout
 
+block header
+  link(rel='stylesheet' href='/dist/css/bootstrap-select.css')
+
 block content
   include header
     div.task.container
-      div.col-lg-12.col-xs-12.dropdown.show#task
-        button.btn.btn-primary.dropdown-toggle#task(type="button" data-toggle="dropdown")
-          |Select Task
-          span.caret
-        ul.dropdown-menu.scrollable-menu(role="menu")
-          li.task: a.dropdown-item.task#work(href="#") Work
-          li.task: a.dropdown-item.task#private(href="#") Private
+      select.task.selectpicker(title="Select Task" data-style="btn-default")
     div.container
       div.col-lg-8.col-xs-12
         canvas#myChart

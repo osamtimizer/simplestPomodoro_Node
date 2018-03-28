@@ -2,6 +2,7 @@ import $ from 'jquery';
 import firebase from 'firebase';
 import Chart from 'chart.js'
 import moment from 'moment'
+import 'bootstrap-select';
 
 let config = {
   apiKey: "AIzaSyDUBdU1s_1ff_yUxXvlCbS9y4JyocdaShk",
@@ -31,6 +32,7 @@ const CANVAS_TYPES = {
 let myChart;
 
 $(() => {
+  $('.selectpicker').selectpicker();
   auth.onAuthStateChanged((user) => {
     if (user) {
       const uid = user.uid;
@@ -53,7 +55,7 @@ $(() => {
         console.log(currentTask);
         const tasks = [currentTask];
         //TODO init task dropdown
-        refreshActivityPage(uid, today, DURATIONS.week);
+       return refreshActivityPage(uid, today, DURATIONS.week);
       }).catch((err) => {
         console.error(err);
       });
@@ -140,12 +142,14 @@ $(() => {
 });
 
 const refreshTaskButton = (tasks) => {
-  $("li.task").remove();
+  let options = [];
   for (let item in tasks) {
     const task = tasks[item];
-    const template = String.raw`<li class="task"><a href="#" class="dropdown-item task" id="${task}">${task}</a></li>`;
-    $("ul.dropdown-menu").prepend(template);
+    const template = String.raw`<option class="task" value="${task}">${task}</option>`;
+    options.push(template);
   }
+  $(".selectpicker").html(options);
+  $(".selectpicker").selectpicker('refresh');
 }
 
 const refreshActivityPage = (uid, targetDate, duration) => {
