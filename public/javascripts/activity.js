@@ -140,10 +140,11 @@ $(() => {
   });
 
   $("select.selectpicker").on('change', (event) => {
+    //just my opinion: bootstrap plugin shouldn't be customized because this make project much complicated.
     console.log("selectpicker changed");
-    console.log($(event.currentTarget).parent().find('[aria-selected="true"]'));
-    $(event.currentTarget).parent().find('[aria-selected="true"]').addClass('task-selected');
-    $(event.currentTarget).parent().find('[aria-selected="false"]').removeClass('task-selected');
+    $('select.selectpicker option:selected').each((index, selected) => {
+      console.log($(selected).text());
+    });
   });
 
 });
