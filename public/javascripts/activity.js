@@ -49,7 +49,10 @@ $(() => {
     if (user) {
       const uid = user.uid;
       const today = moment();
+      const min = moment(today - DURATIONS.year);
       $('input[type="date"]').val(today.format(DATE_YMD_FORMAT));
+      $('input[type="date"]').attr('max', today.format(DATE_YMD_FORMAT));
+      $('input[type="date"]').attr('min', min.format(DATE_YMD_FORMAT));
 
       let promises = [fetchCurrentTask(uid), fetchAllTasks(uid)];
       Promise.all(promises)
@@ -67,6 +70,19 @@ $(() => {
   });
 
   //event handlers
+
+  $('input[type="date"]').on('keydown', (event) => {
+    return false;
+  });
+
+  $('div.bs-searchbox').on('keydown', (event) => {
+    if(event.keyCode === 13) {
+      event.stopPropagation();
+      return false;
+    }
+  });
+
+
   $('input[type="date"]').on("change", (event) => {
     console.log("input date change event");
     let duration;
@@ -135,7 +151,7 @@ const buildSelectPicker = () => {
   let options = [];
   for (let item in tasks) {
     const task = tasks[item];
-    const template = String.raw`<option class="task selected" value="${task}">${task}</option>`;
+    const template = String.raw`<option class="task selected" value="${task}" data-tokens="${task}">${task}</option>`;
     options.push(template);
   }
   $(".selectpicker").html(options);
@@ -175,7 +191,10 @@ const refreshActivityPage = (uid, targetDate, duration) => {
   console.log("refreshActivityPage");
   //const startDate = moment(targetDate - duration);
   //const endDate = moment(targetDate + DURATIONS.day);
-  const chartType = duration === DURATIONS.year ? CANVAS_TYPES.line : CANVAS_TYPES.bar;
+
+  //const chartType = duration === DURATIONS.year ? CANVAS_TYPES.line : CANVAS_TYPES.bar;
+  const chartType = CANVAS_TYPES.bar;
+
 
   //TODO:fetch selected tasks from selectpicker
   let selectedTasks = [];
