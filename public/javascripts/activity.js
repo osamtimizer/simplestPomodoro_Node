@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import Q from 'q';
 import firebase from 'firebase';
 import Chart from 'chart.js'
 import moment from 'moment'
@@ -28,6 +29,9 @@ const CANVAS_TYPES = {
   line: 'line'
 };
 
+let tasks;
+let currentTask;
+
 //chart obj must be here otherwise drawing of chart will have some issues.
 let myChart;
 
@@ -37,27 +41,19 @@ $(() => {
       const uid = user.uid;
       const today = moment();
       $('input[type="date"]').val(today.format(DATE_YMD_FORMAT));
-      const tasksRef = database.ref('users/' + uid + '/tasks');
-      tasksRef.once('value').then((snapshot) => {
-        console.log("refresh tasks");
-        const tasks = snapshot.val();
-        return tasks;
-      }).then((tasks) => {
-        buildSelectPicker(tasks);
-      }).catch((err) => {
-        console.error(err);
-      });
 
-      const ref = database.ref('users/' + uid + '/pomodoro');
-      ref.once('value').then((snapshot) => {
-        const currentTask = snapshot.child('currentTask').val();
-        console.log(currentTask);
-        const tasks = [currentTask];
-        //TODO:Current task must be selected as default.
-       return refreshActivityPage(uid, today, DURATIONS.week);
-      }).catch((err) => {
-        console.error(err);
-      });
+      let promises = [fetchCurrentTask(uid), fetchAllTasks(uid)];
+      Promise.all(promises)
+        .then((results) => {
+          currentTask = results[0];
+          tasks = results[1];
+        }).then(() => {
+          buildSelectPicker();
+        }).then(() => {
+          refreshActivityPage(uid, today, DURATIONS.week);
+        }).catch((err) => {
+          console.error(err);
+        });
     }
   });
 
@@ -69,21 +65,7 @@ $(() => {
     const user = auth.currentUser;
     if (user) {
       const uid = user.uid;
-
-      switch($("button#duration").text()) {
-          case "Duration:Week":
-            duration = DURATIONS.week;
-            break;
-          case "Duration:Month":
-            duration = DURATIONS.month;
-            break;
-          case "Duration:Year":
-            duration = DURATIONS.year;
-            break;
-        default:
-            duration = DURATIONS.week;
-            break;
-      }
+      duration = getCurrentDuration();
       refreshActivityPage(uid, targetDate, duration).then(() => {
       }).catch((err) => {
         console.error(err);
@@ -142,14 +124,22 @@ $(() => {
   $("select.selectpicker").on('change', (event) => {
     //just my opinion: bootstrap plugin shouldn't be customized because this make project much complicated.
     console.log("selectpicker changed");
-    $('select.selectpicker option:selected').each((index, selected) => {
-      console.log($(selected).text());
-    });
+    const targetDate = moment($('input[type="date"]').val());
+    const user = auth.currentUser;
+    if (user) {
+      const uid = user.uid;
+      const duration = getCurrentDuration();
+
+      refreshActivityPage(uid, targetDate, duration).then(() => {
+      }).catch((err) => {
+        console.error(err);
+      });
+    }
   });
 
 });
 
-const buildSelectPicker = (tasks) => {
+const buildSelectPicker = () => {
   let options = [];
   for (let item in tasks) {
     const task = tasks[item];
@@ -157,7 +147,35 @@ const buildSelectPicker = (tasks) => {
     options.push(template);
   }
   $(".selectpicker").html(options);
+  $(".selectpicker").val([currentTask]);
   $(".selectpicker").selectpicker('refresh');
+}
+
+//Promise
+const fetchAllTasks = (uid) => {
+  return new Promise((resolve, reject) => {
+    const tasksRef = database.ref('users/' + uid + '/tasks');
+    tasksRef.once('value').then((snapshot) => {
+      console.log("refresh tasks");
+      const fetchedTasks = snapshot.val();
+      resolve(fetchedTasks);
+    }).catch((err) => {
+      reject(err);
+    });
+  });
+}
+
+//Promise
+const fetchCurrentTask = (uid) => {
+  return new Promise((resolve, reject) => {
+    const ref = database.ref('users/' + uid + '/pomodoro');
+    ref.once('value').then((snapshot) => {
+      const fetchedTask = snapshot.child('currentTask').val();
+      resolve(fetchedTask);
+    }).catch((err) => {
+      reject(err);
+    });
+  });
 }
 
 //TODO: refreshActivityPage must accept tasks as input value or fetch somehow to render them.
@@ -167,23 +185,38 @@ const refreshActivityPage = (uid, targetDate, duration) => {
     const startDate = moment(targetDate - duration);
     const endDate = moment(targetDate + DURATIONS.day);
     const chartType = duration === DURATIONS.year ? CANVAS_TYPES.line : CANVAS_TYPES.bar;
-    fetchAppropriateActivity(uid, targetDate, duration)
-      .then((result) => {
-        console.log("return value from fetch method: ", result);
-        return parseResult(result, startDate, endDate);
 
-      }).then((parsedResult) => {
-        refreshCanvas(parsedResult.labels, parsedResult.data, chartType);
-      }).catch((err) => {
-        console.error(err);
+    //TODO:fetch selected tasks from selectpicker
+    let selectedTasks = [];
+
+    $('select.selectpicker option:selected').each((index, selected) => {
+      selectedTasks.push($(selected).text());
+    });
+    console.log("SelectedTasks: ", selectedTasks);
+    Promise.all(selectedTasks.map((task) => {
+      console.log("Promise.all");
+      return fetchAppropriateActivity(uid, targetDate, duration, task);
+    })).then((results) => {
+      console.log("results from fetchAppropriateActivity: ", results);
+      return results.map((result) => {
+        console.log("Promise.all parseResult");
+        return parseResult(result.activity, startDate, endDate, result.task);
       });
+    }).then((parsedResults) => {
+      refreshCanvas(parsedResults, chartType);
+    }).catch((err) => {
+      console.error(err);
+    });
   });
 }
 
-const fetchAppropriateActivity = (uid, targetDate, duration) => {
+const fetchAppropriateActivity = (uid, targetDate, duration, taskName) => {
   return new Promise((resolve, reject) => {
     console.log("fetchAppropriateActivity");
-    let activities = [];
+    let activities = {
+      task: taskName,
+      activity: []
+    };
     const ref = database.ref('users/' + uid + '/result');
     const days = duration.days();
 
@@ -197,21 +230,22 @@ const fetchAppropriateActivity = (uid, targetDate, duration) => {
       //if the day fetched from DB is in the duration, then add to array
       snapshot.forEach((childSnapshot) => {
         const date = childSnapshot.key;
-        const count = childSnapshot.val().count;
+        const count = childSnapshot.val()[taskName] || 0;
         //if the date is between startDate and endDate, then push this.
         console.log("date: ", date);
-        console.log("count:", count);
+        console.log("taskCount: ", count);
         const fetchedDate = moment(date);
+        //TODO:This operation can be replaced as limit queries.
         if ( startDate <= fetchedDate <= targetDate) {
           const result = {
             date: date,
             count: count
           };
-          activities.push(result);
+          activities.activity.push(result);
         }
       });
     }).then(() => {
-      console.log(activities);
+      console.log("activities: ", activities);
       resolve(activities);
     }).catch((err) => {
       console.error(err);
@@ -220,10 +254,60 @@ const fetchAppropriateActivity = (uid, targetDate, duration) => {
   });
 }
 
-const refreshCanvas = (labels, data, canvas_type) => {
+const parseResult = (result, startDate, endDate, taskName) => {
+  console.log("parseResult result: ", result);
+  console.log("parseResult startDate: ", startDate);
+  console.log("parseResult endDate: ", endDate);
+  console.log("parseResult task: ", taskName);
+  let labels = [];
+  let data = [];
+  let parsedResult;
+
+  for(let index = startDate; index.isBefore(endDate); index.add(1, 'days')) {
+    console.log("parseResult: index:", index.format(DATE_YMD_FORMAT));
+    labels.push(index.format(DATE_YMD_FORMAT));
+
+    let isFound = false;
+    result.forEach((item) => {
+      if (index.format(DATE_YMD_FORMAT) === item.date) {
+        data.push(item.count);
+        isFound = true;
+      }
+    });
+    if (!isFound) {
+      data.push(0);
+    }
+
+  }
+
+  parsedResult = {
+    labels: labels,
+    data: data,
+    task: taskName
+  };
+
+  console.log("Result of parsedResult", parsedResult);
+  return parsedResult;
+
+}
+
+const refreshCanvas = (results, canvas_type) => {
+  console.log("refreshCanvas");
+  console.log("input value results: ", results);
   const context = $('#myChart')[0].getContext('2d');
   if (myChart) {
     myChart.destroy();
+  }
+
+  const labels = results[0].labels;
+  let datasets = [];
+  for(let index in results) {
+    console.log("each index:", results[index]);
+    datasets.push({
+      label: results[index].task,
+      data: results[index].data,
+      backgroundColor: 'rgba(153,255,51,0.4)'
+    });
   }
 
   //draw chart
@@ -233,44 +317,27 @@ const refreshCanvas = (labels, data, canvas_type) => {
     type: canvas_type,
     data: {
       labels: labels,
-      datasets: [{
-        label: 'activity',
-        data: data,
-        backgroundColor: 'rgba(153,255,51,0.4)'
-      }]
+      datasets: datasets
     }
   });
 }
 
-const parseResult = (result, startDate, endDate) => {
+const getCurrentDuration = () => {
+  let duration;
+  switch($("button#duration").text()) {
+    case "Duration:Week":
+      duration = DURATIONS.week;
+      break;
+    case "Duration:Month":
+      duration = DURATIONS.month;
+      break;
+    case "Duration:Year":
+      duration = DURATIONS.year;
+      break;
+    default:
+      duration = DURATIONS.week;
+      break;
+  }
 
-  return new Promise((resolve, reject) => {
-    let labels = [];
-    let data = [];
-    let parsedResult;
-    console.log("result: ", result);
-
-    for(var i = startDate; i.isBefore(endDate); i.add(1, 'days')) {
-      console.log("parseResult: i:", i.format(DATE_YMD_FORMAT));
-      labels.push(i.format(DATE_YMD_FORMAT));
-
-      let isFound = false;
-      result.forEach((item) => {
-        if (i.format(DATE_YMD_FORMAT) === item.date) {
-          data.push(item.count);
-          isFound = true;
-        }
-      });
-      if (!isFound) {
-        data.push(0);
-      }
-
-      parsedResult = {
-        labels: labels,
-        data: data
-      };
-    }
-    resolve(parsedResult);
-
-  });
+  return duration;
 }
