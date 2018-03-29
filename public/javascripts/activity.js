@@ -29,6 +29,15 @@ const CANVAS_TYPES = {
   line: 'line'
 };
 
+const CANVAS_COLORS = [
+  'rgba(231, 76, 60,1.0)',
+  'rgba(46, 204, 113,1.0)',
+  'rgba(52, 152, 219,1.0)',
+  'rgba(155, 89, 182,1.0)',
+  'rgba(241, 196, 15,1.0)'
+];
+
+
 let tasks;
 let currentTask;
 
@@ -66,10 +75,7 @@ $(() => {
     if (user) {
       const uid = user.uid;
       duration = getCurrentDuration();
-      refreshActivityPage(uid, targetDate, duration).then(() => {
-      }).catch((err) => {
-        console.error(err);
-      });
+      refreshActivityPage(uid, targetDate, duration);
     }
   });
 
@@ -82,10 +88,7 @@ $(() => {
       const uid = user.uid;
       const duration = DURATIONS.week;
 
-      refreshActivityPage(uid, targetDate, duration).then(() => {
-      }).catch((err) => {
-        console.error(err);
-      });
+      refreshActivityPage(uid, targetDate, duration);
     }
   });
 
@@ -97,11 +100,7 @@ $(() => {
     if (user) {
       const uid = user.uid;
       const duration = DURATIONS.month;
-      refreshActivityPage(uid, targetDate, duration).then(() => {
-        //nothing todo
-      }).catch((err) => {
-        console.error(err);
-      });
+      refreshActivityPage(uid, targetDate, duration);
     }
   });
 
@@ -113,11 +112,7 @@ $(() => {
     if (user) {
       const uid = user.uid;
       const duration = DURATIONS.year;
-      refreshActivityPage(uid, targetDate, duration).then(() => {
-        //nothing todo
-      }).catch((err) => {
-        console.error(err);
-      });
+      refreshActivityPage(uid, targetDate, duration)
     }
   });
 
@@ -130,10 +125,7 @@ $(() => {
       const uid = user.uid;
       const duration = getCurrentDuration();
 
-      refreshActivityPage(uid, targetDate, duration).then(() => {
-      }).catch((err) => {
-        console.error(err);
-      });
+      refreshActivityPage(uid, targetDate, duration);
     }
   });
 
@@ -180,33 +172,31 @@ const fetchCurrentTask = (uid) => {
 
 //TODO: refreshActivityPage must accept tasks as input value or fetch somehow to render them.
 const refreshActivityPage = (uid, targetDate, duration) => {
-  return new Promise((resolve, reject) => {
-    console.log("refreshActivityPage");
-    const startDate = moment(targetDate - duration);
-    const endDate = moment(targetDate + DURATIONS.day);
-    const chartType = duration === DURATIONS.year ? CANVAS_TYPES.line : CANVAS_TYPES.bar;
+  console.log("refreshActivityPage");
+  //const startDate = moment(targetDate - duration);
+  //const endDate = moment(targetDate + DURATIONS.day);
+  const chartType = duration === DURATIONS.year ? CANVAS_TYPES.line : CANVAS_TYPES.bar;
 
-    //TODO:fetch selected tasks from selectpicker
-    let selectedTasks = [];
+  //TODO:fetch selected tasks from selectpicker
+  let selectedTasks = [];
 
-    $('select.selectpicker option:selected').each((index, selected) => {
-      selectedTasks.push($(selected).text());
+  $('select.selectpicker option:selected').each((index, selected) => {
+    selectedTasks.push($(selected).text());
+  });
+  console.log("SelectedTasks: ", selectedTasks);
+  Promise.all(selectedTasks.map((task) => {
+    console.log("Promise.all");
+    return fetchAppropriateActivity(uid, targetDate, duration, task);
+  })).then((results) => {
+    console.log("results from fetchAppropriateActivity: ", results);
+    return results.map((result) => {
+      console.log("Promise.all parseResult");
+      return parseResult(result.activity, targetDate, duration, result.task);
     });
-    console.log("SelectedTasks: ", selectedTasks);
-    Promise.all(selectedTasks.map((task) => {
-      console.log("Promise.all");
-      return fetchAppropriateActivity(uid, targetDate, duration, task);
-    })).then((results) => {
-      console.log("results from fetchAppropriateActivity: ", results);
-      return results.map((result) => {
-        console.log("Promise.all parseResult");
-        return parseResult(result.activity, startDate, endDate, result.task);
-      });
-    }).then((parsedResults) => {
-      refreshCanvas(parsedResults, chartType);
-    }).catch((err) => {
-      console.error(err);
-    });
+  }).then((parsedResults) => {
+    refreshCanvas(parsedResults, chartType);
+  }).catch((err) => {
+    console.error(err);
   });
 }
 
@@ -254,14 +244,21 @@ const fetchAppropriateActivity = (uid, targetDate, duration, taskName) => {
   });
 }
 
-const parseResult = (result, startDate, endDate, taskName) => {
+const parseResult = (result, targetDate, duration, taskName) => {
   console.log("parseResult result: ", result);
-  console.log("parseResult startDate: ", startDate);
-  console.log("parseResult endDate: ", endDate);
+  console.log("parseResult targetDate: ", targetDate);
   console.log("parseResult task: ", taskName);
   let labels = [];
   let data = [];
   let parsedResult;
+
+  const startDate = moment(targetDate - duration);
+  const endDate = moment(targetDate + DURATIONS.day);
+
+  let isBefore = startDate.isBefore(endDate);
+
+  const template = String.raw`startDate: ${startDate} endDate${endDate} startDate.isBefore: ${isBefore}`;
+  console.log(template);
 
   for(let index = startDate; index.isBefore(endDate); index.add(1, 'days')) {
     console.log("parseResult: index:", index.format(DATE_YMD_FORMAT));
@@ -291,6 +288,7 @@ const parseResult = (result, startDate, endDate, taskName) => {
 
 }
 
+//TODO:Limit of data must be up to 5 or 10...
 const refreshCanvas = (results, canvas_type) => {
   console.log("refreshCanvas");
   console.log("input value results: ", results);
@@ -306,7 +304,7 @@ const refreshCanvas = (results, canvas_type) => {
     datasets.push({
       label: results[index].task,
       data: results[index].data,
-      backgroundColor: 'rgba(153,255,51,0.4)'
+      backgroundColor: CANVAS_COLORS[index]
     });
   }
 
