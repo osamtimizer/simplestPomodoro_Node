@@ -226,6 +226,7 @@ const fetchAppropriateActivity = (uid, targetDate, duration, taskName) => {
       task: taskName,
       activity: []
     };
+    //TODO:subordination of node should be uid->result->task->date...
     const ref = database.ref('users/' + uid + '/result');
     const days = duration.days();
 
