@@ -33,6 +33,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser('secret'));
 app.use(express.static(path.join(__dirname, 'public')));
 
+//TODO:PRODUCTION:set SESSION_SECRET value in env
 var key = {
   secret: process.env.SESSION_SECRET,
   resave: false,
