@@ -1,4 +1,5 @@
 const admin = require('firebase-admin');
+//TODO:PRODUCTION:put simplestpomodoro.json file in the following path
 const serviceAccount = require('./.simplestpomodoro.json');
 
 const myFirebase_admin = admin.initializeApp({
