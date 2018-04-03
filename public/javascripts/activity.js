@@ -226,6 +226,26 @@ const fetchAppropriateActivity = (uid, targetDate, duration, taskName) => {
       task: taskName,
       activity: []
     };
+
+//NEW OPERATION
+    const migrateRef = database.ref('/users/' + uid + '/result/' + taskname);
+    migrateRef.once("value").then((snapshot) => {
+      snapshot.forEach((childSnapshot) => {
+        const date = childSnapshot.key;
+        const count = childSnapshot.val();
+        const result = {
+          date: date,
+          count: count
+        };
+        console.log("New operation: result: ", result);
+        //activities.activity.push(result);
+      });
+    }).catch((err) => {
+      console.error(err);
+    });
+//NEW OPERATION END
+
+//OLD OPERATION
     //TODO:subordination of node should be uid->result->task->date...
     const ref = database.ref('users/' + uid + '/result');
     const days = duration.days();
@@ -238,7 +258,10 @@ const fetchAppropriateActivity = (uid, targetDate, duration, taskName) => {
     ref.once("value").then((snapshot) => {
       console.log(snapshot);
       //if the day fetched from DB is in the duration, then add to array
+      //TODO:This snapshot.forEach should iterate each task, not date.
+
       snapshot.forEach((childSnapshot) => {
+
         const date = childSnapshot.key;
         const count = childSnapshot.val()[taskName] || 0;
         //if the date is between startDate and endDate, then push this.
@@ -254,6 +277,9 @@ const fetchAppropriateActivity = (uid, targetDate, duration, taskName) => {
           activities.activity.push(result);
         }
       });
+//OLD OPERATION END
+
+
     }).then(() => {
       console.log("activities: ", activities);
       resolve(activities);

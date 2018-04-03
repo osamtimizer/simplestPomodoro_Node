@@ -280,6 +280,7 @@ const addPomodoroResult = () => {
     //const date = new Date().toISOString().slice(0, -14);
     const date = moment().format("YYYY-MM-DD");
     //TODO:subordination of node should be uid->result->task->date...
+//OLD OPERATION
     const resultRef = database.ref('users/' + user.uid + '/result');
     resultRef.once("value").then((snapshot) => {
       if (snapshot.hasChild(date)) {
@@ -313,7 +314,15 @@ const addPomodoroResult = () => {
     }).catch((err) => {
       console.error("Error: ", err);
     });
+//OLD OPERATION END
+//NEW OPERATION
 
+    const migrateResultRef = database.ref('users/' + user.uid + '/result');
+    migrateResultRef.once("value").then((snapshot) => {
+    }).catch((err) => {
+      console.error(err);
+    });
+//NEW OPERATION END
   }
 }
 
