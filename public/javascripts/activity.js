@@ -228,58 +228,26 @@ const fetchAppropriateActivity = (uid, targetDate, duration, taskName) => {
     };
 
 //NEW OPERATION
-    const migrateRef = database.ref('/users/' + uid + '/result/' + taskname);
+    const ref = database.ref('users/' + uid + '/result');
+    const days = duration.days();
+    const startDate = moment(targetDate - duration);
+    const migrateRef = database.ref('/users/' + uid + '/result/' + taskName);
+
     migrateRef.once("value").then((snapshot) => {
       snapshot.forEach((childSnapshot) => {
         const date = childSnapshot.key;
         const count = childSnapshot.val();
+
+        const fetchedDate = moment(date);
         const result = {
           date: date,
           count: count
         };
         console.log("New operation: result: ", result);
-        //activities.activity.push(result);
-      });
-    }).catch((err) => {
-      console.error(err);
-    });
-//NEW OPERATION END
-
-//OLD OPERATION
-    //TODO:subordination of node should be uid->result->task->date...
-    const ref = database.ref('users/' + uid + '/result');
-    const days = duration.days();
-
-    const startDate = moment(targetDate - duration);
-
-    console.log("EndDate: ", targetDate.format(DATE_YMD_FORMAT));
-    console.log("StartDate: ", startDate.format(DATE_YMD_FORMAT));
-
-    ref.once("value").then((snapshot) => {
-      console.log(snapshot);
-      //if the day fetched from DB is in the duration, then add to array
-      //TODO:This snapshot.forEach should iterate each task, not date.
-
-      snapshot.forEach((childSnapshot) => {
-
-        const date = childSnapshot.key;
-        const count = childSnapshot.val()[taskName] || 0;
-        //if the date is between startDate and endDate, then push this.
-        console.log("date: ", date);
-        console.log("taskCount: ", count);
-        const fetchedDate = moment(date);
-        //TODO:This operation can be replaced as limit queries.
-        if ( startDate <= fetchedDate <= targetDate) {
-          const result = {
-            date: date,
-            count: count
-          };
+        if (startDate <= fetchedDate <= targetDate) {
           activities.activity.push(result);
         }
       });
-//OLD OPERATION END
-
-
     }).then(() => {
       console.log("activities: ", activities);
       resolve(activities);
