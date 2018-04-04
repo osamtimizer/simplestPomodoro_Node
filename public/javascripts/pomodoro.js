@@ -277,52 +277,29 @@ const addPomodoroResult = () => {
   console.log("addPomodoroResult");
   const user = auth.currentUser;
   if (user) {
+    const uid = user.uid;
     //const date = new Date().toISOString().slice(0, -14);
     const date = moment().format("YYYY-MM-DD");
-    //TODO:subordination of node should be uid->result->task->date...
-//OLD OPERATION
-    const resultRef = database.ref('users/' + user.uid + '/result');
-    resultRef.once("value").then((snapshot) => {
-      if (snapshot.hasChild(date)) {
-        //TODO: count should be task name, each task should have count.
-        if (snapshot.child(date).hasChild(currentTask)) {
-          const count = snapshot.child(date).child(currentTask).val();
-          const updated_count = count + 1;
-          //TODO:subordination of node should be uid->result->task->date...
-          const resultTodayRef = database.ref('users/' + user.uid + '/result/' + date);
-          resultTodayRef.update({
-            [currentTask]: updated_count
-          })
-        } else {
-          //If appropriate obj isn't on DB, then push it.
-          //TODO:subordination of node should be uid->result->task->date...
-          const resultTodayRef = database.ref('users/' + user.uid + '/result/' + date);
-          resultTodayRef.update({
-            [currentTask]: 1
-          })
-        }
-      } else {
-        console.log("snapshot doesn't have child");
-        //TODO:subordination of node should be uid->result->task->date...
-        const resultTodayRef = database.ref('users/' + user.uid + '/result/' + date);
-
-        const key = currentTask;
-        resultTodayRef.update({
-          [key]: 1
-        })
-      }
-    }).catch((err) => {
-      console.error("Error: ", err);
-    });
-//OLD OPERATION END
-//NEW OPERATION
-
-    const migrateResultRef = database.ref('users/' + user.uid + '/result');
+    //NEW OPERATION
+    const resultCurrentTaskRef = database.ref('users/' + uid + '/result/' + currentTask);
+    const migrateResultRef = database.ref('users/' + uid + '/result');
     migrateResultRef.once("value").then((snapshot) => {
+      if (snapshot.hasChild(currentTask) &&
+        snapshot.child(currentTask).hasChild(date)) {
+        const count = snapshot.child(currentTask).child(date).val();
+        const updated_count = count + 1;
+        resultCurrentTaskRef.update({
+          [date]: updated_count
+        });
+      } else {
+        resultCurrentTaskRef.update({
+          [date]: 1
+        });
+      }
     }).catch((err) => {
       console.error(err);
     });
-//NEW OPERATION END
+    //NEW OPERATION END
   }
 }
 
