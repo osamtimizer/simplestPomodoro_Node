@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import firebase from 'firebase';
 import moment from 'Moment';
+import 'jquery-confirm';
 
 let config = {
   apiKey: "AIzaSyDUBdU1s_1ff_yUxXvlCbS9y4JyocdaShk",
@@ -114,17 +115,13 @@ $(() => {
     timerStatus = false;
     clearInterval(timer);
 
-    let result = confirm("Are you sure want to reset this timer?");
-    if (result) {
-      //reset timer and send init value to realtimeDB
-      isWorking = true;
-      terms = INITIAL_TERM_COUNT;
-      remain = WORKING_DURATION_MIN * MIN_MS;
+    //reset timer and send init value to realtimeDB
+    const content = "Do you sure want to reset this timer?";
+    confirmDialog(content, () => {
+      resetTimer();
       refreshTimer();
       refreshDBPomodoroStatus();
-    } else {
-      //nothing to do
-    }
+    });
 
     refreshButtonview();
   });
@@ -145,26 +142,25 @@ $(() => {
   $("ul.dropdown-menu").on("click", "li.task a.task span.close.task", (event) => {
     console.log("span.close.task is clicked");
 
-    if (confirmDialog("Do you sure want to remove this task?")) {
+    const content = "Do you sure want to delete this task?";
+    confirmDialog(content, () => {
       console.log(event.currentTarget);
       const selectedTask = $(event.currentTarget).parent().text().slice(0, -1);
       console.log(selectedTask);
       //TODO:Change current task
       if (selectedTask === currentTask) {
         console.log("Warning: This task is currently selected.");
-        //TODO:Show warning
-        alert("You cannot remove this task without selecting other task.");
       } else {
         const index = tasks.indexOf(selectedTask);
         if (index >= 0) {
           $(event.currentTarget).parent().remove();
-          //TODO:Results of removed task must be deleted from DB
           deleteSpecifiedTask(selectedTask);
           tasks.splice(index, 1);
           refreshTask();
         }
       }
-    }
+    });
+
     event.stopPropagation();
   });
 
@@ -311,12 +307,36 @@ const deleteSpecifiedTask = (task) => {
   }
 }
 
-const confirmDialog = (text) => {
-  if (confirm(text)) {
-    return true;
-  } else {
-    return false;
+const confirmDialog = (content, okCallback, cancelCallback) => {
+  if (okCallback === null) {
+    okCallback = () => {
+      console.log("Default okCallback");
+    };
   }
+  if (cancelCallback === null) {
+    cancelCallback = () => {
+      console.log("Default cancelCallback");
+    };
+  }
+
+  $.confirm({
+    title: "Caution",
+    content: content,
+    type: 'green',
+    buttons: {
+      ok: {
+        text: 'ok',
+        btnClass: 'btn-primary',
+        keys: ['enter'],
+        action: okCallback
+      },
+      cancel: {
+        text: 'cancel',
+        btnClass: 'btn-default',
+        action: cancelCallback
+      }
+    }
+  });
 }
 
 const addPomodoroResult = () => {
@@ -386,6 +406,12 @@ const updateDBTasks = () => {
     const uid = user.uid;
     database.ref('users/' + uid + '/tasks').set(tasks);
   }
+}
+
+const resetTimer = () => {
+  isWorking = true;
+  terms = INITIAL_TERM_COUNT;
+  remain = WORKING_DURATION_MIN * MIN_MS;
 }
 
 const refreshTimer = () => {
