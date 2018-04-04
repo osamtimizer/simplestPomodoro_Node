@@ -144,22 +144,25 @@ $(() => {
 
   $("ul.dropdown-menu").on("click", "li.task a.task span.close.task", (event) => {
     console.log("span.close.task is clicked");
-    console.log(event.currentTarget);
-    const selectedTask = $(event.currentTarget).parent().text().slice(0, -1);
-    console.log(selectedTask);
-    //TODO:Change current task
-    if (selectedTask === currentTask) {
-      console.log("Warning: This task is currently selected.");
-      //TODO:Show warning
-      alert("You cannot remove this task without selecting other task.");
-    } else {
-      const index = tasks.indexOf(selectedTask);
-      if (index >= 0) {
-        $(event.currentTarget).parent().remove();
-        //TODO:Results of removed task must be deleted from DB
-        deleteSpecifiedTask(selectedTask);
-        tasks.splice(index, 1);
-        refreshTask();
+
+    if (confirmDialog("Do you sure want to remove this task?")) {
+      console.log(event.currentTarget);
+      const selectedTask = $(event.currentTarget).parent().text().slice(0, -1);
+      console.log(selectedTask);
+      //TODO:Change current task
+      if (selectedTask === currentTask) {
+        console.log("Warning: This task is currently selected.");
+        //TODO:Show warning
+        alert("You cannot remove this task without selecting other task.");
+      } else {
+        const index = tasks.indexOf(selectedTask);
+        if (index >= 0) {
+          $(event.currentTarget).parent().remove();
+          //TODO:Results of removed task must be deleted from DB
+          deleteSpecifiedTask(selectedTask);
+          tasks.splice(index, 1);
+          refreshTask();
+        }
       }
     }
     event.stopPropagation();
@@ -303,8 +306,16 @@ const deleteSpecifiedTask = (task) => {
   const user = auth.currentUser;
   if (user) {
     const uid = user.uid;
-    //TODO:subordination of node should be uid->result->task->date...
-    const ref = database.ref('users/' + uid + '/result/');
+    const ref = database.ref('users/' + uid + '/result/' + task);
+    ref.remove();
+  }
+}
+
+const confirmDialog = (text) => {
+  if (confirm(text)) {
+    return true;
+  } else {
+    return false;
   }
 }
 
