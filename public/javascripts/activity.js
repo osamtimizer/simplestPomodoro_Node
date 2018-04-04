@@ -159,7 +159,7 @@ const fadeOutLoadingImage = () => {
   console.log("fadeOutLoadingImage is called");
   $('#loader-bg').delay(900).fadeOut(300);
   $('#loader').delay(600).fadeOut(300);
-  $('div#main').delay(300).fadeIn(300);
+  $('div.wrap').delay(300).fadeIn(300);
   $('div#header-home').delay(300).fadeIn(300);
 }
 const buildSelectPicker = () => {

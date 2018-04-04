@@ -9,8 +9,7 @@ a {
 
 div {
   &#main {
-  padding: 10px;
-  display: none;
+    padding: 10px;
   }
 
   &#btn-reset {
@@ -39,13 +38,12 @@ div {
     z-index: 2;
   }
 
-  &.hide{
-    opacity: 0;
-    transition: .7s;
+  &.wrap {
+    display: none;
   }
 
-  &.show {
-    opacity: 1;
+  &.alert {
+    display: none;
   }
 
   &.blank {
