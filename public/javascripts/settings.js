@@ -14,6 +14,7 @@ const auth = firebase.auth();
 $(() => {
   $("button#submit").click((event) => {
     console.log("submit clicked");
+    //TODO: use css.Display, fadein and fadeout
     $("div.alert").addClass('show');
     $("div.alert").removeClass('hide');
   });
