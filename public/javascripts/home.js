@@ -34,6 +34,10 @@ let tasks;
 
 $(() => {
 
+  const window_height = $(window).height();
+  $('#loader-bg , #loader').height(window_height).css('display', 'block');
+  setTimeout(fadeOutLoadingImage, 10000);
+
   auth.onAuthStateChanged((user) => {
     console.log("onAuthStateChanged is called");
     if (user) {
@@ -83,6 +87,7 @@ $(() => {
         }
       }).then(() => {
         refreshTask();
+        fadeOutLoadingImage();
       }).catch((err) => {
         console.error("Error: ", err);
       });
@@ -201,7 +206,21 @@ $(() => {
       location.href="/login";
     }
   });
+
+
 });
+
+//
+//Methods
+//
+
+const fadeOutLoadingImage = () => {
+  console.log("fadeOutLoadingImage is called");
+  $('#loader-bg').delay(900).fadeOut(300);
+  $('#loader').delay(600).fadeOut(300);
+  $('div#main').delay(300).fadeIn(300);
+  $('div#header-home').delay(300).fadeIn(300);
+}
 
 const startCount = () => {
   if (remain <= 0) {

@@ -45,6 +45,10 @@ let currentTask;
 let myChart;
 
 $(() => {
+  const window_height = $(window).height();
+  $('#loader-bg , #loader').height(window_height).css('display', 'block');
+  setTimeout(fadeOutLoadingImage, 10000);
+
   auth.onAuthStateChanged((user) => {
     if (user) {
       const uid = user.uid;
@@ -63,6 +67,7 @@ $(() => {
           buildSelectPicker();
         }).then(() => {
           refreshActivityPage(uid, today, DURATIONS.week);
+          fadeOutLoadingImage();
         }).catch((err) => {
           console.error(err);
         });
@@ -147,6 +152,16 @@ $(() => {
 
 });
 
+//
+//Methods
+//
+const fadeOutLoadingImage = () => {
+  console.log("fadeOutLoadingImage is called");
+  $('#loader-bg').delay(900).fadeOut(300);
+  $('#loader').delay(600).fadeOut(300);
+  $('div#main').delay(300).fadeIn(300);
+  $('div#header-home').delay(300).fadeIn(300);
+}
 const buildSelectPicker = () => {
   let options = [];
   for (let item in tasks) {

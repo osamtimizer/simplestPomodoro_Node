@@ -4,21 +4,26 @@ block header
   link(rel='stylesheet' href='/dist/css/bootstrap-select.css')
 
 block content
+  div#loader-bg
+    div#loader
+      img(src="/images/gif/icon_loader_a_ww_01_s1.gif")
+      p.loading Now loading...
   include header
-    div.task.container
-      select.task.selectpicker(multiple title="Select Task" data-max-options="5" data-live-search="true" data-style="btn-inverse")
-    div.container
-      div.col-lg-12.col-xs-12
-        canvas#myChart
-      div.col-lg-2.col-xs-4
-        input(type="date")
-      div.col-lg-2.col-xs-4.dropdown.show
-        button.btn.btn-primary.dropdown-toggle#duration(type="button" data-toggle="dropdown")
-          |Select Duration
-          span.caret
-        ul.dropdown-menu(role="menu")
-          li: a.dropdown-item#week(href="#") Week
-          li: a.dropdown-item#month(href="#") Month
-          li: a.dropdown-item#year(href="#") Year
+    div#main
+      div.task.container
+        select.task.selectpicker(multiple title="Select Task" data-max-options="5" data-live-search="true" data-style="btn-inverse")
+      div.container
+        div.col-lg-12.col-xs-12
+          canvas#myChart
+        div.col-lg-2.col-xs-4
+          input(type="date")
+        div.col-lg-2.col-xs-4.dropdown.show
+          button.btn.btn-primary.dropdown-toggle#duration(type="button" data-toggle="dropdown")
+            |Select Duration
+            span.caret
+          ul.dropdown-menu(role="menu")
+            li: a.dropdown-item#week(href="#") Week
+            li: a.dropdown-item#month(href="#") Month
+            li: a.dropdown-item#year(href="#") Year
   include footer
   script(src='/javascripts/build/activity.js')
