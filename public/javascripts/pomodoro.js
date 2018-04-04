@@ -185,6 +185,21 @@ $(() => {
     return "Are you sure want to leave this page?";
   });
 
+  $("a#logout").click((event) => {
+    console.log("logout")
+    let user = auth.currentUser;
+    if (user) {
+      auth.signOut().then(() => {
+        console.log("Sign out");
+        //redirect
+        location.href="/login";
+      }).catch((err) => {
+        console.error("Error: ", err);
+      });
+    } else {
+      location.href="/login";
+    }
+  });
 });
 
 const startCount = () => {
