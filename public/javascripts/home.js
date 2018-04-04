@@ -185,9 +185,9 @@ $(() => {
   });
 
   $(window).on('beforeunload', (event) => {
-    //TODO: if user want to leave this page, status must be stored on DB.
-    //RefreshPomodoroStatus();
-    return "Are you sure want to leave this page?";
+    if (timerStatus) {
+      refreshDBPomodoroStatus();
+    }
   });
 
   $("a#logout").click((event) => {
