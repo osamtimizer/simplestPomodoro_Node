@@ -329,7 +329,7 @@ const refreshTask = () => {
     if ( task === currentTask) {
       template = String.raw`<li class="task"><a href="#" class="dropdown-item task currentTask" id="${task}">${task}</a></li>`;
     } else {
-      template = String.raw`<li class="task"><a href="#" class="dropdown-item task" id="${task}">${task}<span type="button" class="close task">&times;</span></a></li>`;
+      template = String.raw`<li class="task"><a href="#" class="dropdown-item task" id="${task}">${task}<span type="button" class="close task fui-cross"></span></a></li>`;
     }
     $("ul.dropdown-menu").prepend(template);
   }

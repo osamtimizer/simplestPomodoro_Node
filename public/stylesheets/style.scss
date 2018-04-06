@@ -102,18 +102,10 @@ a {
   &.task-selected {
     background-color: blue;
   }
-}
 
-.scrollable-menu {
-  height: auto;
-  max-height: 500px;
-  overflow-x: hidden;
-}
-
-.alert {
-  height: 50px;
-  width: 100%;
-  position: absolute;
+  &.register {
+    cursor: pointer;
+  }
 }
 
 h1 {
@@ -142,3 +134,20 @@ nav.navbar-default {
 footer.footer {
   //background-color: #e74c3c;
 }
+
+.text-white {
+  color: #FFF;
+}
+
+.scrollable-menu {
+  height: auto;
+  max-height: 500px;
+  overflow-x: hidden;
+}
+
+.alert {
+  height: 50px;
+  width: 100%;
+  position: absolute;
+}
+
