@@ -6,3 +6,4 @@
 **/build/*.css
 /public/stylesheets/bootflat/*
 /log/*
+/public/images/pomodoro.jpg
