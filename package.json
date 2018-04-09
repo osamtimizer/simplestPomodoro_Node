@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www",
-    "webpack": "webpack",
+    "start": "./node_modules/.bin/nodemon ./bin/www",
+    "webpack": "./node_modules/.bin/webpack",
     "gulp": "gulp"
   },
   "dependencies": {
@@ -26,6 +26,7 @@
     "log4js": "^2.5.3",
     "moment": "^2.21.0",
     "morgan": "~1.9.0",
+    "nodemon": "^1.17.3",
     "pug": "^2.0.1",
     "q": "^1.5.1",
     "serve-favicon": "~2.4.5"
