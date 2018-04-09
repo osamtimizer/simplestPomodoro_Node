@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import firebase from 'firebase';
+//TODO: Moment should be renamed to moment
 import moment from 'Moment';
 import 'jquery-confirm';
 

@@ -1,5 +1,6 @@
 const path = require('path');
 
+//TODO:this file should be adjusted for production environment
 const webpack = require('webpack');
 module.exports = {
   target: 'web',
