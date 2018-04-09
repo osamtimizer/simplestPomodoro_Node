@@ -111,7 +111,6 @@ a {
 h1 {
   &.index {
     color: #FFF;
-    font-family: 'pacifico', cursive;
   }
 }
 
@@ -133,6 +132,7 @@ nav.navbar-default {
 
 footer.footer {
   //background-color: #e74c3c;
+  z-index: 0;
 }
 
 .text-white {
