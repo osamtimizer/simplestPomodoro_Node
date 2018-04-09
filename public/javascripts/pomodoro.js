@@ -1,7 +1,6 @@
 import $ from 'jquery';
 import firebase from 'firebase';
-//TODO: Moment should be renamed to moment
-import moment from 'Moment';
+import moment from 'moment';
 
 let config = {
   apiKey: "AIzaSyDUBdU1s_1ff_yUxXvlCbS9y4JyocdaShk",
