@@ -12,6 +12,7 @@ module.exports = {
     register: './public/javascripts/register.js',
     activity: './public/javascripts/activity.js',
     settings: './public/javascripts/settings.js',
+    task_management: './public/javascripts/task_management.js',
     login: './public/javascripts/login.js'
   },
   output: {

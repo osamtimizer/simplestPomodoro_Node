@@ -1,8 +1,10 @@
-import $ from 'jquery';
 import firebase from 'firebase';
 import moment from 'moment';
 import 'jquery-confirm';
 import 'bootstrap-select';
+//TODO:jQuery is duplicated, not solved yet...
+//HINT: using webpack ProvidePlugin, this might be solved...
+import 'bootstrap-tagsinput';
 
 let config = {
   apiKey: "AIzaSyDUBdU1s_1ff_yUxXvlCbS9y4JyocdaShk",
@@ -90,6 +92,7 @@ $(() => {
       }).then(() => {
         refreshTask();
         fadeOutLoadingImage();
+        //console.log($(".tagsinput").tagsinput('items'));
       }).catch((err) => {
         console.error("Error: ", err);
       });

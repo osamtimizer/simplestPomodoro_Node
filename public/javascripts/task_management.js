@@ -11,11 +11,4 @@ firebase.initializeApp(config);
 const auth = firebase.auth();
 
 $(() => {
-  $("button#submit").click((event) => {
-    $(".alert").fadeIn('fast');
-  });
-
-  $("a.close").click((event) => {
-    $(".alert").fadeOut('fast');
-  });
 });

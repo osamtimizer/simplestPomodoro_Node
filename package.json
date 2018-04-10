@@ -13,6 +13,7 @@
     "bootflat": "^2.0.4",
     "bootstrap-multiselect": "^0.9.13-1",
     "bootstrap-select": "^1.12.4",
+    "bootstrap-tagsinput": "^0.7.1",
     "chart.js": "^2.7.2",
     "config": "^1.30.0",
     "cookie-parser": "~1.4.3",
