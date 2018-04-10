@@ -2,6 +2,7 @@ import $ from 'jquery';
 import firebase from 'firebase';
 import moment from 'moment';
 import 'jquery-confirm';
+import 'bootstrap-select';
 
 let config = {
   apiKey: "AIzaSyDUBdU1s_1ff_yUxXvlCbS9y4JyocdaShk",
@@ -397,6 +398,7 @@ const refreshTask = () => {
   }
 
   updateDBTasks();
+  buildSelectPicker();
 }
 
 const updateDBTasks = () => {
@@ -443,4 +445,16 @@ const refreshButtonview = () => {
     $("button.stop").removeClass("btn-primary");
     $("button.stop").addClass("btn-default");
   }
+}
+
+const buildSelectPicker = () => {
+  let options = [];
+  for (let item in tasks) {
+    const task = tasks[item];
+    const template = String.raw`<option class="task selected" value="${task}" data-tokens="${task}">${task}</option>`;
+    options.push(template);
+  }
+  $(".selectpicker").html(options);
+  $(".selectpicker").val([currentTask]);
+  $(".selectpicker").selectpicker('refresh');
 }
