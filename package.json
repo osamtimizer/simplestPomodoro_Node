@@ -5,6 +5,7 @@
   "scripts": {
     "start": "./node_modules/.bin/nodemon ./bin/www",
     "webpack": "./node_modules/.bin/webpack",
+    "node-sass": "./node_modules/.bin/node-sass",
     "gulp": "gulp"
   },
   "dependencies": {
