@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import firebase from 'firebase';
 
 let config = {

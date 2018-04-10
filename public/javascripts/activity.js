@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import Q from 'q';
 import firebase from 'firebase';
 import Chart from 'chart.js'

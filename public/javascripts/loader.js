@@ -1,5 +1,3 @@
-import $ from 'jquery';
-
 $(() => {
   console.log("Loader is called");
   const window_height = $(window).height();

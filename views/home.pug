@@ -1,8 +1,5 @@
 extends layout
 
-block header
-  link(rel='stylesheet' href='/dist/css/bootstrap-select.css')
-
 block content
   div#loader-bg
     div#loader
@@ -14,6 +11,8 @@ block content
       div.task
         div.selector
           select.selectpicker(data-live-search="true")
+        div.tagsinput-primary
+          input.tagsinput(name="tagsinput" data-role="tagsinput" value="test1, test21, test3" maxTags="5")
         div.col-lg-12.col-xs-12.dropdown.show#task
           button.btn.btn-primary.dropdown-toggle#task(type="button" data-toggle="dropdown") Select Task
           ul.dropdown-menu.scrollable-menu(role="menu")
