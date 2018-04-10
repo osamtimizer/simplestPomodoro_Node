@@ -10,7 +10,7 @@ router.get('/', function(req, res, next) {
   auth.verifyIdToken(req.session.user.token)
     .then((decodedToken) => {
       const username = decodedToken.name;
-      res.render('settings', {
+      res.render('task-management', {
         username: username,
         user: true
       });

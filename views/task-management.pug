@@ -1,6 +1,13 @@
 extends layout
 
 block content
+  div#loader-bg
+    div#loader
+      img(src="/images/gif/icon_loader_a_ww_01_s1.gif")
+      p.loading Now loading...
   include header
+  div#main.wrap
+    div#contents.task_management
+
   include footer
   script(src='/javascripts/build/task-management.js')
