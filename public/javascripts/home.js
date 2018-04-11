@@ -1,8 +1,6 @@
 import firebase from 'firebase';
 import moment from 'moment';
 import 'jquery-confirm';
-//TODO:jQuery is duplicated, not solved yet...
-//HINT: using webpack ProvidePlugin, this might be solved...
 
 let config = {
   apiKey: "AIzaSyDUBdU1s_1ff_yUxXvlCbS9y4JyocdaShk",
@@ -33,7 +31,6 @@ let remain = WORKING_DURATION_MIN * MIN_MS;
 let currentTask = INITIAL_TASK_NAME;
 let timer;
 let tasks;
-let tags;
 
 $(() => {
 
@@ -68,23 +65,6 @@ $(() => {
           refreshTimer();
         }
 
-        if (snapshot.hasChild('tags')) {
-          console.log("tags found");
-          const fetchedTags = snapshot.child('tags').val();
-          tags = fetchedTags;
-          console.log("Fetched tags: ", tags);
-
-        } else {
-          console.log("create tags on DB");
-          tags = [
-            "sampleTag"
-          ];
-
-          database.ref('users/' + user.uid + '/tags').set({
-            0: "sampleTag"
-          });
-          console.log("no personal tags. Pushed tag: ", tags);
-        }
         if (snapshot.hasChild('tasks')) {
           console.log("tasks found");
           const fetchedTasks = snapshot.child('tasks').val();
@@ -92,21 +72,15 @@ $(() => {
           console.log("Fetched tasks: ", tasks);
         } else {
           console.log("create tasks on DB");
-          tasks = [
-            "Work",
-            "MyTask",
-            "Private"
-          ];
+          tasks = {
+            "Work": "sampleTag",
+            "MyTask": "sampleTag",
+            "Private": "sampleTag"
+          };
 
-          database.ref('users/' + user.uid + '/tasks').set({
-            0: "Work",
-            1: "MyTask",
-            2: "Private",
-          });
-          console.log("no personal tasks.Pushed tasks: ", tasks);
+          database.ref('users/' + user.uid + '/tasks').set(tasks);
         }
       }).then(() => {
-        initTagsinput();
         refreshTask();
         fadeOutLoadingImage();
       }).catch((err) => {
@@ -167,15 +141,13 @@ $(() => {
       console.log(event.currentTarget);
       const selectedTask = $(event.currentTarget).parent().text().slice(0, -1);
       console.log(selectedTask);
-      //TODO:Change current task
       if (selectedTask === currentTask) {
         console.log("Warning: This task is currently selected.");
       } else {
-        const index = tasks.indexOf(selectedTask);
-        if (index >= 0) {
+        if (tasks[selectedTask]) {
           $(event.currentTarget).parent().remove();
           deleteSpecifiedTask(selectedTask);
-          tasks.splice(index, 1);
+          delete tasks[selectedTask];
           refreshTask();
         }
       }
@@ -200,9 +172,11 @@ $(() => {
     $("button#task").html(currentTask + '<span class="caret"/>');
     //TODO:Show alert and Reset Timer
     refreshTask();
-    //push currentTask to realtimeDB
     refreshDBPomodoroStatus();
   });
+
+  //TODO:Add event handlers for selectpicker
+
 
   $(window).on('beforeunload', (event) => {
     if (timerStatus) {
@@ -230,24 +204,43 @@ $(() => {
   $("input.tagsinput").on('beforeItemAdd', (event) => {
   });
   $("input.tagsinput").on('itemAdded', (event) => {
+    console.log("input.tagsinput itemAdded");
     //validate tag
     //TODO:sanitize input text
-    //TODO:If item added during initialization, this should be prevented.
+    /*
     const addedTag = event.item;
     if (tags.indexOf(addedTag) == -1) {
       tags.push(addedTag);
       updateDBTags();
+      let updatedTask = {
+        [currentTask]: tags
+      };
+      console.log("updatedTask:", updatedTask);
     }
+    */
   });
   $("input.tagsinput").on('beforeItemRemove', (event) => {
   });
   $("input.tagsinput").on('itemRemoved', (event) => {
-    const index = tags.indexOf(event.item);
-    if (index >= 0) {
-      tags.splice(index, 1);
-      updateDBTags();
+  });
+
+  $("select.selectpicker").on('change', (event) => {
+    console.log("selectpicker changed");
+    const content = "When task is changed, Timer status will be reset.";
+    confirmDialog(content, () => {
+      const selectedTask = $(event.target).children("option:selected").text();
+      console.log(selectedTask);
+      console.log("targetTask", selectedTask);
+      console.log("currentTask", currentTask);
+      currentTask = selectedTask;
+      resetTimer();
+      refreshTimer();
+      refreshTask();
+      refreshDBPomodoroStatus();
+
     }
   });
+});
 
 });
 
@@ -319,7 +312,8 @@ const addNewTaskEventHandler = (event) => {
     console.log("Warning: Task name already exists.");
   } else {
     const escaped = $('<span />').text(task).html();
-    tasks.push(escaped);
+    const newTask = { [escaped]: ""};
+    tasks[newTask] = "";
     refreshTask();
     $("input#newTask").val("");
   }
@@ -418,7 +412,7 @@ const refreshTask = () => {
   $("li.task").remove();
   //Add Registered Tasks
   for (let item in tasks) {
-    const task = tasks[item];
+    const task = item;
     let template;
     if ( task === currentTask) {
       template = String.raw`<li class="task"><a href="#" class="dropdown-item task currentTask" id="${task}">${task}</a></li>`;
@@ -430,7 +424,7 @@ const refreshTask = () => {
 
   console.log("refreshTask: tasks:", tasks);
   console.log("refreshTask: currentTask:", currentTask);
-  if (tasks.indexOf(currentTask) >= 0) {
+  if (tasks[currentTask]) {
     console.log(currentTask);
     const escaped = $('<span />').text(currentTask).html();
     console.log("escaped: ", escaped);
@@ -441,6 +435,9 @@ const refreshTask = () => {
 
   updateDBTasks();
   buildSelectPicker();
+}
+
+const refreshTags = () => {
 }
 
 
@@ -502,7 +499,7 @@ const refreshButtonview = () => {
 const buildSelectPicker = () => {
   let options = [];
   for (let item in tasks) {
-    const task = tasks[item];
+    const task = item;
     const template = String.raw`<option class="task selected" value="${task}" data-tokens="${task}">${task}</option>`;
     options.push(template);
   }
@@ -513,13 +510,9 @@ const buildSelectPicker = () => {
 
 const initTagsinput = () => {
   console.log("buildTagsinput");
-  console.log(tags);
   $("input.tagsinput").tagsinput({
     maxTags: 5,
     allowDuplicates: false,
     maxChars: 20
   });
-  for (let item in tags) {
-    $("input.tagsinput").tagsinput('add', tags[item]);
-  }
 }
