@@ -73,9 +73,9 @@ $(() => {
         } else {
           console.log("create tasks on DB");
           tasks = {
-            "Work": "sampleTag",
-            "MyTask": "sampleTag",
-            "Private": "sampleTag"
+            "Work": "",
+            "MyTask": "",
+            "Private": ""
           };
 
           database.ref('users/' + user.uid + '/tasks').set(tasks);
@@ -175,6 +175,10 @@ $(() => {
       console.log("updatedTask:", updatedTask);
     }
     */
+    const inputTags = $(event.currentTarget).tagsinput('items');
+    let isNewTag = false;
+
+    //compare tags held by currentTask
   });
   $("input.tagsinput").on('beforeItemRemove', (event) => {
   });
@@ -183,22 +187,21 @@ $(() => {
 
   $("select.selectpicker").on('change', (event) => {
     console.log("selectpicker changed");
+    const selectedTask = $(event.target).children("option:selected").text();
+    console.log("selectedTask", selectedTask);
+    console.log("currentTask", currentTask);
+    currentTask = selectedTask;
+    refreshTask();
+    refreshTags();
+
     const content = "Do you want to reset timer?";
-    confirmDialog(content,
-      () => {
-        const selectedTask = $(event.target).children("option:selected").text();
-        console.log(selectedTask);
-        console.log("targetTask", selectedTask);
-        console.log("currentTask", currentTask);
-        currentTask = selectedTask;
-        resetTimer();
-        refreshTimer();
-        refreshTask();
-        refreshDBPomodoroStatus();
-      },
-      () => {
-        //revert selectpicker status
-      });
+    confirmDialog(content,() => {
+      resetTimer();
+      refreshTimer();
+      refreshDBPomodoroStatus();
+    });
+
+
   });
 
 });
@@ -371,6 +374,9 @@ const refreshTask = () => {
 }
 
 const refreshTags = () => {
+  console.log("refreshTags");
+  $("input.tagsinput").tagsinput('removeAll');
+  //fetch tags of currentTask
 }
 
 
@@ -408,7 +414,6 @@ const refreshTimer = () => {
   } else {
     $("p.currentStatus").text("Status: Break");
   }
-
 }
 
 const refreshButtonview = () => {
