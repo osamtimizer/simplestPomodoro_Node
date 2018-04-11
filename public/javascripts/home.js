@@ -1,10 +1,8 @@
 import firebase from 'firebase';
 import moment from 'moment';
 import 'jquery-confirm';
-import 'bootstrap-select';
 //TODO:jQuery is duplicated, not solved yet...
 //HINT: using webpack ProvidePlugin, this might be solved...
-import 'bootstrap-tagsinput';
 
 let config = {
   apiKey: "AIzaSyDUBdU1s_1ff_yUxXvlCbS9y4JyocdaShk",
@@ -460,4 +458,8 @@ const buildSelectPicker = () => {
   $(".selectpicker").html(options);
   $(".selectpicker").val([currentTask]);
   $(".selectpicker").selectpicker('refresh');
+  $("input.tagsinput").tagsinput({
+    maxTags: 3
+  });
+  $("input.tagsinput").tagsinput('add', 'testtesttest');
 }

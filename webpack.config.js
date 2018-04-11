@@ -19,10 +19,9 @@ module.exports = {
     filename: '[name].js',
     path: path.join(__dirname, '/public/javascripts/build')
   },
-  plugins: [
-    new webpack.ProvidePlugin({
-      $: 'jquery',
-      jQuery: 'jquery'
-    })
-  ]
+  resolve: {
+    alias: {
+      $: './public/dist/js/vendor/jquery.min.js'
+    }
+  }
 }
