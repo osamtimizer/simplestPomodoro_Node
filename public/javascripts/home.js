@@ -189,7 +189,10 @@ $(() => {
   $("input.tagsinput").on('beforeItemRemove', (event) => {
   });
   $("input.tagsinput").on('itemRemoved', (event) => {
-    const inputTags = $(event.currentTarget).tagsinput('items');
+    let inputTags = $(event.currentTarget).tagsinput('items');
+    if (inputTags.length === 0) {
+      inputTags = "";
+    }
     const user = auth.currentUser;
     if (user) {
       const uid = user.uid;
@@ -445,10 +448,10 @@ const updateDBTags = () => {
       });
       console.log("tags:", tags);
     }).then(() => {
-      tags.sort();
-      console.log(tags);
+      const sortedTags = tags.slice().sort();
+      console.log(sortedTags);
       const tagsRef = database.ref('users/' + uid + '/tags');
-      tagsRef.set(tags);
+      tagsRef.set(sortedTags);
     }).catch((err) => {
       console.error(err);
     });
