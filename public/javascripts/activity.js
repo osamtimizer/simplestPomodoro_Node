@@ -2,7 +2,6 @@ import Q from 'q';
 import firebase from 'firebase';
 import Chart from 'chart.js'
 import moment from 'moment'
-import 'bootstrap-select';
 
 let config = {
   apiKey: "AIzaSyDUBdU1s_1ff_yUxXvlCbS9y4JyocdaShk",
