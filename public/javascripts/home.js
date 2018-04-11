@@ -237,8 +237,6 @@ $(() => {
       refreshTimer();
       refreshTask();
       refreshDBPomodoroStatus();
-
-    }
   });
 });
 
