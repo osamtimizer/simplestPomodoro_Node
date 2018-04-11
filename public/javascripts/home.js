@@ -90,7 +90,7 @@ $(() => {
       }).then(() => {
         refreshTask();
         fadeOutLoadingImage();
-        //console.log($(".tagsinput").tagsinput('items'));
+        initTagsinput();
       }).catch((err) => {
         console.error("Error: ", err);
       });
@@ -458,8 +458,12 @@ const buildSelectPicker = () => {
   $(".selectpicker").html(options);
   $(".selectpicker").val([currentTask]);
   $(".selectpicker").selectpicker('refresh');
+}
+
+const initTagsinput = () => {
+  console.log("buildTagsinput");
   $("input.tagsinput").tagsinput({
-    maxTags: 3
+    maxTags: 5,
+    allowDuplicates: false
   });
-  $("input.tagsinput").tagsinput('add', 'testtesttest');
 }
