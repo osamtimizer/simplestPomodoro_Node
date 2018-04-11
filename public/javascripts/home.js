@@ -176,7 +176,7 @@ $(() => {
     }
     */
     const inputTags = $(event.currentTarget).tagsinput('items');
-    let isNewTag = false;
+    let newTags = [];
 
     //compare tags held by currentTask
   });
@@ -377,8 +377,28 @@ const refreshTags = () => {
   console.log("refreshTags");
   $("input.tagsinput").tagsinput('removeAll');
   //fetch tags of currentTask
+  const user = auth.currentUser;
+  if (user) {
+    const uid = user.uid;
+    const ref = database.ref('users/' + uid + '/tasks/' + currentTask);
+    ref.once('value').then((snapshot) => {
+      return snapshot.val();
+    }).then((tags) => {
+      console.log("tags:", tags);
+      if (typeof(tags) === 'string') {
+        $("input.tagsinput").tagsinput('add', tags);
+        $("input.tagsinput").tagsinput('refresh');
+      } else {
+        for (item in tags) {
+          $("input.tagsinput").tagsinput('add', tags[item]);
+        }
+        $("input.tagsinput").tagsinput('refresh');
+      }
+    }).catch((err) => {
+      console.error(err);
+    });
+  }
 }
-
 
 const updateDBTasks = () => {
   console.log("updateDBTasks");
@@ -394,7 +414,10 @@ const updateDBTags = () => {
   const user = auth.currentUser;
   if (user) {
     const uid = user.uid;
-    database.ref('users/' + uid + '/tags').set(tags);
+    const ref = database.ref('users/' + uid + '/tags');
+    ref.once('value').then((snapshot) => {
+
+    });
   }
 }
 
