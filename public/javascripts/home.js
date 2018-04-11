@@ -82,6 +82,7 @@ $(() => {
         }
       }).then(() => {
         refreshTask();
+        initTagsinput();
         fadeOutLoadingImage();
       }).catch((err) => {
         console.error("Error: ", err);
