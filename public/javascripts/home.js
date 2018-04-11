@@ -133,51 +133,7 @@ $(() => {
   });
   $("button#submitNewTask").on('click.bs.dropdown.data-api', addNewTaskEventHandler);
 
-
-  $("ul.dropdown-menu").on("click", "li.task a.task span.close.task", (event) => {
-    console.log("span.close.task is clicked");
-
-    const content = "Do you sure want to delete this task?";
-    confirmDialog(content, () => {
-      console.log(event.currentTarget);
-      const selectedTask = $(event.currentTarget).parent().text().slice(0, -1);
-      console.log(selectedTask);
-      if (selectedTask === currentTask) {
-        console.log("Warning: This task is currently selected.");
-      } else {
-        if (tasks[selectedTask]) {
-          $(event.currentTarget).parent().remove();
-          deleteSpecifiedTask(selectedTask);
-          delete tasks[selectedTask];
-          refreshTask();
-        }
-      }
-    });
-
-    event.stopPropagation();
-  });
-
-  //Usage: This expression provides function to watch elements added dinamically.
-  $("ul.dropdown-menu").on("click", "a.task", (event) => {
-    console.log("a.task called");
-
-    let targetTask = $(event.currentTarget).text();
-    if ( targetTask !== currentTask) {
-      console.log("targetTask", targetTask);
-      console.log("currentTask", currentTask);
-      targetTask = targetTask.slice(0, -1);
-    }
-    const escaped = $('<span />').text(targetTask).html();
-    console.log("escaped text: ", escaped);
-    currentTask = escaped;
-    $("button#task").html(currentTask + '<span class="caret"/>');
-    //TODO:Show alert and Reset Timer
-    refreshTask();
-    refreshDBPomodoroStatus();
-  });
-
   //TODO:Add event handlers for selectpicker
-
 
   $(window).on('beforeunload', (event) => {
     if (timerStatus) {
@@ -227,19 +183,23 @@ $(() => {
 
   $("select.selectpicker").on('change', (event) => {
     console.log("selectpicker changed");
-    const content = "When task is changed, Timer status will be reset.";
-    confirmDialog(content, () => {
-      const selectedTask = $(event.target).children("option:selected").text();
-      console.log(selectedTask);
-      console.log("targetTask", selectedTask);
-      console.log("currentTask", currentTask);
-      currentTask = selectedTask;
-      resetTimer();
-      refreshTimer();
-      refreshTask();
-      refreshDBPomodoroStatus();
+    const content = "Do you want to reset timer?";
+    confirmDialog(content,
+      () => {
+        const selectedTask = $(event.target).children("option:selected").text();
+        console.log(selectedTask);
+        console.log("targetTask", selectedTask);
+        console.log("currentTask", currentTask);
+        currentTask = selectedTask;
+        resetTimer();
+        refreshTimer();
+        refreshTask();
+        refreshDBPomodoroStatus();
+      },
+      () => {
+        //revert selectpicker status
+      });
   });
-});
 
 });
 
@@ -361,13 +321,13 @@ const confirmDialog = (content, okCallback, cancelCallback) => {
     type: 'green',
     buttons: {
       ok: {
-        text: 'ok',
+        text: 'Yes',
         btnClass: 'btn-primary',
         keys: ['enter'],
         action: okCallback
       },
       cancel: {
-        text: 'cancel',
+        text: 'No',
         btnClass: 'btn-default',
         action: cancelCallback
       }
@@ -406,32 +366,6 @@ const addPomodoroResult = () => {
 }
 
 const refreshTask = () => {
-  console.log("refreshTask");
-  //Remove All Tasks
-  $("li.task").remove();
-  //Add Registered Tasks
-  for (let item in tasks) {
-    const task = item;
-    let template;
-    if ( task === currentTask) {
-      template = String.raw`<li class="task"><a href="#" class="dropdown-item task currentTask" id="${task}">${task}</a></li>`;
-    } else {
-      template = String.raw`<li class="task"><a href="#" class="dropdown-item task" id="${task}">${task}<span type="button" class="close task">&times;</span></a></li>`;
-    }
-    $("ul.dropdown-menu").prepend(template);
-  }
-
-  console.log("refreshTask: tasks:", tasks);
-  console.log("refreshTask: currentTask:", currentTask);
-  if (tasks[currentTask]) {
-    console.log(currentTask);
-    const escaped = $('<span />').text(currentTask).html();
-    console.log("escaped: ", escaped);
-    $("button#task").html(escaped + '<span class="caret"/>');
-  } else {
-    console.log("No task matched in tasks");
-  }
-
   updateDBTasks();
   buildSelectPicker();
 }
