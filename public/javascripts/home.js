@@ -33,6 +33,7 @@ let remain = WORKING_DURATION_MIN * MIN_MS;
 let currentTask = INITIAL_TASK_NAME;
 let timer;
 let tasks;
+let tags;
 
 $(() => {
 
@@ -67,6 +68,23 @@ $(() => {
           refreshTimer();
         }
 
+        if (snapshot.hasChild('tags')) {
+          console.log("tags found");
+          const fetchedTags = snapshot.child('tags').val();
+          tags = fetchedTags;
+          console.log("Fetched tags: ", tags);
+
+        } else {
+          console.log("create tags on DB");
+          tags = [
+            "sampleTag"
+          ];
+
+          database.ref('users/' + user.uid + '/tags').set({
+            0: "sampleTag"
+          });
+          console.log("no personal tags. Pushed tag: ", tags);
+        }
         if (snapshot.hasChild('tasks')) {
           console.log("tasks found");
           const fetchedTasks = snapshot.child('tasks').val();
@@ -88,9 +106,9 @@ $(() => {
           console.log("no personal tasks.Pushed tasks: ", tasks);
         }
       }).then(() => {
+        initTagsinput();
         refreshTask();
         fadeOutLoadingImage();
-        initTagsinput();
       }).catch((err) => {
         console.error("Error: ", err);
       });
@@ -208,12 +226,35 @@ $(() => {
     }
   });
 
+  //tagsinput event handlers
+  $("input.tagsinput").on('beforeItemAdd', (event) => {
+  });
+  $("input.tagsinput").on('itemAdded', (event) => {
+    //validate tag
+    //TODO:sanitize input text
+    //TODO:If item added during initialization, this should be prevented.
+    const addedTag = event.item;
+    if (tags.indexOf(addedTag) == -1) {
+      tags.push(addedTag);
+      updateDBTags();
+    }
+  });
+  $("input.tagsinput").on('beforeItemRemove', (event) => {
+  });
+  $("input.tagsinput").on('itemRemoved', (event) => {
+    const index = tags.indexOf(event.item);
+    if (index >= 0) {
+      tags.splice(index, 1);
+      updateDBTags();
+    }
+  });
 
 });
 
 //
 //Methods
 //
+
 
 const fadeOutLoadingImage = () => {
   console.log("fadeOutLoadingImage is called");
@@ -402,12 +443,22 @@ const refreshTask = () => {
   buildSelectPicker();
 }
 
+
 const updateDBTasks = () => {
   console.log("updateDBTasks");
   const user = auth.currentUser;
   if (user) {
     const uid = user.uid;
     database.ref('users/' + uid + '/tasks').set(tasks);
+  }
+}
+
+const updateDBTags = () => {
+  console.log("updateDBTags");
+  const user = auth.currentUser;
+  if (user) {
+    const uid = user.uid;
+    database.ref('users/' + uid + '/tags').set(tags);
   }
 }
 
@@ -462,8 +513,13 @@ const buildSelectPicker = () => {
 
 const initTagsinput = () => {
   console.log("buildTagsinput");
+  console.log(tags);
   $("input.tagsinput").tagsinput({
     maxTags: 5,
-    allowDuplicates: false
+    allowDuplicates: false,
+    maxChars: 20
   });
+  for (let item in tags) {
+    $("input.tagsinput").tagsinput('add', tags[item]);
+  }
 }
