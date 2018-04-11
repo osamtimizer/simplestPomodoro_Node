@@ -41,8 +41,9 @@ $(() => {
   auth.onAuthStateChanged((user) => {
     console.log("onAuthStateChanged is called");
     if (user) {
+      const uid = user.uid;
       console.log("user is logged in");
-      const ref = database.ref('users/' + user.uid);
+      const ref = database.ref('users/' + uid);
       $("button.start").prop("disabled", false);
       $("button.stop").prop("disabled", true);
       ref.once("value").then((snapshot) => {
@@ -56,7 +57,7 @@ $(() => {
           refreshTimer();
         } else {
           //create pomodoro node
-          database.ref('users/' + user.uid + '/pomodoro').set({
+          database.ref('users/' + uid + '/pomodoro').set({
             remain: remain,
             terms: terms,
             isWorking: isWorking,
@@ -78,11 +79,12 @@ $(() => {
             "Private": ""
           };
 
-          database.ref('users/' + user.uid + '/tasks').set(tasks);
+          database.ref('users/' + uid + '/tasks').set(tasks);
         }
       }).then(() => {
         refreshTask();
         initTagsinput();
+        refreshTags();
         fadeOutLoadingImage();
       }).catch((err) => {
         console.error("Error: ", err);
@@ -176,13 +178,28 @@ $(() => {
     }
     */
     const inputTags = $(event.currentTarget).tagsinput('items');
-    let newTags = [];
-
-    //compare tags held by currentTask
+    const user = auth.currentUser;
+    if (user) {
+      const uid = user.uid;
+      const ref = database.ref('users/' + uid + '/tasks/' + currentTask);
+      ref.set(inputTags);
+    }
+    updateDBTags();
   });
   $("input.tagsinput").on('beforeItemRemove', (event) => {
   });
   $("input.tagsinput").on('itemRemoved', (event) => {
+    const inputTags = $(event.currentTarget).tagsinput('items');
+    const user = auth.currentUser;
+    if (user) {
+      const uid = user.uid;
+      const ref = database.ref('users/' + uid + '/tasks/' + currentTask);
+      ref.set(inputTags).then(() => {
+        updateDBTags();
+      }).catch((err) => {
+        console.error(err);
+      });
+    }
   });
 
   $("select.selectpicker").on('change', (event) => {
@@ -193,6 +210,7 @@ $(() => {
     currentTask = selectedTask;
     refreshTask();
     refreshTags();
+    refreshDBPomodoroStatus();
 
     const content = "Do you want to reset timer?";
     confirmDialog(content,() => {
@@ -200,7 +218,6 @@ $(() => {
       refreshTimer();
       refreshDBPomodoroStatus();
     });
-
 
   });
 
@@ -369,7 +386,6 @@ const addPomodoroResult = () => {
 }
 
 const refreshTask = () => {
-  updateDBTasks();
   buildSelectPicker();
 }
 
@@ -389,7 +405,7 @@ const refreshTags = () => {
         $("input.tagsinput").tagsinput('add', tags);
         $("input.tagsinput").tagsinput('refresh');
       } else {
-        for (item in tags) {
+        for (let item in tags) {
           $("input.tagsinput").tagsinput('add', tags[item]);
         }
         $("input.tagsinput").tagsinput('refresh');
@@ -414,9 +430,27 @@ const updateDBTags = () => {
   const user = auth.currentUser;
   if (user) {
     const uid = user.uid;
-    const ref = database.ref('users/' + uid + '/tags');
-    ref.once('value').then((snapshot) => {
-
+    const ref = database.ref('users/' + uid + '/tasks');
+    let tags = [];
+    ref.once("value").then((snapshot) => {
+      snapshot.forEach((childSnapshot) => {
+        const fetchedTags = childSnapshot.val();
+        console.log("taskName:", childSnapshot.key);
+        console.log("fetchedTags:", fetchedTags);
+        for (let item in fetchedTags) {
+          if ( tags.indexOf(fetchedTags[item]) < 0) {
+            tags.push(fetchedTags[item]);
+          }
+        }
+      });
+      console.log("tags:", tags);
+    }).then(() => {
+      tags.sort();
+      console.log(tags);
+      const tagsRef = database.ref('users/' + uid + '/tags');
+      tagsRef.set(tags);
+    }).catch((err) => {
+      console.error(err);
     });
   }
 }
@@ -477,3 +511,7 @@ const initTagsinput = () => {
     maxChars: 20
   });
 }
+
+
+
+
