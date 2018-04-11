@@ -178,7 +178,10 @@ const fetchAllTasks = (uid) => {
     const tasksRef = database.ref('users/' + uid + '/tasks');
     tasksRef.once('value').then((snapshot) => {
       console.log("refresh tasks");
-      const fetchedTasks = snapshot.val();
+      let fetchedTasks = [];
+      snapshot.forEach((childSnapshot) => {
+        fetchedTasks.push(childSnapshot.key);
+      });
       resolve(fetchedTasks);
     }).catch((err) => {
       reject(err);
