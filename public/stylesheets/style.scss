@@ -9,6 +9,12 @@ a {
   color: #00B7FF;
 }
 
+span {
+  &.close {
+    text-align: right;
+  }
+}
+
 div {
   &#main {
     padding: 10px;
@@ -38,6 +44,9 @@ div {
     text-align: center;
     color: #fff;
     z-index: 2;
+  }
+
+  &.list {
   }
 
   &.index {
