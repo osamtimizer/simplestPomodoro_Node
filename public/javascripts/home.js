@@ -34,6 +34,7 @@ let tasks;
 
 $(() => {
 
+  $('[data-toggle="popover"]').popover();
   const window_height = $(window).height();
   $('#loader-bg , #loader').height(window_height).css('display', 'block');
   setTimeout(fadeOutLoadingImage, 10000);
@@ -123,17 +124,24 @@ $(() => {
     refreshButtonview();
   });
 
-  $("input#newTask").on('click.bs.dropdown.data-api', (event) => {
-    event.stopPropagation();
+  $("div.popover").on('click', (event) => {
+    $('input[data-toggle="popover"]').popover('hide');
   });
 
   $("input#newTask").on('keydown', (event) => {
     if(event.keyCode === 13) {
       console.log("Enter pushed");
       addNewTaskEventHandler(event);
+      //TODO:Rebuild Selectpicker
+      buildSelectPicker();
+    } else {
+      $('input[data-toggle="popover"]').popover('hide');
     }
   });
-  $("button#submitNewTask").on('click.bs.dropdown.data-api', addNewTaskEventHandler);
+
+  $("button#submitNewTask").on('click', (event) => {
+    addNewTaskEventHandler(event);
+  });
 
   //TODO:Add event handlers for selectpicker
 
@@ -166,17 +174,6 @@ $(() => {
     console.log("input.tagsinput itemAdded");
     //validate tag
     //TODO:sanitize input text
-    /*
-    const addedTag = event.item;
-    if (tags.indexOf(addedTag) == -1) {
-      tags.push(addedTag);
-      updateDBTags();
-      let updatedTask = {
-        [currentTask]: tags
-      };
-      console.log("updatedTask:", updatedTask);
-    }
-    */
     const inputTags = $(event.currentTarget).tagsinput('items');
     const user = auth.currentUser;
     if (user) {
@@ -276,31 +273,6 @@ const startCount = () => {
   refreshTimer();
 };
 
-const addNewTaskEventHandler = (event) => {
-  event.stopPropagation();
-  //HINT: task names should be managed as json or some other good type, not li items.
-  const task = $("input#newTask").val();
-  if (task.length >= 20) {
-    //TODO:Show Alert
-    console.log("Warning: Task name must be less than 20.");
-  }
-  else if (!task.match(/\S/g)) {
-    //TODO:Show Alert
-    console.log("Warning: Task name must be some string, not empty");
-  }
-  else if(tasks.indexOf(task) >= 0 ) {
-    //task already exists.
-    //TODO:Show Alert
-    console.log("Warning: Task name already exists.");
-  } else {
-    const escaped = $('<span />').text(task).html();
-    const newTask = { [escaped]: ""};
-    tasks[newTask] = "";
-    refreshTask();
-    $("input#newTask").val("");
-  }
-}
-
 const refreshDBPomodoroStatus = () => {
   console.log("refreshDBPomodoroStatus");
   const user = auth.currentUser;
@@ -389,7 +361,25 @@ const addPomodoroResult = () => {
 }
 
 const refreshTask = () => {
+  fetchDBTasks();
   buildSelectPicker();
+}
+
+const fetchDBTasks = () => {
+  const user = auth.currentUser;
+  if (user) {
+    const uid = user.uid;
+    const ref = database.ref('users/' + uid + '/tasks/');
+    ref.once("value").then((snapshot) => {
+      console.log("tasks found");
+      const fetchedTasks = snapshot.val();
+      tasks = fetchedTasks;
+      console.log("Fetched tasks: ", tasks);
+    }).catch((err) => {
+      console.error("Error: ", err);
+    });
+  }
+
 }
 
 const refreshTags = () => {
@@ -495,12 +485,15 @@ const refreshButtonview = () => {
 }
 
 const buildSelectPicker = () => {
+  console.log("buildSelectPicker");
   let options = [];
   for (let item in tasks) {
     const task = item;
     const template = String.raw`<option class="task selected" value="${task}" data-tokens="${task}">${task}</option>`;
     options.push(template);
   }
+
+  $(".selectpicker").html("");
   $(".selectpicker").html(options);
   $(".selectpicker").val([currentTask]);
   $(".selectpicker").selectpicker('refresh');
@@ -515,6 +508,51 @@ const initTagsinput = () => {
   });
 }
 
+const addNewTaskEventHandler = (event) => {
+  console.log('addNewTaskEventHandler');
+  event.stopPropagation();
+  const task = $("input#newTask").val();
+  if (task.length >= 20) {
+    const warning = "Warning: Length of task name must be less than 20.";
+    $('input[data-toggle="popover"]').attr("data-content", warning);
+    $('input[data-toggle="popover"]').popover('show');
+  }
+  else if (!task.match(/\S/g)) {
+    const warning = "Warning: Task name must be some string, not empty";
+    $('input[data-toggle="popover"]').attr("data-content", warning);
+    $('input[data-toggle="popover"]').popover('show');
+  }
+  else {
+    const user = auth.currentUser;
+    if (user) {
+      const uid = user.uid;
+      console.log(uid);
+      const ref = database.ref('users/' + uid + '/tasks/');
+      let exists = false;
+      ref.once('value').then((snapshot) => {
+        console.log("snapshot:", snapshot);
+        snapshot.forEach((childSnapshot) => {
+          if (task === childSnapshot.key) {
+            exists = true;
+          }
+        });
+      }).then(() => {
+        if (exists) {
+          const warning = "Warning: Task name already exists";
+          $('input[data-toggle="popover"]').attr("data-content", warning);
+          $('input[data-toggle="popover"]').popover('show');
+        } else {
+          const ref = database.ref('users/' + uid + '/tasks/' + task);
+          ref.set("");
+          $('input[data-toggle="popover"]').popover('hide');
+        }
+      }).catch((err) => {
+        console.error(err);
+      });
+      refreshTask();
+    }
+  }
+}
 
 
 
