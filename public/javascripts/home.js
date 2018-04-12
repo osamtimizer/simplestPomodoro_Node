@@ -19,8 +19,11 @@ const WORKING_TERM = true;
 const INITIAL_TERM_COUNT = 4;
 const MIN_MS = 60 * 1000;
 const WORKING_DURATION_MIN = 25;
+const WORKING_DURATION_MS = WORKING_DURATION_MIN * MIN_MS;
 const BREAK_SMALL_DURATION_MIN = 5;
+const BREAK_SMALL_DURATION_MS = BREAK_SMALL_DURATION_MIN * MIN_MS;
 const BREAK_LARGE_DURATION_MIN = 30;
+const BREAK_LARGE_DURATION_MS = BREAK_LARGE_DURATION_MIN * MIN_MS;
 const ONE_SEC_MS = 1000;
 const INITIAL_TASK_NAME = "Work";
 
@@ -273,6 +276,26 @@ const startCount = () => {
   refreshTimer();
 };
 
+const refreshProgressBar = () => {
+  if (isWorking) {
+    const style_width =  (remain / WORKING_DURATION_MS) * 100;
+    const template = String.raw`width: ${style_width}%`;
+    $("div.progress-bar").attr("style",template);
+  } else {
+    if (terms === 4) {
+      const style_width =  (remain / BREAK_LARGE_DURATION_MS) * 100;
+      const template = String.raw`width: ${style_width}%`;
+      console.log(template);
+      $("div.progress-bar").attr("style",template);
+    } else {
+      const style_width =  (remain / BREAK_SMALL_DURATION_MS) * 100;
+      const template = String.raw`width: ${style_width}%`;
+      console.log(template);
+      $("div.progress-bar").attr("style",template);
+    }
+  }
+}
+
 const refreshDBPomodoroStatus = () => {
   console.log("refreshDBPomodoroStatus");
   const user = auth.currentUser;
@@ -464,6 +487,7 @@ const refreshTimer = () => {
   } else {
     $("p.currentStatus").text("Status: Break");
   }
+  refreshProgressBar();
 }
 
 const refreshButtonview = () => {
