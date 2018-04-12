@@ -28,7 +28,7 @@ $(() => {
       });
     }).then(() => {
       for(const item of tasks) {
-        const template = String.raw`<a href="#" class="list-group-item ${item}">${item}<span class="fui-cross close"></span></a>`;
+        const template = String.raw`<a href="#" class="task list-group-item ${item}">${item}<span class="fui-cross close"></span></a>`;
         $("div.list-group#task-list").append(template);
       }
     }).then((result) => {
@@ -38,6 +38,18 @@ $(() => {
     });
   });
 
+  //event handlers
+  $("div.list-group#task-list").on('click', 'a.task', (event) => {
+    const task = $(event.currentTarget).text();
+    console.log(task);
+    //TODO: Show specific information of task as modal dialog.
+  });
+
+  $("div.list-group#task-list").on('click', 'a.span.close', (event) => {
+    const task = $(event.currentTarget).parent().text();
+    //TODO: Show confirm dialog and delete task
+    //TODO: Render list
+  });
 });
 
 const fadeOutLoadingImage = () => {
