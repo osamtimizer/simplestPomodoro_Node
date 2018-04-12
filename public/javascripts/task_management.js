@@ -23,12 +23,24 @@ $(() => {
     let tasks = [];
     ref.once('value').then((snapshot) => {
       snapshot.forEach((childSnapshot) => {
-        console.log(childSnapshot.key);
-        tasks.push(childSnapshot.key);
+        let json = {
+          key: childSnapshot.key,
+          value: childSnapshot.val()
+        }
+        tasks.push(json);
       });
     }).then(() => {
-      for(const item of tasks) {
-        const template = String.raw`<a href="#" class="task list-group-item ${item}">${item}<span class="fui-cross close"></span></a>`;
+      for(const index in tasks) {
+        console.log(tasks[index]);
+        let tags = tasks[index]["value"];
+        console.log("tags:", tags);
+        let tags_html = "";
+        for (const tag of tags) {
+          const template = String.raw`<span class="tag label label-info tag-list">${tag}</span>`;
+          tags_html = tags_html.concat(template);
+        }
+        console.log(tags_html);
+        const template = String.raw`<a href="#" class="task list-group-item ${tasks[index]["key"]}">${tasks[index]["key"]}${tags_html}<span class="fui-cross close"></span></a>`;
         $("div.list-group#task-list").append(template);
       }
     }).then((result) => {
