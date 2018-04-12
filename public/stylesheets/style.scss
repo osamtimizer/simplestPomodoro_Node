@@ -13,6 +13,10 @@ span {
   &.close {
     text-align: right;
   }
+
+  &.tag-list {
+    margin: 0 2px;
+  }
 }
 
 div {
