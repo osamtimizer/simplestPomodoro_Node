@@ -17,6 +17,7 @@
     "chart.js": "^2.7.2",
     "config": "^1.30.0",
     "cookie-parser": "~1.4.3",
+    "datatables.net-bs": "^1.10.16",
     "debug": "~2.6.9",
     "express": "~4.15.5",
     "express-session": "^1.15.6",

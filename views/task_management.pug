@@ -7,7 +7,9 @@ block content
       p.loading Now loading...
   include header
   div#main.wrap
-    div#contents.task_management
-
+    div.description
+    div.list.container-fluid
+      h3.description Tasks
+      div.list-group#task-list.center-block
   include footer
-  script(src='/javascripts/build/task-management.js')
+  script(src='/javascripts/build/task_management.js')
