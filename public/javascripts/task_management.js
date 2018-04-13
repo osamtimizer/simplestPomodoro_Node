@@ -1,4 +1,5 @@
 import firebase from 'firebase';
+import confirmDialog from './confirmDialog'
 
 let config = {
   apiKey: "AIzaSyDUBdU1s_1ff_yUxXvlCbS9y4JyocdaShk",
@@ -57,12 +58,43 @@ $(() => {
     //TODO: Show specific information of task as modal dialog.
   });
 
-  $("div.list-group#task-list").on('click', 'a.span.close', (event) => {
+  $("div.list-group#task-list").on('click', 'a span.close', (event) => {
+    event.stopPropagation();
     const task = $(event.currentTarget).parent().text();
+    const content = "Do you sure want to delete this task?";
+    confirmDialog(content, () => {
+      console.log("OK Clicked");
+      fetchLatestTasks().then((result) => {
+        console.log(result);
+      });
+
+    });
     //TODO: Show confirm dialog and delete task
     //TODO: Render list
   });
+
+  $("div.list-group#task-list").on('click', 'a span.tag', (event) => {
+    event.stopPropagation();
+    console.log("tag clicked");
+  });
 });
+
+const renderList = () => {
+  $("div.list-group#task-list").empty();
+}
+
+const fetchLatestTasks = async () => {
+  const user = auth.currentUser;
+  let tasks;
+  if (user) {
+    const uid = user.uid;
+    tasks = (await database.ref('users/' + uid + '/tasks').once('value')).val();
+  } else {
+    tasks = [];
+  }
+  return tasks;
+}
+
 
 const fadeOutLoadingImage = () => {
   console.log("fadeOutLoadingImage is called");

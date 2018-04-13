@@ -13,6 +13,7 @@ module.exports = {
     activity: './public/javascripts/activity.js',
     settings: './public/javascripts/settings.js',
     task_management: './public/javascripts/task_management.js',
+    confirmDialog: './public/javascripts/confirmDialog.js',
     login: './public/javascripts/login.js'
   },
   output: {
