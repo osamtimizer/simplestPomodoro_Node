@@ -278,10 +278,16 @@ const startCount = () => {
 
 const refreshProgressBar = () => {
   if (isWorking) {
+    if($("div.progress-bar").hasClass("progress-bar-info")) {
+      $("div.progress-bar").removeClass("progress-bar-info");
+    }
     const style_width =  (remain / WORKING_DURATION_MS) * 100;
     const template = String.raw`width: ${style_width}%`;
     $("div.progress-bar").attr("style",template);
   } else {
+    if(!$("div.progress-bar").hasClass("progress-bar-info")) {
+      $("div.progress-bar").addClass("progress-bar-info");
+    }
     if (terms === 4) {
       const style_width =  (remain / BREAK_LARGE_DURATION_MS) * 100;
       const template = String.raw`width: ${style_width}%`;
