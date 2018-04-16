@@ -24,32 +24,18 @@ $(() => {
   });
 
   //event handlers
-  $("button#addTask").on('click', async(event) => {
+  $("input#newTask").on('keydown', (event) => {
+    if(event.keyCode === 13) {
+      console.log("Enter pushed");
+      addNewTaskEventHandler(event);
+    } else {
+      $('input[data-toggle="popover"]').popover('hide');
+    }
+  });
+
+  $("button#addTask").on('click', (event) => {
     //validate input
-    const taskName = $("input#addTaskName").val();
-    console.log(taskName);
-    if (taskName.length >= 20) {
-      return;
-    } else if (!task.match(/\S/g)) {
-      return;
-    }
-    const user = auth.currentUser;
-    if (user) {
-      const uid = user.uid;
-      const ref = database.ref('users/' + uid + '/tasks/');
-      const result = await ref.once("value");
-      if (result.hasChild(taskName)) {
-        console.log("task is already added");
-      } else {
-        const ref = database.ref('users/' + uid + '/tasks/' + taskName);
-        ref.set("")
-          .then(() => {
-            renderList();
-          }).catch((err) => {
-            console.error(err);
-          });
-      }
-    }
+    addNewTaskEventHandler(event);
   });
 
   $("div.list-group#task-list").on('click', 'a.task', (event) => {
@@ -112,4 +98,38 @@ const fadeOutLoadingImage = () => {
   $('#loader').delay(600).fadeOut(300);
   $('div.wrap').delay(300).fadeIn(300);
   $('div#header-home').delay(300).fadeIn(300);
+}
+
+const addNewTaskEventHandler = async(event) => {
+  const taskName = $("input#newTask").val();
+  if (taskName.length >= 20) {
+    const warning = "Warning: Length of task name must be less than 20.";
+    $('input[data-toggle="popover"]').attr("data-content", warning);
+    $('input[data-toggle="popover"]').popover('show');
+    return;
+  } else if (!taskName.match(/\S/g)) {
+    const warning = "Warning: Task name must be some string, not empty";
+    $('input[data-toggle="popover"]').attr("data-content", warning);
+    $('input[data-toggle="popover"]').popover('show');
+    return;
+  }
+  const user = auth.currentUser;
+  if (user) {
+    const uid = user.uid;
+    const ref = database.ref('users/' + uid + '/tasks/');
+    const result = await ref.once("value");
+    if (result.hasChild(taskName)) {
+      const warning = "Warning: Task name already exists";
+      $('input[data-toggle="popover"]').attr("data-content", warning);
+      $('input[data-toggle="popover"]').popover('show');
+    } else {
+      const ref = database.ref('users/' + uid + '/tasks/' + taskName);
+      ref.set("")
+        .then(() => {
+          renderList();
+        }).catch((err) => {
+          console.error(err);
+        });
+    }
+  }
 }

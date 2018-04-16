@@ -12,7 +12,7 @@ block content
       h3.description Tasks
       div#addTasks
         button#addTask.btn.btn-primary add Task
-        input#addTaskName(placeholder="input task name...")
+        input#newTask(placeholder="input task name..." data-toggle="popover" data-content="" data-placement="bottom" data-trigger="manual")
       div.list-group#task-list.center-block
   include footer
   script(src='/javascripts/build/task_management.js')
