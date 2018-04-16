@@ -10,6 +10,9 @@ block content
     div.description
     div.list.container-fluid
       h3.description Tasks
+      div#addTasks
+        button#addTask.btn.btn-primary add Task
+        input#addTaskName(placeholder="input task name...")
       div.list-group#task-list.center-block
   include footer
   script(src='/javascripts/build/task_management.js')
