@@ -19,39 +19,39 @@ $(() => {
 
   //fetch tasks
   auth.onAuthStateChanged((user) => {
-    const uid = user.uid;
-    const ref = database.ref('users/' + uid +'/tasks/');
-    let tasks = [];
-    ref.once('value').then((snapshot) => {
-      snapshot.forEach((childSnapshot) => {
-        let json = {
-          key: childSnapshot.key,
-          value: childSnapshot.val()
-        }
-        tasks.push(json);
-      });
-    }).then(() => {
-      for(const index in tasks) {
-        console.log(tasks[index]);
-        let tags = tasks[index]["value"];
-        console.log("tags:", tags);
-        let tags_html = "";
-        for (const tag of tags) {
-          const template = String.raw`<span class="tag label label-info tag-list">${tag}</span>`;
-          tags_html = tags_html.concat(template);
-        }
-        console.log(tags_html);
-        const template = String.raw`<a href="#" class="task list-group-item ${tasks[index]["key"]}">${tasks[index]["key"]}${tags_html}<span class="fui-cross close"></span></a>`;
-        $("div.list-group#task-list").append(template);
-      }
-    }).then((result) => {
-      fadeOutLoadingImage();
-    }).catch((err) => {
-      console.error(err);
-    });
+    renderList();
+    fadeOutLoadingImage();
   });
 
   //event handlers
+  $("button#addTask").on('click', async(event) => {
+    //validate input
+    const taskName = $("input#addTaskName").val();
+    console.log(taskName);
+    if (taskName.length >= 20) {
+      return;
+    } else if (!task.match(/\S/g)) {
+      return;
+    }
+    const user = auth.currentUser;
+    if (user) {
+      const uid = user.uid;
+      const ref = database.ref('users/' + uid + '/tasks/');
+      const result = await ref.once("value");
+      if (result.hasChild(taskName)) {
+        console.log("task is already added");
+      } else {
+        const ref = database.ref('users/' + uid + '/tasks/' + taskName);
+        ref.set("")
+          .then(() => {
+            renderList();
+          }).catch((err) => {
+            console.error(err);
+          });
+      }
+    }
+  });
+
   $("div.list-group#task-list").on('click', 'a.task', (event) => {
     const task = $(event.currentTarget).text();
     console.log(task);
@@ -64,12 +64,8 @@ $(() => {
     const content = "Do you sure want to delete this task?";
     confirmDialog(content, () => {
       console.log("OK Clicked");
-      fetchLatestTasks().then((result) => {
-        console.log(result);
-      });
-
+      renderList();
     });
-    //TODO: Show confirm dialog and delete task
     //TODO: Render list
   });
 
@@ -77,10 +73,24 @@ $(() => {
     event.stopPropagation();
     console.log("tag clicked");
   });
+
 });
 
-const renderList = () => {
+const renderList = async() => {
   $("div.list-group#task-list").empty();
+  const result = await fetchLatestTasks();
+  for (let item in result) {
+    console.log(item);
+    const task = item;
+    const tags = result[item];
+    let tags_html = "";
+    for (let tag of tags) {
+      const template = String.raw`<span class="tag label label-info tag-list">${tag}</span>`;
+      tags_html = tags_html.concat(template);
+    }
+    const template = String.raw`<a href="#" class="task list-group-item ${task}">${task}${tags_html}<span class="fui-cross close"></span></a>`;
+    $("div.list-group#task-list").append(template);
+  }
 }
 
 const fetchLatestTasks = async () => {
