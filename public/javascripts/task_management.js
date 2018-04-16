@@ -46,10 +46,12 @@ $(() => {
 
   $("div.list-group#task-list").on('click', 'a span.close', (event) => {
     event.stopPropagation();
-    const task = $(event.currentTarget).parent().text();
+    const task = $(event.currentTarget).parent().attr("taskName");
     const content = "Do you sure want to delete this task?";
     confirmDialog(content, () => {
       console.log("OK Clicked");
+      console.log(task);
+      deleteSpecifiedTask(task);
       renderList();
     });
     //TODO: Render list
@@ -66,7 +68,6 @@ const renderList = async() => {
   $("div.list-group#task-list").empty();
   const result = await fetchLatestTasks();
   for (let item in result) {
-    console.log(item);
     const task = item;
     const tags = result[item];
     let tags_html = "";
@@ -74,7 +75,7 @@ const renderList = async() => {
       const template = String.raw`<span class="tag label label-info tag-list">${tag}</span>`;
       tags_html = tags_html.concat(template);
     }
-    const template = String.raw`<a href="#" class="task list-group-item ${task}">${task}${tags_html}<span class="fui-cross close"></span></a>`;
+    const template = String.raw`<a href="#" class="task list-group-item ${task}" taskName="${task}">${task}${tags_html}<span class="fui-cross close"></span></a>`;
     $("div.list-group#task-list").append(template);
   }
 }
@@ -133,3 +134,17 @@ const addNewTaskEventHandler = async(event) => {
     }
   }
 }
+
+const deleteSpecifiedTask = async(task) => {
+  console.log(task);
+  const user = auth.currentUser;
+  if (user) {
+    const uid = user.uid;
+    const resultRef = database.ref('users/' + uid + '/result/' + task);
+    const taskRef = database.ref('users/' + uid + '/tasks/').child(task);
+    console.log(taskRef);
+    await resultRef.remove();
+    await taskRef.remove();
+  }
+}
+

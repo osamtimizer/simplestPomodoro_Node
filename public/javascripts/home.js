@@ -312,15 +312,6 @@ const refreshDBPomodoroStatus = () => {
   }
 }
 
-const deleteSpecifiedTask = (task) => {
-  const user = auth.currentUser;
-  if (user) {
-    const uid = user.uid;
-    const ref = database.ref('users/' + uid + '/result/' + task);
-    ref.remove();
-  }
-}
-
 const confirmDialog = (content, okCallback, cancelCallback) => {
   if (okCallback === null) {
     okCallback = () => {
