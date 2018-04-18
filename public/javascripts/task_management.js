@@ -12,13 +12,19 @@ firebase.initializeApp(config);
 const auth = firebase.auth();
 const database = firebase.database();
 
+let currentTask;
+
 $(() => {
   const window_height = $(window).height();
   $('#loader-bg , #loader').height(window_height).css('display', 'block');
   setTimeout(fadeOutLoadingImage, 1000);
 
   //fetch tasks
-  auth.onAuthStateChanged((user) => {
+  auth.onAuthStateChanged(async (user) => {
+    const uid = user.uid;
+    const ref = database.ref('users/' + uid + '/pomodoro/currentTask');
+    currentTask = (await ref.once('value')).val();
+    console.log("currentTask:", currentTask);
     renderList();
     fadeOutLoadingImage();
   });
@@ -48,13 +54,13 @@ $(() => {
     event.stopPropagation();
     const task = $(event.currentTarget).parent().attr("taskName");
     const content = "Do you sure want to delete this task?";
+    //TODO:check whether the task is current task.
     confirmDialog(content, () => {
       console.log("OK Clicked");
       console.log(task);
       deleteSpecifiedTask(task);
       renderList();
     });
-    //TODO: Render list
   });
 
   $("div.list-group#task-list").on('click', 'a span.tag', (event) => {
@@ -72,10 +78,17 @@ const renderList = async() => {
     const tags = result[item];
     let tags_html = "";
     for (let tag of tags) {
+
       const template = String.raw`<span class="tag label label-info tag-list">${tag}</span>`;
       tags_html = tags_html.concat(template);
     }
-    const template = String.raw`<a href="#" class="task list-group-item ${task}" taskName="${task}">${task}${tags_html}<span class="fui-cross close"></span></a>`;
+    let template;
+    if (task === currentTask) {
+      template = String.raw`<a href="#" class="task list-group-item ${task}" taskName="${task}">${task}${tags_html}</a>`;
+    } else {
+      template = String.raw`<a href="#" class="task list-group-item ${task}" taskName="${task}">${task}${tags_html}<span class="fui-cross close"></span></a>`;
+    }
+
     $("div.list-group#task-list").append(template);
   }
 }
