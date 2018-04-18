@@ -88,6 +88,7 @@ $(() => {
       }).then(() => {
         refreshTask();
         initTagsinput();
+        initSlider();
         refreshTags();
         fadeOutLoadingImage();
       }).catch((err) => {
@@ -243,6 +244,7 @@ const startCount = () => {
   if (remain <= 0) {
     //Toggle Working<->Break
     isWorking = !isWorking;
+    initSlider();
     if (isWorking) {
       remain = WORKING_DURATION_MIN * MIN_MS;
       refreshTimer();
@@ -266,7 +268,7 @@ const startCount = () => {
     }
   }
 
-  remain -= ONE_SEC_MS * 100;
+  remain -= ONE_SEC_MS * 10;
 
   if (isWorking) {
     $("title").text("Working: " + moment(remain).format("mm:ss"));
@@ -282,8 +284,12 @@ const refreshProgressBar = () => {
       $("div.progress-bar").removeClass("progress-bar-info");
     }
     const style_width =  (remain / WORKING_DURATION_MS) * 100;
+
     const template = String.raw`width: ${style_width}%`;
+    const template_slider = String.raw`left: ${style_width}%`;
+
     $("div.progress-bar").attr("style",template);
+    $("a.ui-slider-handle").attr("style",template_slider);
   } else {
     if(!$("div.progress-bar").hasClass("progress-bar-info")) {
       $("div.progress-bar").addClass("progress-bar-info");
@@ -291,13 +297,17 @@ const refreshProgressBar = () => {
     if (terms === 4) {
       const style_width =  (remain / BREAK_LARGE_DURATION_MS) * 100;
       const template = String.raw`width: ${style_width}%`;
+      const template_slider = String.raw`left: ${style_width}%`;
       console.log(template);
       $("div.progress-bar").attr("style",template);
+      $("a.ui-slider-handle").attr("style",template_slider);
     } else {
       const style_width =  (remain / BREAK_SMALL_DURATION_MS) * 100;
       const template = String.raw`width: ${style_width}%`;
+      const template_slider = String.raw`left: ${style_width}%`;
       console.log(template);
       $("div.progress-bar").attr("style",template);
+      $("a.ui-slider-handle").attr("style",template_slider);
     }
   }
 }
@@ -529,6 +539,31 @@ const initTagsinput = () => {
   });
 }
 
+const initSlider = () => {
+  let max;
+  if (isWorking) {
+    max = WORKING_DURATION_MS;
+  } else {
+    if (terms === 0) {
+      max = BREAK_LARGE_DURATION_MS;
+    } else {
+      max = BREAK_SMALL_DURATION_MS;
+    }
+
+  }
+  $("div.slider").slider({
+    min: 0,
+    max: max,
+    value: remain,
+    orientation: "horizonal",
+    range: "ms",
+    change: (event, ui) => {
+      remain = ui.value;
+      refreshTimer();
+    }
+  });
+}
+
 const addNewTaskEventHandler = (event) => {
   console.log('addNewTaskEventHandler');
   event.stopPropagation();
@@ -575,5 +610,20 @@ const addNewTaskEventHandler = (event) => {
   }
 }
 
-
+$.fn.addSliderSegments = function (amount, orientation) {
+  return this.each(function () {
+    if (orientation == "vertical") {
+      var output = ''
+        , i;
+      for (i = 1; i <= amount - 2; i++) {
+        output += '<div class="ui-slider-segment" style="top:' + 100 / (amount - 1) * i + '%;"></div>';
+      };
+      $(this).prepend(output);
+    } else {
+      var segmentGap = 100 / (amount - 1) + "%"
+        , segment = '<div class="ui-slider-segment" style="margin-left: ' + segmentGap + ';"></div>';
+      $(this).prepend(segment.repeat(amount - 2));
+    }
+  });
+};
 
