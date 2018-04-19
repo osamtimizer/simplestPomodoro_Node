@@ -1,6 +1,6 @@
 block content
   if user
-    nav.navbar.navbar-default(role="navigation")
+    nav.navbar.navbar-default.navbar-custom(role="navigation")
       div.navbar-heder
         button.navbar-toggle.collapsed#hamburger(type="button" data-toggle="collapse" data-target="#navbarContents")
           span.icon-bar
@@ -17,7 +17,7 @@ block content
           li: a#task_management(href="/task_management") task management
           li: a#logout(href="#") logout
   else
-    nav.navbar.navbar-default(role="navigation")
+    nav.navbar.navbar-default.navbar-custom(role="navigation")
       div.navbar-heder
         button.navbar-toggle.collapsed(type="button" data-toggle="collapse" data-target="#navbarContents")
           span.icon-bar
