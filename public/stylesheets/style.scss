@@ -144,12 +144,20 @@ input {
   }
 }
 
-nav.navbar-default {
-  //background-color: #e74c3c;
+nav.navbar-custom {
+  //background-color: #FF8C5B;
+  background-color: white;
+  border-bottom: 1px solid;
+  border-color: #888888;
+  border-radius: 0px;
 }
 
-footer.footer {
-  //background-color: #e74c3c;
+footer.footer-custom {
+  //background-color: #FF8C5B;
+  background-color: white;
+  border-top: 1px solid;
+  border-color: #888888;
+  border-radius: 0px;
   z-index: 0;
 }
 

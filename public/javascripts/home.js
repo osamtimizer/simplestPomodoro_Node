@@ -87,6 +87,7 @@ $(() => {
         }
       }).then(() => {
         refreshTask();
+        toggleBackgroundColor();
         initTagsinput();
         initSlider();
         refreshTags();
@@ -122,6 +123,7 @@ $(() => {
     confirmDialog(content, () => {
       resetTimer();
       refreshTimer();
+      initSlider();
       refreshDBPomodoroStatus();
     });
 
@@ -240,15 +242,24 @@ const fadeOutLoadingImage = () => {
   $('div#header-home').delay(300).fadeIn(300);
 }
 
+const toggleBackgroundColor = () => {
+  if (isWorking) {
+    $("body").css("background-color", "rgba(255,0,0,0.1)");
+  } else {
+    $("body").css("background-color", "rgba(0,0,255,0.1)");
+  }
+}
+
 const startCount = () => {
   if (remain <= 0) {
     //Toggle Working<->Break
     isWorking = !isWorking;
-    initSlider();
+    toggleBackgroundColor();
     if (isWorking) {
       remain = WORKING_DURATION_MIN * MIN_MS;
       refreshTimer();
       refreshDBPomodoroStatus();
+      initSlider();
       return;
 
     } else {
@@ -264,6 +275,7 @@ const startCount = () => {
       refreshTimer();
       refreshDBPomodoroStatus();
       addPomodoroResult();
+      initSlider();
       return;
     }
   }
@@ -275,8 +287,8 @@ const startCount = () => {
   } else {
     $("title").text("Break: " + moment(remain).format("mm:ss"));
   }
-  initSlider();
   refreshTimer();
+  initSlider();
 };
 
 const refreshProgressBar = () => {
