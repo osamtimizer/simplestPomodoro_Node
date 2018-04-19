@@ -275,6 +275,7 @@ const startCount = () => {
   } else {
     $("title").text("Break: " + moment(remain).format("mm:ss"));
   }
+  initSlider();
   refreshTimer();
 };
 
@@ -556,7 +557,7 @@ const initSlider = () => {
     max: max,
     value: remain,
     orientation: "horizonal",
-    range: "ms",
+    range: "min",
     change: (event, ui) => {
       remain = ui.value;
       refreshTimer();
