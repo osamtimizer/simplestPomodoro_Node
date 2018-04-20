@@ -16,6 +16,7 @@
     "bootstrap-tagsinput": "^0.7.1",
     "chart.js": "^2.7.2",
     "config": "^1.30.0",
+    "connect-redis": "^3.3.3",
     "cookie-parser": "~1.4.3",
     "datatables.net-bs": "^1.10.16",
     "debug": "~2.6.9",

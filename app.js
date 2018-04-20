@@ -5,6 +5,7 @@ var logger = require('./logger');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
+var RedisStore = require('connect-redis')(session);
 
 const admin = require('./firebase_init');
 const auth = admin.auth();
@@ -34,6 +35,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser('secret'));
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+
 //TODO:PRODUCTION:set SESSION_SECRET value in env
 var key = {
   secret: process.env.SESSION_SECRET,
@@ -42,7 +45,8 @@ var key = {
   name: 'simplestpomodoro',
   cookie: {
     maxAge: 30 * 60 * 1000
-  }
+  },
+  store: new RedisStore()
 };
 
 app.use(session(key));
