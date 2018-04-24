@@ -1,4 +1,5 @@
 const path = require('path');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 //TODO:this file should be adjusted for production environment
 const webpack = require('webpack');
@@ -24,5 +25,16 @@ module.exports = {
     alias: {
       $: './public/dist/js/vendor/jquery.min.js'
     }
+  },
+  optimization: {
+    minimizer: [
+      new UglifyJSPlugin({
+        uglifyOptions: {
+          compress: {
+            drop_console:false,
+          }
+        }
+      })
+    ]
   }
 }
