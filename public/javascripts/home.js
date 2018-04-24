@@ -298,7 +298,7 @@ const startCount = () => {
   initSlider();
 };
 
-const refreshProgressBar = () => {
+const refreshSlider = () => {
   if (isWorking) {
     const style_width =  (remain / WORKING_DURATION_MS) * 100;
     const template_slider = String.raw`left: ${style_width}%`;
@@ -494,7 +494,7 @@ const refreshTimer = () => {
   } else {
     $("p.currentStatus").text("Status: Break");
   }
-  refreshProgressBar();
+  refreshSlider();
 }
 
 const refreshButtonview = () => {
