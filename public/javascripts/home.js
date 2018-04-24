@@ -86,8 +86,8 @@ $(() => {
           database.ref('users/' + uid + '/tasks').set(tasks);
         }
       }).then(() => {
-        refreshTask();
-        toggleBackgroundColor();
+        buildSelectPicker();
+        refreshBackgroundColor();
         initTagsinput();
         initSlider();
         refreshTags();
@@ -121,10 +121,7 @@ $(() => {
     //reset timer and send init value to realtimeDB
     const content = "Do you sure want to reset this timer?";
     confirmDialog(content, () => {
-      resetTimer();
-      refreshTimer();
-      initSlider();
-      refreshDBPomodoroStatus();
+      reset();
     });
 
     refreshButtonview();
@@ -139,7 +136,6 @@ $(() => {
       console.log("Enter pushed");
       addNewTaskEventHandler(event);
       //TODO:Rebuild Selectpicker
-      buildSelectPicker();
     } else {
       $('input[data-toggle="popover"]').popover('hide');
     }
@@ -214,17 +210,28 @@ $(() => {
     console.log("selectedTask", selectedTask);
     console.log("currentTask", currentTask);
     currentTask = selectedTask;
-    refreshTask();
+    buildSelectPicker();
     refreshTags();
     refreshDBPomodoroStatus();
 
     const content = "Do you want to reset timer?";
     confirmDialog(content,() => {
-      resetTimer();
-      refreshTimer();
-      refreshDBPomodoroStatus();
+      reset();
     });
 
+  });
+
+  $("div.newTask").on('click', 'div.popover div.arrow div.popover-content', (event) => {
+    console.log('test');
+    $('input[data-toggle="popover"]').popover('hide');
+  });
+
+  $(document).on('click', (event) => {
+    if(!$(event.target).closest('div.popover-content').length) {
+      $('input[data-toggle="popover"]').popover('hide');
+    } else {
+      console.log(event.target);
+    }
   });
 
 });
@@ -242,7 +249,7 @@ const fadeOutLoadingImage = () => {
   $('div#header-home').delay(300).fadeIn(300);
 }
 
-const toggleBackgroundColor = () => {
+const refreshBackgroundColor = () => {
   if (isWorking) {
     $("body").css("background-color", "rgba(255,0,0,0.1)");
   } else {
@@ -254,7 +261,7 @@ const startCount = () => {
   if (remain <= 0) {
     //Toggle Working<->Break
     isWorking = !isWorking;
-    toggleBackgroundColor();
+    refreshBackgroundColor();
     if (isWorking) {
       remain = WORKING_DURATION_MIN * MIN_MS;
       refreshTimer();
@@ -307,7 +314,7 @@ const refreshProgressBar = () => {
     if(!$("div.progress-bar").hasClass("progress-bar-info")) {
       $("div.progress-bar").addClass("progress-bar-info");
     }
-    if (terms === 4) {
+    if (terms === INITIAL_TERM_COUNT) {
       const style_width =  (remain / BREAK_LARGE_DURATION_MS) * 100;
       const template = String.raw`width: ${style_width}%`;
       const template_slider = String.raw`left: ${style_width}%`;
@@ -403,10 +410,6 @@ const addPomodoroResult = () => {
   }
 }
 
-const refreshTask = () => {
-  fetchDBTasks();
-  buildSelectPicker();
-}
 
 const fetchDBTasks = () => {
   const user = auth.currentUser;
@@ -613,14 +616,27 @@ const addNewTaskEventHandler = (event) => {
         } else {
           const ref = database.ref('users/' + uid + '/tasks/' + task);
           ref.set("");
-          $('input[data-toggle="popover"]').popover('hide');
+          tasks[task] = "";
+          const success = `${task} was added successfully.`;
+          $('input[data-toggle="popover"]').attr("data-content", success);
+          $('input[data-toggle="popover"]').popover('show');
+          $('input#newTask').val('');
         }
+      }).then(() => {
+        buildSelectPicker();
       }).catch((err) => {
         console.error(err);
       });
-      refreshTask();
     }
   }
+}
+
+const reset = () => {
+  resetTimer();
+  refreshTimer();
+  initSlider();
+  refreshDBPomodoroStatus();
+  refreshBackgroundColor();
 }
 
 $.fn.addSliderSegments = function (amount, orientation) {
