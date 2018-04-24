@@ -300,33 +300,17 @@ const startCount = () => {
 
 const refreshProgressBar = () => {
   if (isWorking) {
-    if($("div.progress-bar").hasClass("progress-bar-info")) {
-      $("div.progress-bar").removeClass("progress-bar-info");
-    }
     const style_width =  (remain / WORKING_DURATION_MS) * 100;
-
-    const template = String.raw`width: ${style_width}%`;
     const template_slider = String.raw`left: ${style_width}%`;
-
-    $("div.progress-bar").attr("style",template);
     $("a.ui-slider-handle").attr("style",template_slider);
   } else {
-    if(!$("div.progress-bar").hasClass("progress-bar-info")) {
-      $("div.progress-bar").addClass("progress-bar-info");
-    }
     if (terms === INITIAL_TERM_COUNT) {
       const style_width =  (remain / BREAK_LARGE_DURATION_MS) * 100;
-      const template = String.raw`width: ${style_width}%`;
       const template_slider = String.raw`left: ${style_width}%`;
-      console.log(template);
-      $("div.progress-bar").attr("style",template);
       $("a.ui-slider-handle").attr("style",template_slider);
     } else {
       const style_width =  (remain / BREAK_SMALL_DURATION_MS) * 100;
-      const template = String.raw`width: ${style_width}%`;
       const template_slider = String.raw`left: ${style_width}%`;
-      console.log(template);
-      $("div.progress-bar").attr("style",template);
       $("a.ui-slider-handle").attr("style",template_slider);
     }
   }
