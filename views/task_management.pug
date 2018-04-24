@@ -6,6 +6,16 @@ block content
       img(src="/images/gif/icon_loader_a_ww_01_s1.gif")
       p.loading Now loading...
   include header
+  div.remodal(data-remodal-id="modal" data-remodal-options="hashTracking: true, closeOnConfirm: false")
+    button.remodal-close(data-remodal-action="close")
+    div#remodal-content
+      div#taskInfo
+        h3#taskName
+      div.tagsinput-primary
+        input.tagsinput(name="tagsinput" placeholder="Input tags up to 5.")
+    div#remodal-buttons
+      button#remodal-cancel.remodal-cancel(data-remodal-action="cancel") close
+      button#remodal-confirm.remodal-confirm(data-remodal-action="confirm") Select task
   div#main.wrap
     div.description
     div.list.container-fluid
