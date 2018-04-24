@@ -11,8 +11,10 @@ firebase.initializeApp(config);
 
 const auth = firebase.auth();
 const database = firebase.database();
+const modal = $('[data-remodal-id=modal]').remodal();
 
 let currentTask;
+let selectedTask;
 
 $(() => {
   const window_height = $(window).height();
@@ -29,6 +31,8 @@ $(() => {
     fadeOutLoadingImage();
   });
 
+  initTagsinput();
+
   //event handlers
   $("input#newTask").on('keydown', (event) => {
     if(event.keyCode === 13) {
@@ -44,15 +48,17 @@ $(() => {
     addNewTaskEventHandler(event);
   });
 
+  //event handlers for dynamic elem
   $("div.list-group#task-list").on('click', 'a.task', (event) => {
-    const task = $(event.currentTarget).text();
-    console.log(task);
+    selectedTask = $(event.target).attr("taskName");
+    console.log(selectedTask);
     //TODO: Show specific information of task as modal dialog.
+    modal.open();
   });
 
   $("div.list-group#task-list").on('click', 'a span.close', (event) => {
     event.stopPropagation();
-    const task = $(event.currentTarget).parent().attr("taskName");
+    const task = $(event.target).parent().attr("taskName");
     const content = "Do you sure want to delete this task?";
     //TODO:check whether the task is current task.
     confirmDialog(content, () => {
@@ -67,6 +73,28 @@ $(() => {
     event.stopPropagation();
     console.log("tag clicked");
   });
+
+  $(document).on('confirmation', '.remodal', (event) => {
+    console.log('confirmation button is clicked');
+    console.log($(event.target));
+  });
+
+  $(document).on('opening', '.remodal', async(event) => {
+    const user = auth.currentUser;
+    if (user) {
+      console.log("opening");
+      const uid = user.uid;
+      const ref = database.ref('users/' + uid + '/tasks/' + selectedTask);
+      let tags = (await ref.once('value')).val();
+      console.log(tags);
+      $("input.tagsinput").tagsinput('removeAll');
+      for (let item of tags) {
+        $("input.tagsinput").tagsinput('add', item);
+      }
+      $("h3#taskName").text(selectedTask);
+    }
+  });
+
 
 });
 
@@ -161,3 +189,11 @@ const deleteSpecifiedTask = async(task) => {
   }
 }
 
+const initTagsinput = () => {
+  console.log("buildTagsinput");
+  $("input.tagsinput").tagsinput({
+    maxTags: 5,
+    allowDuplicates: false,
+    maxChars: 20
+  });
+}
