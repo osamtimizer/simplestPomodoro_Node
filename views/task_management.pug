@@ -6,7 +6,7 @@ block content
       img(src="/images/gif/icon_loader_a_ww_01_s1.gif")
       p.loading Now loading...
   include header
-  div.remodal(data-remodal-id="modal" data-remodal-options="hashTracking: true, closeOnConfirm: false")
+  div.remodal-task.remodal(data-remodal-id="modal" data-remodal-options="hashTracking: true, closeOnConfirm: false")
     button.remodal-close(data-remodal-action="close")
     div#remodal-content
       div#taskInfo
@@ -14,8 +14,16 @@ block content
       div.tagsinput-primary
         input.tagsinput(name="tagsinput" placeholder="Input tags up to 5.")
     div#remodal-buttons
-      button#remodal-cancel.remodal-cancel(data-remodal-action="cancel") close
-      button#remodal-confirm.remodal-confirm(data-remodal-action="confirm") Select task
+      button#remodal-confirm.btn.btn-primary(data-remodal-action="confirm") Select task
+  div.remodal-tasks-delete.remodal(data-remodal-id="modal-delete" data-remodal-options="hashTracking: true, closeOnCOnfirm: false")
+    button.remodal-close(data-remodal-action="close")
+    div#remodal-delete-content
+      h3#remodal-warning-header Warning!
+      p#remodal-warning-description This action cannot be undone. This function will delete all your tasks, tags, activities permanently.
+      p#remodal-delete-description To delete all tasks, please type "DeleteAllTasks" to confirm.
+      div#remodal-delete-form
+        button#btn-deleteAllTasks.btn.btn-danger(data-remodal-action='close' disabled="disabled") Delete All Tasks
+        input#confirmDeleteAllTasks(placeholder='enter "DeleteAllTasks"')
   div#main.wrap
     div.description
     div.list.container-fluid
@@ -24,5 +32,7 @@ block content
         button#addTask.btn.btn-primary add Task
         input#newTask(placeholder="input task name..." data-toggle="popover" data-content="" data-placement="bottom" data-trigger="manual")
       div.list-group#task-list.center-block
+      div#deleteAll
+        button#btn-deleteAll.btn-danger Delete All Tasks
   include footer
   script(src='/javascripts/build/task_management.js')

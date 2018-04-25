@@ -12,13 +12,14 @@ firebase.initializeApp(config);
 const auth = firebase.auth();
 const database = firebase.database();
 const modal = $('[data-remodal-id=modal]').remodal();
+const modal_delete = $('[data-remodal-id=modal-delete]').remodal();
 
 let currentTask;
 let selectedTask;
 
 $(() => {
   const window_height = $(window).height();
-  $('#loader-bg , #loader').height(window_height).css('display', 'block');
+  $('#loader-bg , #loader').height(window_height * 2).css('display', 'block');
   setTimeout(fadeOutLoadingImage, 1000);
 
   //fetch tasks
@@ -59,7 +60,7 @@ $(() => {
   $("div.list-group#task-list").on('click', 'a span.close', (event) => {
     event.stopPropagation();
     const task = $(event.target).parent().attr("taskName");
-    const content = "Do you sure want to delete this task?";
+    const content = "Are you sure want to delete this task?";
     //TODO:check whether the task is current task.
     confirmDialog(content, () => {
       console.log("OK Clicked");
@@ -69,17 +70,24 @@ $(() => {
     });
   });
 
+  //event handlers
   $("div.list-group#task-list").on('click', 'a span.tag', (event) => {
     event.stopPropagation();
     console.log("tag clicked");
   });
 
-  $(document).on('confirmation', '.remodal', (event) => {
+  $(document).on('confirmation', '.remodal-task', (event) => {
     console.log('confirmation button is clicked');
     console.log($(event.target));
   });
 
-  $(document).on('opening', '.remodal', async(event) => {
+
+  $(document).on('opening', '.remodal-task', async(event) => {
+    if (currentTask === selectedTask) {
+      $("button#remodal-confirm").prop('disabled', true);
+    } else {
+      $("button#remodal-confirm").prop('disabled', false);
+    }
     const user = auth.currentUser;
     if (user) {
       console.log("opening");
@@ -95,8 +103,134 @@ $(() => {
     }
   });
 
+  $(document).on('closed', '.remodal-task', (event) => {
+    $("input.tagsinput").tagsinput('removeAll');
+    $("h3#taskName").text('');
+  });
 
+  $("button#remodal-confirm").on('click', (event) => {
+    const user = auth.currentUser;
+    if (user) {
+      const uid= user.uid;
+      const ref = database.ref('users/' + uid + '/pomodoro/currentTask');
+      ref.set(selectedTask).then(() => {
+        currentTask = selectedTask;
+        renderList();
+      }).catch((err) => {
+        console.error(err);
+      });
+    }
+  });
+
+  $("button#btn-deleteAll").on('click', (event) => {
+    modal_delete.open();
+  });
+
+  $("button#btn-deleteAllTasks").on('click', async(event) => {
+    $('input#confirmDeleteAllTasks').val('');
+    const user = auth.currentUser;
+    if (user) {
+      const uid = user.uid;
+      const currentTaskRef = database.ref('users/' + uid + '/pomodoro/currentTask');
+      const tasksRef = database.ref('users/' + uid + '/tasks/');
+      const tagsRef = database.ref('users/' + uid + '/tags/');
+      const resultRef = database.ref('users/' + uid + '/result/');
+
+      await tagsRef.set("");
+      await resultRef.set("");
+      const defaultTask = {
+        defaultTask: ""
+      };
+      tasksRef.set(defaultTask).then(() => {
+        currentTaskRef.set("defaultTask");
+      }).then(() => {
+        return renderList();
+      }).catch((err) => {
+        console.error(err);
+      });
+    }
+  });
+
+  $(document).on('opening', '.remodal-tasks-delete', (event) => {
+      $("button#btn-deleteAllTasks").prop("disabled", true);
+      $('input#confirmDeleteAllTasks').val('');
+  });
+
+  $("input#confirmDeleteAllTasks").on('keyup', (event) => {
+    if ($('input#confirmDeleteAllTasks').val() === 'DeleteAllTasks') {
+      $("button#btn-deleteAllTasks").prop("disabled", false);
+    } else {
+      $("button#btn-deleteAllTasks").prop("disabled", true);
+    }
+  });
+
+  //tagsinput event handlers
+  $("input.tagsinput").on('beforeItemAdd', (event) => {
+  });
+  $("input.tagsinput").on('itemAdded', (event) => {
+    console.log("input.tagsinput itemAdded");
+    //validate tag
+    //TODO:sanitize input text
+    const inputTags = $(event.currentTarget).tagsinput('items');
+    const user = auth.currentUser;
+    if (user) {
+      const uid = user.uid;
+      const ref = database.ref('users/' + uid + '/tasks/' + selectedTask);
+      ref.set(inputTags);
+    }
+    updateDBTags();
+    renderList();
+  });
+  $("input.tagsinput").on('beforeItemRemove', (event) => {
+  });
+  $("input.tagsinput").on('itemRemoved', (event) => {
+    let inputTags = $(event.currentTarget).tagsinput('items');
+    if (inputTags.length === 0) {
+      inputTags = "";
+    }
+    const user = auth.currentUser;
+    if (user) {
+      const uid = user.uid;
+      const ref = database.ref('users/' + uid + '/tasks/' + selectedTask);
+      ref.set(inputTags).then(() => {
+        updateDBTags();
+      }).catch((err) => {
+        console.error(err);
+      });
+      renderList();
+    }
+  });
 });
+
+const updateDBTags = () => {
+  console.log("updateDBTags");
+  const user = auth.currentUser;
+  if (user) {
+    const uid = user.uid;
+    const ref = database.ref('users/' + uid + '/tasks');
+    let tags = [];
+    ref.once("value").then((snapshot) => {
+      snapshot.forEach((childSnapshot) => {
+        const fetchedTags = childSnapshot.val();
+        console.log("taskName:", childSnapshot.key);
+        console.log("fetchedTags:", fetchedTags);
+        for (let item in fetchedTags) {
+          if ( tags.indexOf(fetchedTags[item]) < 0) {
+            tags.push(fetchedTags[item]);
+          }
+        }
+      });
+      console.log("tags:", tags);
+    }).then(() => {
+      const sortedTags = tags.slice().sort();
+      console.log(sortedTags);
+      const tagsRef = database.ref('users/' + uid + '/tags');
+      tagsRef.set(sortedTags);
+    }).catch((err) => {
+      console.error(err);
+    });
+  }
+}
 
 const renderList = async() => {
   $("div.list-group#task-list").empty();
@@ -132,7 +266,6 @@ const fetchLatestTasks = async () => {
   }
   return tasks;
 }
-
 
 const fadeOutLoadingImage = () => {
   console.log("fadeOutLoadingImage is called");
