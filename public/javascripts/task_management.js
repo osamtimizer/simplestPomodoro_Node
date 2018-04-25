@@ -49,6 +49,11 @@ $(() => {
     addNewTaskEventHandler(event);
   });
 
+  $("input#search-query").on('keyup', (event) => {
+    const query = $("input#search-query").val().toUpperCase();
+    filterList(query);
+  });
+
   //event handlers for dynamic elem
   $("div.list-group#task-list").on('click', 'a.task', (event) => {
     selectedTask = $(event.target).attr("taskName");
@@ -232,10 +237,19 @@ const updateDBTags = () => {
   }
 }
 
-const renderList = async() => {
+const renderList = async(query = '') => {
+  $("input#search-query").val('');
   $("div.list-group#task-list").empty();
+  let isSearching = true;
+  if (query === '') {
+    console.log("Query is empty");
+    isSearching = false;
+  }
   const result = await fetchLatestTasks();
   for (let item in result) {
+    if (isSearching && !item.includes(query)) {
+      continue;
+    }
     const task = item;
     const tags = result[item];
     let tags_html = "";
@@ -319,6 +333,19 @@ const deleteSpecifiedTask = async(task) => {
     console.log(taskRef);
     await resultRef.remove();
     await taskRef.remove();
+  }
+}
+
+const filterList = (query) => {
+  const targetElements = $("div.list-group#task-list").children("a.task");
+
+  for (let index = 0; index < targetElements.length; index++) {
+    const taskName = $(targetElements[index]).attr("taskName").toUpperCase();
+    if (!taskName.includes(query)){
+      $(targetElements[index]).hide();
+    } else {
+      $(targetElements[index]).show();
+    }
   }
 }
 
