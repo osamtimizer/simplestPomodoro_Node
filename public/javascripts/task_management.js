@@ -343,6 +343,9 @@ const addNewTaskEventHandler = async(event) => {
         }).catch((err) => {
           console.error(err);
         });
+      const success = `${task} was added successfully.`;
+      $('input[data-toggle="popover"]').attr("data-content", success);
+      $('input[data-toggle="popover"]').popover('show');
       $("input#newTask").val('');
     }
   }
