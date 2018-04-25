@@ -31,63 +31,55 @@ router.post('/', (req, res, next) => {
   console.log("token: ", token);
 
   let isValid = true;
+
   auth.verifyIdToken(token)
     .then((decodedToken) => {
       if (decodedToken === null) {
-        isValid = false;
+        return new Promise((resolve, reject) => {
+          reject(new Error("token is invalid"));
+        });
       }
       if (uid !== decodedToken.uid) {
-        isValid = false;
+        return new Promise((resolve, reject) => {
+          reject(new Error("uid is invalid"));
+        });
       }
-    }).catch((err) => {
-      console.error(err);
-    });
+    }).then(() => {
 
-  if (!isValid) {
-    console.log('token is invalid');
-    res.render('error');
-    return;
-  }
+      //uidが存在しなければthrow eとなる
+      auth.getUser(uid)
+        .then((userRecord) => {
+          //既に登録されていたらメインページにリダイレクトしてやる
 
-  //uidが存在しなければthrow eとなる
-  auth.getUser(uid)
-    .then((userRecord) => {
-      //既に登録されていたらメインページにリダイレクトしてやる
+          database.ref('users').once('value')
+            .then((snapshot) => {
+              if (snapshot.hasChild(uid)) {
+                console.log("user found");
+                console.log("Token from client:", token);
+                //generate new token to store in cookie.
+                //TODO:validate token
 
-      database.ref('users').once('value')
-        .then((snapshot) => {
-          if (snapshot.hasChild(uid)) {
-            console.log("user found");
-            console.log("Token from client:", token);
-            //generate new token to store in cookie.
-            //TODO:validate token
+                req.session.user = {token: token};
+                res.redirect('/home');
 
-            req.session.user = {token: token};
-            res.redirect('/home');
+              } else {
+                console.log("New user. Create record for the user");
 
-          } else {
+                //tokenは毎回server->firebase adminで確認しに行けばいいので格納しなくて良い
+                database.ref('users/' + userRecord.uid).set('');
 
-            //tokenは毎回server->firebase adminで確認しに行けばいいので格納しなくて良い
-            database.ref('users/' + userRecord.uid).set({
-              displayName: userRecord.displayName,
-              email: userRecord.email,
-              providerId: userRecord.providerData[0].providerId,
-              pomodoro: {
-                isWorking: true,
-                remain: 25 * 60 * 1000,
-                terms: 4
+                //token must be stored in secure cookie.
+                req.session.user = { token: token };
+                res.redirect('/home');
               }
             });
-
-            //token must be stored in secure cookie.
-            req.session.user = { token: token };
-            res.redirect('/home');
-          }
-        }).catch((err) => {
-          console.error("Error: ", err);
         });
 
+    }).catch((err) => {
+      console.error(err);
+      res.render('error');
     });
+
 });
 
 router.post('/delete', (req, res, next) => {
@@ -105,6 +97,7 @@ router.post('/delete', (req, res, next) => {
         //delete all information of user
         //TODO:uncomment for deletion
         //auth.deleteUser(uid);
+        //database.ref('users/' + uid).remove();
       }
     }).then(() => {
       res.redirect('/');
