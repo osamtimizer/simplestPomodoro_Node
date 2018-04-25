@@ -10,6 +10,7 @@ firebase.initializeApp(config);
 const auth = firebase.auth();
 
 $(() => {
+  /*
   auth.onAuthStateChanged((user) => {
     if (user) {
       const uid = user.uid;
@@ -22,13 +23,15 @@ $(() => {
       });
     }
   });
+  */
 
-  $("button#auth").click((event) => {
+  $("button#auth").click(async(event) => {
     let provider = new firebase.auth.GoogleAuthProvider();
-    firebase.auth().signInWithPopup(provider).then((result) => {
-    }).catch((err) => {
-      console.error(err);
-    });
+    const result = await firebase.auth().signInWithPopup(provider);
+    const idToken = await result.user.getIdToken(true);
+    if (idToken !== null) {
+      startRegister(result.user.uid, idToken);
+    }
   });
 });
 
