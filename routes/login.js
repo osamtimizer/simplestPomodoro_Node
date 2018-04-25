@@ -11,31 +11,27 @@ router.get('/', function(req, res, next) {
   res.render('login', { title: 'login page' });
 });
 
-router.post('/', (req, res, next) => {
+router.post('/', async(req, res, next) => {
   const token = req.body.token;
   console.log(token);
-  auth.verifyIdToken(token)
-    .then((decodedToken) => {
-      const uid = decodedToken.uid;
-      const ref = database.ref('users');
-      ref.once("value")
-        .then((snapshot) => {
-          //TODO: check whether uid exists on firebaseDB
-          const userId = snapshot.child(uid).child('userId').val();
-          console.log("add session to client");
-          req.session.user = { token: token };
-          req.session.save((err) => {
-            if(err) {
-              console.log(err);
-            }
-          });
-          res.redirect('/home');
-        }).catch((err) => {
-          console.error("Error: ", err);
-        });
-    }).catch((err) => {
-      console.error("Error: ", err);
+  const decodedToken = await auth.verifyIdToken(token);
+  const uid = decodedToken.uid;
+  const ref = database.ref('users');
+  const snapshot = await ref.once("value");
+
+  if (!snapshot.hasChild(uid)) {
+    console.log("no user found. redirect to register page.");
+    res.redirect('/register');
+  } else {
+    console.log("add session to client");
+    req.session.user = { token: token };
+    req.session.save((err) => {
+      if(err) {
+        console.log(err);
+      }
     });
+    res.redirect('/home');
+  }
 
 });
 
