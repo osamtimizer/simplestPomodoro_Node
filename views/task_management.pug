@@ -28,14 +28,14 @@ block content
     div.description
     div.list.container-fluid
       h3.description Tasks
-      div#addTasks
+      div#addTasks.input-group
         button#addTask.btn.btn-primary add Task
-        input#newTask(placeholder="input task name..." data-toggle="popover" data-content="" data-placement="bottom" data-trigger="manual")
+        input#newTask.form-control(placeholder="input task name..." data-toggle="popover" data-content="" data-placement="bottom" data-trigger="manual")
       div.input-group
-        input#search-query.form-control(type='text' placeholder="Search")
+        input#search-query.form-control(type='text' placeholder="Search...")
         span.input-group-btn
           button#submitSearch.btn(type="submit")
-            span#span-submitSearch.fui-search
+            span#clear-search-query.fui-cross
       div.list-group#task-list.center-block
       div#deleteAll
         button#btn-deleteAll.btn-danger Delete All Tasks
