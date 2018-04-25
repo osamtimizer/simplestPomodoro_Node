@@ -94,11 +94,11 @@ app.use(accessLog);
 app.use('/', index);
 app.use('/register', register);
 app.use('/login', login);
+app.use('/users', users);
 
 app.use(authentication);
 
 //These routes require authentication.
-app.use('/users', users);
 app.use('/home', home);
 app.use('/activity', activity);
 app.use('/task_management', task_management);

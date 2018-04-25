@@ -10,7 +10,7 @@ firebase.initializeApp(config);
 const auth = firebase.auth();
 
 $(() => {
-  var user = auth.currentUser;
+  const user = auth.currentUser;
   if (user) {
     console.log("Signed out");
     user.signOut();

@@ -84,6 +84,8 @@ $(() => {
           };
 
           database.ref('users/' + uid + '/tasks').set(tasks);
+          database.ref('users/' + uid + '/tags').set('');
+          database.ref('users/' + uid + '/results').set('');
         }
       }).then(() => {
         buildSelectPicker();
