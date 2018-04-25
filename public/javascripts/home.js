@@ -119,7 +119,7 @@ $(() => {
     clearInterval(timer);
 
     //reset timer and send init value to realtimeDB
-    const content = "Do you sure want to reset this timer?";
+    const content = "Are you sure want to reset this timer?";
     confirmDialog(content, () => {
       reset();
     });
