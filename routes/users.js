@@ -22,16 +22,6 @@ router.get('/', function(req, res, next) {
   }
 });
 
-router.get('/:userId', (req, res, next) => {
-  console.log("unused router");
-  res.redirect("/login");
-});
-
-router.post('/:userId', (req, res) => {
-  console.log("unused router");
-  res.redirect('/login');
-});
-
 //Add new user
 router.post('/', (req, res, next) => {
   console.log("Users POST");
@@ -60,7 +50,6 @@ router.post('/', (req, res, next) => {
   }
 
   //uidが存在しなければthrow eとなる
-  let count = 0;
   auth.getUser(uid)
     .then((userRecord) => {
       //既に登録されていたらメインページにリダイレクトしてやる
@@ -77,11 +66,9 @@ router.post('/', (req, res, next) => {
             res.redirect('/home');
 
           } else {
-            count = snapshot.child('userCount').child('count').val();
 
             //tokenは毎回server->firebase adminで確認しに行けばいいので格納しなくて良い
             database.ref('users/' + userRecord.uid).set({
-              userId: count,
               displayName: userRecord.displayName,
               email: userRecord.email,
               providerId: userRecord.providerData[0].providerId,
@@ -92,11 +79,6 @@ router.post('/', (req, res, next) => {
               }
             });
 
-            const updated_count = count + 1;
-            database.ref('users/userCount').set({
-              count: updated_count
-            });
-
             //token must be stored in secure cookie.
             req.session.user = { token: token };
             res.redirect('/home');
@@ -105,6 +87,29 @@ router.post('/', (req, res, next) => {
           console.error("Error: ", err);
         });
 
+    });
+});
+
+router.post('/delete', (req, res, next) => {
+  const token = req.session.user.token;
+  console.log("token:", token);
+  console.log("token from cli:", req.body.token);
+  auth.verifyIdToken(token)
+    .then((decodedToken) => {
+      if (decodedToken === null) {
+        //token is invalid
+        return new Promise((resolve, reject) => {
+          reject(new Error('token is invalid'));
+        });
+      } else {
+        //delete all information of user
+        //TODO:uncomment for deletion
+        //auth.deleteUser(uid);
+      }
+    }).then(() => {
+      res.redirect('/');
+    }).catch((err) => {
+      res.redirect('/settings', { message: 'an error occured'});
     });
 });
 

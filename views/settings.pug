@@ -1,16 +1,18 @@
 extends layout
 
 block content
+  if message
+    div.alert.alert-danger(role="alert")= message
   include header
-  div.alert.alert-success.alert-dismissable.col-12
-    a.close(href="#") &times;
-    strong success!
+  div#remodal-delete-account.remodal(data-remodal-id="modal-delete" data-remodal-options="hashTracking: true, closeOnCOnfirm: false")
+    h3#remodal-warning-header Warning!
+    p#remodal-warning-description This action cannot be undone. This function will delete your Account including Tasks, Tags, Activities and timer status.
+    p#remodal-delete-description To delete all tasks, please type "DeleteAccount" to confirm.
+    div#remodal-delete-form
+      button#btn-deleteAccount.btn.btn-danger(disabled="disabled") Delete Account
+      input#confirmDeleteAccount(placeholder='enter "DeleteAccount"')
   div.container#main
-    div.blank
     div.form-group
-      label.col-sm-4.control-label(for="displayName") Display Name
-      div.col-sm-8
-        input.form-control#displayName(type="text" placeholder="Enter displayName")
-        button.btn.btn-primary#submit(type="submit") Submit
+      button#delete-account.btn.btn-danger Delete Account
   include footer
   script(src='/javascripts/build/settings.js')
