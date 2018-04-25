@@ -34,6 +34,13 @@ $(() => {
 
   initTagsinput();
 
+  //initialization for FlatUI elem
+  $('.input-group').on('focus', 'form-control', function() {
+    $(this).closest('.input-group, input-group-btn').addClass('focus');
+  }).on('blur', '.form-control', function() {
+    $(this).closest('.input-group, input-group-btn').removeClass('focus');
+  });
+
   //event handlers
   $("input#newTask").on('keydown', (event) => {
     if(event.keyCode === 13) {
@@ -51,7 +58,23 @@ $(() => {
 
   $("input#search-query").on('keyup', (event) => {
     const query = $("input#search-query").val().toUpperCase();
+    console.log(query);
     filterList(query);
+  });
+
+  $("span#clear-search-query").on('click', (event) => {
+    $("input#search-query").val('');
+    const query = $("input#search-query").val().toUpperCase();
+    console.log(query);
+    filterList(query);
+  });
+
+  $(document).on('click', (event) => {
+    if(!$(event.target).closest('div.popover-content').length) {
+      $('input[data-toggle="popover"]').popover('hide');
+    } else {
+      console.log(event.target);
+    }
   });
 
   //event handlers for dynamic elem
@@ -75,17 +98,16 @@ $(() => {
     });
   });
 
-  //event handlers
   $("div.list-group#task-list").on('click', 'a span.tag', (event) => {
     event.stopPropagation();
     console.log("tag clicked");
   });
 
+  //event handlers for remodal elem
   $(document).on('confirmation', '.remodal-task', (event) => {
     console.log('confirmation button is clicked');
     console.log($(event.target));
   });
-
 
   $(document).on('opening', '.remodal-task', async(event) => {
     if (currentTask === selectedTask) {
@@ -169,7 +191,7 @@ $(() => {
     }
   });
 
-  //tagsinput event handlers
+  //event handlers for tagsinput
   $("input.tagsinput").on('beforeItemAdd', (event) => {
   });
   $("input.tagsinput").on('itemAdded', (event) => {
@@ -186,8 +208,10 @@ $(() => {
     updateDBTags();
     renderList();
   });
+
   $("input.tagsinput").on('beforeItemRemove', (event) => {
   });
+
   $("input.tagsinput").on('itemRemoved', (event) => {
     let inputTags = $(event.currentTarget).tagsinput('items');
     if (inputTags.length === 0) {
@@ -319,6 +343,7 @@ const addNewTaskEventHandler = async(event) => {
         }).catch((err) => {
           console.error(err);
         });
+      $("input#newTask").val('');
     }
   }
 }
