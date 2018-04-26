@@ -10,20 +10,6 @@ firebase.initializeApp(config);
 const auth = firebase.auth();
 
 $(() => {
-  /*
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      const uid = user.uid;
-      user.getIdToken(true).then((idToken) => {
-        if (idToken !== null) {
-          startRegister(uid, idToken);
-        }
-      }).catch((err) => {
-        console.error(err);
-      });
-    }
-  });
-  */
 
   $("button#auth").click(async(event) => {
     let provider = new firebase.auth.GoogleAuthProvider();

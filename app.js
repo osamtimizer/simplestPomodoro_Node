@@ -15,6 +15,7 @@ var index = require('./routes/index');
 var register = require('./routes/register');
 var users = require('./routes/users');
 var login = require('./routes/login');
+var logout = require('./routes/logout');
 var home = require('./routes/home');
 var activity = require('./routes/activity');
 var task_management= require('./routes/task_management');
@@ -94,6 +95,7 @@ app.use(accessLog);
 app.use('/', index);
 app.use('/register', register);
 app.use('/login', login);
+app.use('/logout', logout);
 app.use('/users', users);
 
 app.use(authentication);

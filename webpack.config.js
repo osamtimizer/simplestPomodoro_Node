@@ -11,6 +11,7 @@ module.exports = {
     home: './public/javascripts/home.js',
     pomodoro: './public/javascripts/pomodoro.js',
     register: './public/javascripts/register.js',
+    header: './public/javascripts/header.js',
     activity: './public/javascripts/activity.js',
     settings: './public/javascripts/settings.js',
     task_management: './public/javascripts/task_management.js',
@@ -26,6 +27,7 @@ module.exports = {
       $: './public/dist/js/vendor/jquery.min.js'
     }
   },
+  /*
   optimization: {
     minimizer: [
       new UglifyJSPlugin({
@@ -37,4 +39,5 @@ module.exports = {
       })
     ]
   }
+  */
 }
