@@ -12,7 +12,6 @@ router.post('/', async(req, res, next) => {
 
   const uid = req.body.uid;
   const token = req.body.token;
-  console.log("token: ", token);
 
   auth.verifyIdToken(token)
     .then((decodedToken) => {
@@ -34,7 +33,6 @@ router.post('/', async(req, res, next) => {
       const snapshot = await database.ref('users').once('value');
       if (snapshot.hasChild(uid)) {
         console.log("user found");
-        console.log("Token from client:", token);
         //generate new token to store in cookie.
         //TODO:validate token
 
@@ -61,8 +59,6 @@ router.post('/', async(req, res, next) => {
 
 router.post('/delete', (req, res, next) => {
   const token = req.session.user.token;
-  console.log("token:", token);
-  console.log("token from cli:", req.body.token);
   auth.verifyIdToken(token)
     .then((decodedToken) => {
       if (decodedToken === null) {
@@ -73,13 +69,15 @@ router.post('/delete', (req, res, next) => {
       } else {
         //delete all information of user
         //TODO:uncomment for deletion
-        //auth.deleteUser(uid);
-        //database.ref('users/' + uid).remove();
+        const uid = decodedToken.uid;
+        auth.deleteUser(uid);
+        database.ref('users/' + uid).remove();
       }
     }).then(() => {
       res.redirect('/');
     }).catch((err) => {
-      res.redirect('/settings', { message: 'an error occured'});
+      console.error(err);
+      res.redirect('/settings');
     });
 });
 
