@@ -19,7 +19,6 @@ router.get('/', (req, res, next) => {
 
 router.post('/', async(req, res, next) => {
   const token = req.body.token;
-  console.log(token);
   const decodedToken = await auth.verifyIdToken(token);
   const uid = decodedToken.uid;
   const ref = database.ref('users');
