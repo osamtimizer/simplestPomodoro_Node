@@ -3,6 +3,6 @@ $(() => {
     location.href='/register';
   });
   $("button#login").on('click', (event) => {
-    location.href='/register';
+    location.href='/login';
   });
 });

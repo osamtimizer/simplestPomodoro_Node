@@ -10,26 +10,14 @@ firebase.initializeApp(config);
 const auth = firebase.auth();
 
 $(() => {
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      //redirect to user page
-      user.getIdToken(true).then((idToken) => {
-        startAuth(idToken);
-      }).catch((err) => {
-        console.error("Error: ", err);
-      });
-    }
-  });
 
-  $("button#auth").click((event) => {
-    console.log("Button clicked");
+  $("button#auth").click(async(event) => {
     let provider = new firebase.auth.GoogleAuthProvider();
-    console.log("start auth");
-    firebase.auth().signInWithPopup(provider).then((result) => {
-      //TODO:consider when user wants to register.
-    }).catch((err) => {
-      console.error(err);
-    });
+    const result = await firebase.auth().signInWithPopup(provider);
+    const idToken = await result.user.getIdToken(true);
+    if (idToken !== null) {
+      startAuth(idToken);
+    }
   });
 
   $("button#login").click((event) => {
