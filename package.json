@@ -6,6 +6,7 @@
     "start": "./node_modules/.bin/nodemon ./bin/www",
     "webpack": "./node_modules/.bin/webpack",
     "node-sass": "./node_modules/.bin/node-sass",
+    "test": "./node_modules/.bin/mocha --reporter spec ./test/",
     "gulp": "gulp"
   },
   "dependencies": {
@@ -39,10 +40,13 @@
     "uglifyjs-webpack-plugin": "^1.2.5"
   },
   "devDependencies": {
+    "chai": "^4.1.2",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^5.0.0",
     "gulp-plumber": "^1.2.0",
     "gulp-sass": "^3.1.0",
+    "mocha": "^5.1.1",
+    "supertest": "^3.0.0",
     "webpack": "^4.1.1",
     "webpack-cli": "^2.0.12",
     "webpack-stream": "^4.0.2"
