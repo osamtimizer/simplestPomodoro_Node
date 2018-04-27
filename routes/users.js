@@ -15,7 +15,7 @@ router.post('/', async(req, res, next) => {
 
   auth.verifyIdToken(token)
     .then((decodedToken) => {
-      if (decodedToken === null) {
+      if (decodedToken === null || decodedToken === undefined) {
         return new Promise((resolve, reject) => {
           reject(new Error("token is invalid"));
         });
@@ -42,43 +42,39 @@ router.post('/', async(req, res, next) => {
       } else {
         console.log("New user. Create record for the user");
 
-        //tokenは毎回server->firebase adminで確認しに行けばいいので格納しなくて良い
+        //decodedTokenは毎回server->firebase adminで確認しに行けばいいので格納しなくて良い
         database.ref('users/' + uid).set('');
 
-        //token must be stored in secure cookie.
+        //accessToken must be stored in secure cookie.
         req.session.user = { token: token };
         res.redirect('/home');
       }
 
     }).catch((err) => {
-      console.error(err);
-      res.render('error');
+      next(err);
     });
 
 });
 
-router.post('/delete', (req, res, next) => {
-  const token = req.session.user.token;
-  auth.verifyIdToken(token)
-    .then((decodedToken) => {
-      if (decodedToken === null) {
-        //token is invalid
-        return new Promise((resolve, reject) => {
-          reject(new Error('token is invalid'));
-        });
-      } else {
-        //delete all information of user
-        //TODO:uncomment for deletion
-        const uid = decodedToken.uid;
-        auth.deleteUser(uid);
-        database.ref('users/' + uid).remove();
-      }
-    }).then(() => {
-      res.redirect('/');
-    }).catch((err) => {
-      console.error(err);
-      res.redirect('/settings');
-    });
+router.post('/delete', async(req, res, next) => {
+  const token = req.body.token;
+  const decodedToken = await auth.verifyIdToken(token).catch((err) => {
+    next(err);
+  });
+  if (decodedToken === null || decodedToken === undefined) {
+    next(new Error("Token is invalid"));
+  } else {
+    //delete all information of user
+    //TODO:uncomment for deletion
+    const uid = decodedToken.uid;
+    auth.deleteUser(uid);
+    database.ref('users/' + uid).remove()
+      .then(() => {
+        res.redirect('/');
+      }).catch((err) => {
+        next(err);
+      });
+  }
 });
 
 module.exports = router;
