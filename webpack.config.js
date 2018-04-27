@@ -7,9 +7,7 @@ module.exports = {
   target: 'web',
   entry: {
     index: './public/javascripts/index.js',
-    users: './public/javascripts/users.js',
     home: './public/javascripts/home.js',
-    pomodoro: './public/javascripts/pomodoro.js',
     register: './public/javascripts/register.js',
     header: './public/javascripts/header.js',
     activity: './public/javascripts/activity.js',
