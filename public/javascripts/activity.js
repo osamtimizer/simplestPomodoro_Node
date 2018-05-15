@@ -73,6 +73,34 @@ $(() => {
   });
 
   //event handlers
+  $('button#download').on('click', async(event) => {
+    const user = auth.currentUser;
+    if (user) {
+      const uid = user.uid;
+      const ref = database.ref('users/' + uid + '/result');
+
+      const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+      let content = "";
+      content += "Task name,Date,Count\n";
+      const snapshot = (await ref.once('value'));
+      snapshot.forEach((childSnapshot) => {
+        const taskName = childSnapshot.key;
+        const val = childSnapshot.val();
+        for (let item in val) {
+          const date = item;
+          const count = val[item];
+          content += taskName + ',' + date + ',' + count + '\n';
+        }
+      });
+
+      const link = document.createElement('a');
+      const blob = new Blob([bom, content], {"type": "text/csv" });
+      link.href = window.URL.createObjectURL(blob);
+      link.download = uid + '_' + moment().format('YYYY_MM_DD_HH_mm_ss') + '.csv';
+      link.click();
+
+    }
+  });
 
   $('input[type="date"]').on('keydown', (event) => {
     return false;
