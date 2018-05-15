@@ -8,3 +8,4 @@
 /log/*
 /public/images/pomodoro.jpg
 package-lock.json
+.*
