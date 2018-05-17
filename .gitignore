@@ -9,3 +9,4 @@
 /public/images/pomodoro.jpg
 package-lock.json
 .*
+.DS_Store
