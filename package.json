@@ -3,9 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "./node_modules/.bin/nodemon ./bin/www",
+    "start": "WORKING_MODE=debug ./node_modules/.bin/nodemon ./bin/www",
     "webpack": "./node_modules/.bin/webpack",
     "node-sass": "./node_modules/.bin/node-sass",
+    "test": "WORKING_MODE=debug ./node_modules/.bin/mocha --reporter spec ./test/",
     "gulp": "gulp"
   },
   "dependencies": {
@@ -28,7 +29,6 @@
     "jquery": "^3.3.1",
     "jquery-confirm": "^3.3.2",
     "jquery-ui-dist": "^1.12.1",
-    "log4js": "^2.5.3",
     "moment": "^2.21.0",
     "morgan": "~1.9.0",
     "nodemon": "^1.17.3",
@@ -39,10 +39,15 @@
     "uglifyjs-webpack-plugin": "^1.2.5"
   },
   "devDependencies": {
+    "chai": "^4.1.2",
+    "express-list-endpoints": "^3.0.1",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^5.0.0",
     "gulp-plumber": "^1.2.0",
     "gulp-sass": "^3.1.0",
+    "log4js": "^2.5.3",
+    "mocha": "^5.1.1",
+    "supertest": "^3.0.0",
     "webpack": "^4.1.1",
     "webpack-cli": "^2.0.12",
     "webpack-stream": "^4.0.2"

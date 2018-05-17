@@ -19,23 +19,30 @@ router.get('/', (req, res, next) => {
 
 router.post('/', async(req, res, next) => {
   const token = req.body.token;
-  const decodedToken = await auth.verifyIdToken(token);
-  const uid = decodedToken.uid;
-  const ref = database.ref('users');
-  const snapshot = await ref.once("value");
-
-  if (!snapshot.hasChild(uid)) {
-    console.log("no user found. redirect to register page.");
-    res.redirect('/register');
+  const decodedToken = await auth.verifyIdToken(token).catch((err) => {
+    next(err);
+  });
+  if (decodedToken === null || decodedToken === undefined) {
+    next(new Error("Token is invalid"));
   } else {
-    console.log("add session to client");
-    req.session.user = { token: token };
-    req.session.save((err) => {
-      if(err) {
-        console.log(err);
-      }
-    });
-    res.redirect('/home');
+    const uid = decodedToken.uid;
+    const ref = database.ref('users');
+    const snapshot = await ref.once("value");
+
+    if (!snapshot.hasChild(uid)) {
+      console.log("no user found. redirect to register page.");
+      res.redirect('/register');
+    } else {
+      console.log("add session to client");
+      req.session.user = { token: token };
+      req.session.save((err) => {
+        if(err) {
+          next(err);
+        } else {
+          res.redirect('/home');
+        }
+      });
+    }
   }
 
 });

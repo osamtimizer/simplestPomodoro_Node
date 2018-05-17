@@ -20,6 +20,7 @@ var home = require('./routes/home');
 var activity = require('./routes/activity');
 var task_management= require('./routes/task_management');
 var settings = require('./routes/settings');
+var debug = require('./routes/debug');
 
 var app = express();
 
@@ -35,8 +36,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser('secret'));
 app.use(express.static(path.join(__dirname, 'public')));
-
-
 
 //TODO:PRODUCTION:set SESSION_SECRET value in env
 var key = {
@@ -65,6 +64,7 @@ const authentication = (req, res, next) => {
         next();
       }).catch((err) => {
         console.error(err);
+        next(err);
       });
   } else {
     console.log("no session");
@@ -96,6 +96,11 @@ app.use('/register', register);
 app.use('/login', login);
 app.use('/logout', logout);
 app.use('/users', users);
+
+if (process.env.WORKING_MODE=== 'debug') {
+  console.log("WORKING_MODE:", process.env.WORKING_MODE);
+  app.use('/debug', debug);
+}
 
 app.use(authentication);
 
