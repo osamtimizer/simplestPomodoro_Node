@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "./node_modules/.bin/nodemon ./bin/www",
+    "start": "WORKING_MODE=debug ./node_modules/.bin/nodemon ./bin/www",
     "webpack": "./node_modules/.bin/webpack",
     "node-sass": "./node_modules/.bin/node-sass",
     "test": "WORKING_MODE=debug ./node_modules/.bin/mocha --reporter spec ./test/",
