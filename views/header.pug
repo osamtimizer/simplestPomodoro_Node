@@ -15,6 +15,7 @@ block content
           li: a#atcitivy(href="/activity") activity
           li: a#settings(href="/settings") settings
           li: a#task_management(href="/task_management") task management
+          li: a#help(href="/help") help
           li: a#logout(href="#") logout
   else
     nav.navbar.navbar-default.navbar-custom(role="navigation")
@@ -26,6 +27,7 @@ block content
         a.navbar-brand(href='/') SimplestPomodoro
       div.collapse.navbar-collapse#navbarContents
         ul.nav.navbar-nav.navbar-right
+          li: a#help(href="/help") help
           li: a#login(href="login") login
           li: a#register(href="/register") register
   script(src="/javascripts/build/header.js")
