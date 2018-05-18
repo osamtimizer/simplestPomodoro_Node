@@ -12,6 +12,10 @@ router.get('/', (req, res, next) => {
   res.render('index', { title: 'SimplestPomodoro' });
 });
 
+router.get('/help', (req, res, next) => {
+  res.render('help');
+});
+
 router.get('/terms-of-use', (req, res, next) => {
   if (req.session.agreement) {
     res.redirect('/register');
