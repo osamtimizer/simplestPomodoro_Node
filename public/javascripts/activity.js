@@ -19,7 +19,8 @@ const DURATIONS = {
   day: moment.duration(1, 'days'),
   week: moment.duration(6, 'days'),
   month: moment.duration(30, 'days'),
-  year: moment.duration(365, 'days')
+  year: moment.duration(365, 'days'),
+  all: "All"
 };
 
 const CANVAS_TYPES = {
@@ -96,7 +97,7 @@ $(() => {
       const link = document.createElement('a');
       const blob = new Blob([bom, content], {"type": "text/csv" });
       link.href = window.URL.createObjectURL(blob);
-      link.download = uid + '_' + moment().format('YYYY_MM_DD_HH_mm_ss') + '.csv';
+      link.download = user.displayName + '_' + moment().format('YYYY_MM_DD_HH_mm_ss') + '.csv';
       link.click();
 
     }
@@ -163,6 +164,16 @@ $(() => {
     }
   });
 
+  $("a#all").click((event) => {
+    console.log("duration change event: All");
+    $("button#duration").text("Duration:All");
+    const user = auth.currentUser;
+    if (user) {
+      const uid = user.uid;
+      drawAllDuration(uid);
+    }
+  });
+
   $("select.selectpicker").on('change', (event) => {
     //just my opinion: bootstrap plugin shouldn't be customized because this make project much complicated.
     console.log("selectpicker changed");
@@ -172,7 +183,11 @@ $(() => {
       const uid = user.uid;
       const duration = getCurrentDuration();
 
-      refreshActivityPage(uid, targetDate, duration);
+      if (duration === "All") {
+        drawAllDuration(uid);
+      } else {
+        refreshActivityPage(uid, targetDate, duration);
+      }
     }
   });
 
@@ -188,6 +203,86 @@ const fadeOutLoadingImage = () => {
   $('div.wrap').delay(300).fadeIn(300);
   $('div#header-home').delay(300).fadeIn(300);
 }
+
+const drawAllDuration = async(uid) => {
+
+  let tasks = [];
+  let counts = [];
+
+  let selectedTasks = [];
+  $('select.selectpicker option:selected').each((index, selected) => {
+    selectedTasks.push($(selected).text());
+  });
+  console.log("SelectedTasks:", selectedTasks);
+
+  const snapshot = (await database.ref('users/' + uid + '/result').once('value'));
+  snapshot.forEach((childSnapshot) => {
+    const taskName = childSnapshot.key;
+    const val = childSnapshot.val();
+    let count = 0;
+    for (let item in val) {
+      count += val[item];
+    }
+    console.log(taskName);
+    console.log(selectedTasks.indexOf(taskName));
+    if (selectedTasks.indexOf(taskName) !== -1) {
+      console.log("Task matched:", taskName);
+      tasks.push(taskName);
+      counts.push(count);
+    }
+  });
+
+  refreshCanvasAllDuration(tasks, counts);
+}
+
+const refreshCanvasAllDuration = (tasks, counts) => {
+  console.log("refreshCanvasAllDuration");
+  const context = $('#myChart')[0].getContext('2d');
+  if (myChart) {
+    myChart.destroy();
+  }
+
+  const labels = tasks;
+  const canvas_type = CANVAS_TYPES.bar;
+  let datasets = [];
+  let colors = [];
+
+  for (let index in labels) {
+    colors.push(CANVAS_COLORS[index]);
+  }
+  console.log("colors:", colors);
+
+  datasets = [{
+    label: 'tasks',
+    backgroundColor: colors,
+    data: counts,
+  }];
+
+  //draw chart
+  //If you want to add graph on the canvas, add item to "datasets"
+
+  console.log(datasets);
+  myChart = new Chart(context, {
+    type: canvas_type,
+    data: {
+      labels: labels,
+      datasets: datasets
+    },
+    options: {
+      scales: {
+        yAxes: [
+          {
+            ticks: {
+              beginAtZero: true
+            }
+          }
+        ]
+      }
+    }
+  });
+
+}
+
 const buildSelectPicker = () => {
   let options = [];
   for (let item in tasks) {
@@ -246,6 +341,9 @@ const refreshActivityPage = (uid, targetDate, duration) => {
   $('select.selectpicker option:selected').each((index, selected) => {
     selectedTasks.push($(selected).text());
   });
+  if (selectedTasks.length === 0) {
+    return;
+  }
   console.log("SelectedTasks: ", selectedTasks);
   Promise.all(selectedTasks.map((task) => {
     console.log("Promise.all");
@@ -271,7 +369,7 @@ const fetchAppropriateActivity = (uid, targetDate, duration, taskName) => {
       activity: []
     };
 
-//NEW OPERATION
+    //NEW OPERATION
     const ref = database.ref('users/' + uid + '/result');
     const days = duration.days();
     const startDate = moment(targetDate - duration);
@@ -369,6 +467,7 @@ const refreshCanvas = (results, canvas_type) => {
   //draw chart
   //If you want to add graph on the canvas, add item to "datasets"
 
+  console.log(datasets);
   myChart = new Chart(context, {
     type: canvas_type,
     data: {
@@ -389,6 +488,9 @@ const getCurrentDuration = () => {
       break;
     case "Duration:Year":
       duration = DURATIONS.year;
+      break;
+    case "Duration:All":
+      duration = DURATIONS.all;
       break;
     default:
       duration = DURATIONS.week;
