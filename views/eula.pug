@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  include header
+  div.content#main
+    div#eula
+    div#agreement.text-center
+      p#EULA
+        | we will correct your personal information only for using displaying.
+      input#agree-checkbox(type="checkbox")
+      label Agree with the Terms of Use
+    div#submit-eula.text-center
+      button#submit-eula.btn.btn-primary(disabled="true") Submit
+  include footer
+  script(src='/javascripts/build/eula.js')
