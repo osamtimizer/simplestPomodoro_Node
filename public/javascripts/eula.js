@@ -20,6 +20,17 @@ $(() => {
   });
 
   $("button#submit-eula").on('click', (event) => {
-    location.href = '/register';
+    const form = document.createElement("form");
+    form.setAttribute("action", '/terms-of-use');
+    form.setAttribute("method", 'POST');
+    form.style.display = "none";
+    document.body.appendChild(form);
+    const input = document.createElement('input');
+    input.setAttribute('type', 'hidden');
+    input.setAttribute('name', 'agreed');
+    input.setAttribute('value', true);
+    form.appendChild(input);
+
+    form.submit();
   });
 });
