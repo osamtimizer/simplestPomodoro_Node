@@ -101,6 +101,10 @@ $(() => {
   $("div.list-group#task-list").on('click', 'a span.tag', (event) => {
     event.stopPropagation();
     console.log("tag clicked");
+    $("input#search-query").val('');
+    const query = $(event.currentTarget).text();
+    filterListByTag(query.toUpperCase());
+    $("input#search-query").val(query);
   });
 
   //event handlers for remodal elem
@@ -375,6 +379,23 @@ const filterList = (query) => {
     });
     console.log("tagNames:", tagNames);
     if (taskName.includes(query) || isPartialMatchArray(query, tagNames)){
+      $(targetElements[index]).show();
+    } else {
+      $(targetElements[index]).hide();
+    }
+  }
+}
+
+const filterListByTag = (query) => {
+  const targetElements = $("div.list-group#task-list").children("a.task");
+
+  for (let index = 0; index < targetElements.length; index++) {
+    let tagNames = [];
+    $(targetElements[index]).find("span").each((i, elem) => {
+      tagNames.push($(elem).text().toUpperCase());
+    });
+    console.log("tagNames:", tagNames);
+    if (isPartialMatchArray(query, tagNames)){
       $(targetElements[index]).show();
     } else {
       $(targetElements[index]).hide();
