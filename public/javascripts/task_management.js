@@ -369,12 +369,29 @@ const filterList = (query) => {
 
   for (let index = 0; index < targetElements.length; index++) {
     const taskName = $(targetElements[index]).attr("taskName").toUpperCase();
-    if (!taskName.includes(query)){
-      $(targetElements[index]).hide();
-    } else {
+    let tagNames = [];
+    $(targetElements[index]).find("span").each((i, elem) => {
+      tagNames.push($(elem).text().toUpperCase());
+    });
+    console.log("tagNames:", tagNames);
+    if (taskName.includes(query) || isPartialMatchArray(query, tagNames)){
       $(targetElements[index]).show();
+    } else {
+      $(targetElements[index]).hide();
     }
   }
+}
+
+const isPartialMatchArray = (query, targetArr) => {
+  let result = false;
+  console.log("query:", query);
+  console.log("targetArr:", targetArr);
+  for(let item of targetArr) {
+    if (targetArr.includes(query)) {
+      result = true;
+    }
+  }
+  return result;
 }
 
 const initTagsinput = () => {
