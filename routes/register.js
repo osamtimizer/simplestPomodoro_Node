@@ -9,8 +9,10 @@ const database = admin.database();
 router.get('/', (req, res, next) => {
   if (req.session.user) {
     res.redirect('/home');
-  } else {
+  } else if (req.session.agreement.agreed === true) {
     next();
+  } else {
+    res.redirect('/terms-of-use');
   }
 }, (req, res, next) => {
   res.render('register');
