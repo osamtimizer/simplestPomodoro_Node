@@ -321,6 +321,7 @@ const addNewTaskEventHandler = async(event) => {
   const taskName = $("input#newTask").val();
   if (taskName.length >= 20) {
     const warning = "Warning: Length of task name must be less than 20.";
+    console.log(warning);
     $('input[data-toggle="popover"]').attr("data-content", warning);
     $('input[data-toggle="popover"]').popover('show');
     return;
@@ -347,7 +348,7 @@ const addNewTaskEventHandler = async(event) => {
         }).catch((err) => {
           console.error(err);
         });
-      const success = `${task} was added successfully.`;
+      const success = `${taskName} was added successfully.`;
       $('input[data-toggle="popover"]').attr("data-content", success);
       $('input[data-toggle="popover"]').popover('show');
       $("input#newTask").val('');
