@@ -12,4 +12,8 @@ router.get('/', (req, res, next) => {
   res.render('index', { title: 'SimplestPomodoro' });
 });
 
+router.get('/terms-of-use', (req, res, next) => {
+  res.render('eula.pug');
+});
+
 module.exports = router;

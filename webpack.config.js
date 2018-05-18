@@ -8,6 +8,7 @@ module.exports = {
   entry: {
     index: './public/javascripts/index.js',
     home: './public/javascripts/home.js',
+    eula: './public/javascripts/eula.js',
     register: './public/javascripts/register.js',
     header: './public/javascripts/header.js',
     activity: './public/javascripts/activity.js',
