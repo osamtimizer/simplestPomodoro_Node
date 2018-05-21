@@ -16,6 +16,7 @@ const modal_delete = $('[data-remodal-id=modal-delete]').remodal();
 
 let currentTask;
 let selectedTask;
+let isRenderingModal = false;
 
 $(() => {
   const window_height = $(window).height();
@@ -121,6 +122,9 @@ $(() => {
     }
     const user = auth.currentUser;
     if (user) {
+      isRenderingModal = true;
+      //$("input.tagsinput").off('itemAdded');
+      //$("input.tagsinput").off('itemRemoved');
       console.log("opening");
       const uid = user.uid;
       const ref = database.ref('users/' + uid + '/tasks/' + selectedTask);
@@ -131,12 +135,32 @@ $(() => {
         $("input.tagsinput").tagsinput('add', item);
       }
       $("h3#taskName").text(selectedTask);
+
+      const resultRef = database.ref('users/' + uid + '/result/' + selectedTask);
+      resultRef.once('value').then((snapshot) => {
+        let result = 0;
+        snapshot.forEach((childSnapshot) => {
+          console.log("key:", childSnapshot.key);
+          result += childSnapshot.val();
+        });
+        return result;
+      }).then((result) => {
+        console.log("result:", result);
+        $("h4#count").text("Total Count:" + result.toString());
+        isRenderingModal = false;
+      }).catch((err) => {
+      });
+
+      //$("input.tagsinput").on('itemAdded', tagsinput_ItemAdded(event));
+      //$("input.tagsinput").on('itemRemoved', tagsinput_ItemRemoved(event));
     }
   });
 
   $(document).on('closed', '.remodal-task', (event) => {
+    isRenderingModal = true;
     $("input.tagsinput").tagsinput('removeAll');
     $("h3#taskName").text('');
+    isRenderingModal = false;
   });
 
   $("button#remodal-confirm").on('click', (event) => {
@@ -196,13 +220,19 @@ $(() => {
   });
 
   //event handlers for tagsinput
-  $("input.tagsinput").on('beforeItemAdd', (event) => {
-  });
+  //TODO:keydown以外でのTag入力を防ぐ
+
+  $("input.tagsinput").on('beforeItemAdd', (event) => {});
+  $("input.tagsinput").on('beforeItemRemove', (event) => {});
+
   $("input.tagsinput").on('itemAdded', (event) => {
     console.log("input.tagsinput itemAdded");
     //validate tag
     //TODO:sanitize input text
-    const inputTags = $(event.currentTarget).tagsinput('items');
+    if (isRenderingModal) {
+      return false;
+    }
+    const inputTags = $("input.tagsinput").tagsinput('items');
     const user = auth.currentUser;
     if (user) {
       const uid = user.uid;
@@ -212,12 +242,12 @@ $(() => {
     updateDBTags();
     renderList();
   });
-
-  $("input.tagsinput").on('beforeItemRemove', (event) => {
-  });
-
   $("input.tagsinput").on('itemRemoved', (event) => {
-    let inputTags = $(event.currentTarget).tagsinput('items');
+    console.log("itemRemoved");
+    if (isRenderingModal) {
+      return false;
+    }
+    let inputTags = $("input.tagsinput").tagsinput('items');
     if (inputTags.length === 0) {
       inputTags = "";
     }
@@ -234,6 +264,40 @@ $(() => {
     }
   });
 });
+
+const tagsinput_ItemAdded = (event) => {
+  console.log("input.tagsinput itemAdded");
+  //validate tag
+  //TODO:sanitize input text
+  const inputTags = $("input.tagsinput").tagsinput('items');
+  const user = auth.currentUser;
+  if (user) {
+    const uid = user.uid;
+    const ref = database.ref('users/' + uid + '/tasks/' + selectedTask);
+    ref.set(inputTags);
+  }
+  updateDBTags();
+  renderList();
+}
+
+const tagsinput_ItemRemoved = (event) => {
+  console.log("itemRemoved");
+  let inputTags = $("input.tagsinput").tagsinput('items');
+  if (inputTags.length === 0) {
+    inputTags = "";
+  }
+  const user = auth.currentUser;
+  if (user) {
+    const uid = user.uid;
+    const ref = database.ref('users/' + uid + '/tasks/' + selectedTask);
+    ref.set(inputTags).then(() => {
+      updateDBTags();
+    }).catch((err) => {
+      console.error(err);
+    });
+    renderList();
+  }
+}
 
 const updateDBTags = () => {
   console.log("updateDBTags");
