@@ -30,7 +30,7 @@ const INITIAL_TASK_NAME = "Work";
 let timerStatus = false;
 let isWorking = true;
 let initialTerm = DEFAULT_TERM_COUNT;
-let terms = initialTerm;
+let terms = 0;
 let remain = WORKING_DURATION_MIN * MIN_MS;
 let currentTask = INITIAL_TASK_NAME;
 let timer;
@@ -174,8 +174,10 @@ $(() => {
     }
     updateDBTags();
   });
+
   $("input.tagsinput").on('beforeItemRemove', (event) => {
   });
+
   $("input.tagsinput").on('itemRemoved', (event) => {
     let inputTags = $(event.currentTarget).tagsinput('items');
     if (inputTags.length === 0) {
@@ -234,6 +236,7 @@ $(() => {
         database.ref(uri).set(newInitialTerm).then(() => {
           const template = `Term: ${terms.toString()} /<span class="fui-arrow-left"/> ${newInitialTerm.toString()} <span class="fui-arrow-right"/>`;
           $("span.term").html(template);
+          initialTerm = newInitialTerm;
         }).catch((err) => {
           console.error(err);
         });
@@ -252,6 +255,7 @@ $(() => {
         database.ref(uri).set(newInitialTerm).then(() => {
           const template = `Term: ${terms.toString()} /<span class="fui-arrow-left"/> ${newInitialTerm.toString()} <span class="fui-arrow-right"/>`;
           $("span.term").html(template);
+          initialTerm = newInitialTerm;
         }).catch((err) => {
           console.error(err);
         });
@@ -305,19 +309,28 @@ const startCount = () => {
     refreshBackgroundColor();
     if (isWorking) {
       remain = WORKING_DURATION_MIN * MIN_MS;
+      if (terms === initialTerm) {
+        terms = 0;
+      } else {
+        terms = initialTerm;
+      }
       refreshTimer();
       refreshDBPomodoroStatus();
       initSlider();
       return;
 
     } else {
-      if (terms === 0) {
+      if (terms === initialTerm) {
         //Have a long break
-        remain = BREAK_LARGE_DURATION_MIN * MIN_MS;
-        terms = initialTerm;
+        console.log("terms:", terms);
+        console.log("initialTerm:", initialTerm);
+        console.log("long break");
+        console.log(BREAK_LARGE_DURATION_MIN);
+        remain = BREAK_LARGE_DURATION_MS;
       } else {
+        console.log("terms:", terms);
+        console.log("initialTerm:", initialTerm);
         remain = BREAK_SMALL_DURATION_MIN * MIN_MS;
-        terms -= 1;
       }
 
       refreshTimer();
@@ -345,7 +358,7 @@ const refreshSlider = () => {
     const template_slider = String.raw`left: ${style_width}%`;
     $("a.ui-slider-handle").attr("style",template_slider);
   } else {
-    if (terms === initialTerm) {
+    if (terms === 0) {
       const style_width =  (remain / BREAK_LARGE_DURATION_MS) * 100;
       const template_slider = String.raw`left: ${style_width}%`;
       $("a.ui-slider-handle").attr("style",template_slider);
@@ -521,17 +534,14 @@ const updateDBTags = () => {
 
 const resetTimer = () => {
   isWorking = true;
-  terms = initialTerm;
+  terms = 0;
   remain = WORKING_DURATION_MIN * MIN_MS;
 }
 
 const refreshTimer = () => {
   const time = moment(remain).format("mm:ss");
-  //$("p.time").text(new Date(remain).toISOString().slice(14, -5));
   $("p.time").text(time);
-  //TODO:impl arrow span
   const template = `Term: ${terms.toString()} /<span class="fui-arrow-left"/> ${initialTerm.toString()} <span class="fui-arrow-right"/>`;
-  $("p.term").text("Term: " + terms.toString() + '/' + initialTerm.toString());
   $("span.term").html(template);
   if (isWorking) {
     $("p.currentStatus").text("Status: Working");
@@ -588,7 +598,8 @@ const initSlider = () => {
   if (isWorking) {
     max = WORKING_DURATION_MS;
   } else {
-    if (terms === 0) {
+    console.log("terms:initSlider:", terms);
+    if (terms === initialTerm) {
       max = BREAK_LARGE_DURATION_MS;
     } else {
       max = BREAK_SMALL_DURATION_MS;
