@@ -16,7 +16,7 @@ const database = firebase.database();
 //CONSTANTS
 const BREAK_TERM = false;
 const WORKING_TERM = true;
-const INITIAL_TERM_COUNT = 4;
+const DEFAULT_TERM_COUNT = 4;
 const MIN_MS = 60 * 1000;
 const WORKING_DURATION_MIN = 25;
 const WORKING_DURATION_MS = WORKING_DURATION_MIN * MIN_MS;
@@ -29,7 +29,8 @@ const INITIAL_TASK_NAME = "Work";
 
 let timerStatus = false;
 let isWorking = true;
-let terms = INITIAL_TERM_COUNT;
+let initialTerm = DEFAULT_TERM_COUNT;
+let terms = initialTerm;
 let remain = WORKING_DURATION_MIN * MIN_MS;
 let currentTask = INITIAL_TASK_NAME;
 let timer;
@@ -55,6 +56,7 @@ $(() => {
         if (snapshot.hasChild('pomodoro')) {
           remain = snapshot.child('pomodoro').child('remain').val();
           terms = snapshot.child('pomodoro').child('terms').val();
+          initialTerm = snapshot.child('pomodoro').child('initialTerm').val();
           isWorking = snapshot.child('pomodoro').child('isWorking').val();
           currentTask = snapshot.child('pomodoro').child('currentTask').val();
           console.log(currentTask);
@@ -64,6 +66,7 @@ $(() => {
           database.ref('users/' + uid + '/pomodoro').set({
             remain: remain,
             terms: terms,
+            initialTerm: DEFAULT_TERM_COUNT,
             isWorking: isWorking,
             currentTask: currentTask
           });
@@ -220,6 +223,58 @@ $(() => {
     }
   });
 
+  $("span.term").on('click', 'span.fui-arrow-left', async(event) => {
+    const user = auth.currentUser;
+    if (user) {
+      const uid = user.uid;
+      const uri = 'users/' + uid + '/pomodoro/initialTerm';
+      const snapshot = (await database.ref(uri).once('value'));
+      const newInitialTerm = snapshot.val() - 1;
+      if (newInitialTerm >= 1 && newInitialTerm >= terms) {
+        database.ref(uri).set(newInitialTerm).then(() => {
+          const template = `Term: ${terms.toString()} /<span class="fui-arrow-left"/> ${newInitialTerm.toString()} <span class="fui-arrow-right"/>`;
+          $("span.term").html(template);
+        }).catch((err) => {
+          console.error(err);
+        });
+      }
+    }
+  });
+
+  $("span.term").on('click', 'span.fui-arrow-right', async(event) => {
+    const user = auth.currentUser;
+    if (user) {
+      const uid = user.uid;
+      const uri = 'users/' + uid + '/pomodoro/initialTerm';
+      const snapshot = (await database.ref(uri).once('value'));
+      const newInitialTerm = snapshot.val() + 1;
+      if (newInitialTerm <= 9) {
+        database.ref(uri).set(newInitialTerm).then(() => {
+          const template = `Term: ${terms.toString()} /<span class="fui-arrow-left"/> ${newInitialTerm.toString()} <span class="fui-arrow-right"/>`;
+          $("span.term").html(template);
+        }).catch((err) => {
+          console.error(err);
+        });
+      }
+    }
+  });
+
+  $("span.term").on('mouseenter', 'span.fui-arrow-left', (event) => {
+    $(event.target).css("cursor", "pointer");
+  });
+
+  $("span.term").on('mouseleave', 'span.fui-arrow-left', (event) => {
+    $(event.target).css("cursor", "auto");
+  });
+
+  $("span.term").on('mouseenter', 'span.fui-arrow-right', (event) => {
+    $(event.target).css("cursor", "pointer");
+  });
+
+  $("span.term").on('mouseleave', 'span.fui-arrow-right', (event) => {
+    $(event.target).css("cursor", "auto");
+  });
+
 });
 
 //
@@ -259,7 +314,7 @@ const startCount = () => {
       if (terms === 0) {
         //Have a long break
         remain = BREAK_LARGE_DURATION_MIN * MIN_MS;
-        terms = INITIAL_TERM_COUNT;
+        terms = initialTerm;
       } else {
         remain = BREAK_SMALL_DURATION_MIN * MIN_MS;
         terms -= 1;
@@ -290,7 +345,7 @@ const refreshSlider = () => {
     const template_slider = String.raw`left: ${style_width}%`;
     $("a.ui-slider-handle").attr("style",template_slider);
   } else {
-    if (terms === INITIAL_TERM_COUNT) {
+    if (terms === initialTerm) {
       const style_width =  (remain / BREAK_LARGE_DURATION_MS) * 100;
       const template_slider = String.raw`left: ${style_width}%`;
       $("a.ui-slider-handle").attr("style",template_slider);
@@ -466,7 +521,7 @@ const updateDBTags = () => {
 
 const resetTimer = () => {
   isWorking = true;
-  terms = INITIAL_TERM_COUNT;
+  terms = initialTerm;
   remain = WORKING_DURATION_MIN * MIN_MS;
 }
 
@@ -474,7 +529,10 @@ const refreshTimer = () => {
   const time = moment(remain).format("mm:ss");
   //$("p.time").text(new Date(remain).toISOString().slice(14, -5));
   $("p.time").text(time);
-  $("p.term").text("Term: " + terms.toString());
+  //TODO:impl arrow span
+  const template = `Term: ${terms.toString()} /<span class="fui-arrow-left"/> ${initialTerm.toString()} <span class="fui-arrow-right"/>`;
+  $("p.term").text("Term: " + terms.toString() + '/' + initialTerm.toString());
+  $("span.term").html(template);
   if (isWorking) {
     $("p.currentStatus").text("Status: Working");
   } else {
