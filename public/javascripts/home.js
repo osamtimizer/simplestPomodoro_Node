@@ -342,11 +342,11 @@ const startCount = () => {
   }
 
   remain -= ONE_SEC_MS * 10;
-
+  const remain_display = remain > 0 ? remain : 0;
   if (isWorking) {
-    $("title").text("Working: " + moment(remain).format("mm:ss"));
+    $("title").text("Working: " + moment(remain_display).format("mm:ss"));
   } else {
-    $("title").text("Break: " + moment(remain).format("mm:ss"));
+    $("title").text("Break: " + moment(remain_display).format("mm:ss"));
   }
   refreshTimer();
   initSlider();
