@@ -19,10 +19,12 @@ span {
   }
   &.fui-arrow-left {
     font-size: 11px;
+    color: gray;
   }
 
   &.fui-arrow-right {
     font-size: 11px;
+    color: gray;
   }
 
 }
@@ -127,6 +129,11 @@ button {
   }
   &#submitNewTask {
     margin: 5px;
+  }
+
+  &#auth {
+    display: block;
+    margin: 0 auto;
   }
 }
 

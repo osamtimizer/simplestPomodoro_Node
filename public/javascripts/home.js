@@ -17,6 +17,8 @@ const database = firebase.database();
 const BREAK_TERM = false;
 const WORKING_TERM = true;
 const DEFAULT_TERM_COUNT = 4;
+const INITIAL_TERM_LIMIT_UPPER = 9;
+const INITIAL_TERM_LIMIT_LOWER = 1;
 const MIN_MS = 60 * 1000;
 const WORKING_DURATION_MIN = 25;
 const WORKING_DURATION_MS = WORKING_DURATION_MIN * MIN_MS;
@@ -29,6 +31,7 @@ const INITIAL_TASK_NAME = "Work";
 
 let timerStatus = false;
 let isWorking = true;
+let introduction_finish = false;
 let initialTerm = DEFAULT_TERM_COUNT;
 let terms = 0;
 let remain = WORKING_DURATION_MIN * MIN_MS;
@@ -57,6 +60,7 @@ $(() => {
           remain = snapshot.child('pomodoro').child('remain').val();
           terms = snapshot.child('pomodoro').child('terms').val();
           initialTerm = snapshot.child('pomodoro').child('initialTerm').val();
+          introduction_finish = snapshot.child('pomodoro').child('introduction_finish').val();
           isWorking = snapshot.child('pomodoro').child('isWorking').val();
           currentTask = snapshot.child('pomodoro').child('currentTask').val();
           console.log(currentTask);
@@ -67,6 +71,7 @@ $(() => {
             remain: remain,
             terms: terms,
             initialTerm: DEFAULT_TERM_COUNT,
+            introduction_finish: introduction_finish,
             isWorking: isWorking,
             currentTask: currentTask
           });
@@ -97,6 +102,8 @@ $(() => {
         initSlider();
         refreshTags();
         fadeOutLoadingImage();
+      }).then(() => {
+
       }).catch((err) => {
         console.error("Error: ", err);
       });
@@ -228,11 +235,12 @@ $(() => {
   $("span.term").on('click', 'span.fui-arrow-left', async(event) => {
     const user = auth.currentUser;
     if (user) {
+      console.log("fui-arrow-left clicked");
       const uid = user.uid;
       const uri = 'users/' + uid + '/pomodoro/initialTerm';
       const snapshot = (await database.ref(uri).once('value'));
       const newInitialTerm = snapshot.val() - 1;
-      if (newInitialTerm >= 1 && newInitialTerm >= terms) {
+      if (newInitialTerm >= INITIAL_TERM_LIMIT_LOWER && newInitialTerm >= terms) {
         database.ref(uri).set(newInitialTerm).then(() => {
           const template = `Term: ${terms.toString()} /<span class="fui-arrow-left"/> ${newInitialTerm.toString()} <span class="fui-arrow-right"/>`;
           $("span.term").html(template);
@@ -251,7 +259,7 @@ $(() => {
       const uri = 'users/' + uid + '/pomodoro/initialTerm';
       const snapshot = (await database.ref(uri).once('value'));
       const newInitialTerm = snapshot.val() + 1;
-      if (newInitialTerm <= 9) {
+      if (newInitialTerm <= INITIAL_TERM_LIMIT_UPPER) {
         database.ref(uri).set(newInitialTerm).then(() => {
           const template = `Term: ${terms.toString()} /<span class="fui-arrow-left"/> ${newInitialTerm.toString()} <span class="fui-arrow-right"/>`;
           $("span.term").html(template);
@@ -264,19 +272,27 @@ $(() => {
   });
 
   $("span.term").on('mouseenter', 'span.fui-arrow-left', (event) => {
-    $(event.target).css("cursor", "pointer");
+    if (initialTerm > INITIAL_TERM_LIMIT_LOWER && initialTerm > terms) {
+      $(event.target).css("cursor", "pointer");
+      $(event.target).css("color", "red");
+    }
   });
 
   $("span.term").on('mouseleave', 'span.fui-arrow-left', (event) => {
     $(event.target).css("cursor", "auto");
+    $(event.target).css("color", "gray");
   });
 
   $("span.term").on('mouseenter', 'span.fui-arrow-right', (event) => {
-    $(event.target).css("cursor", "pointer");
+    if (initialTerm < INITIAL_TERM_LIMIT_UPPER) {
+      $(event.target).css("cursor", "pointer");
+      $(event.target).css("color", "red");
+    }
   });
 
   $("span.term").on('mouseleave', 'span.fui-arrow-right', (event) => {
     $(event.target).css("cursor", "auto");
+    $(event.target).css("color", "gray");
   });
 
 });
@@ -288,10 +304,10 @@ $(() => {
 
 const fadeOutLoadingImage = () => {
   console.log("fadeOutLoadingImage is called");
-  $('#loader-bg').delay(900).fadeOut(300);
-  $('#loader').delay(600).fadeOut(300);
-  $('div.wrap').delay(300).fadeIn(300);
-  $('div#header-home').delay(300).fadeIn(300);
+  $('#loader-bg').fadeOut(300);
+  $('#loader').fadeOut(300);
+  $('div.wrap').fadeIn(300);
+  $('div#header-home').fadeIn(300);
 }
 
 const refreshBackgroundColor = () => {

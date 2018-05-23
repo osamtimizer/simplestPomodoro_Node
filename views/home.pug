@@ -1,5 +1,9 @@
 extends layout
 
+block headers
+  link(rel='stylesheet' href='/dist/css/introjs.css')
+  script(src='/dist/js/intro.js')
+
 block content
   div#loader-bg
     div#loader
@@ -16,7 +20,7 @@ block content
         div.newTask
           input#newTask.form-control(placeholder="input task name" data-toggle="popover" data-content="" data-placement="bottom" data-trigger="manual")
           button#submitNewTask.btn.btn-primary Add Task
-      div.timer
+      div.timer(data-intro='This is main timer.')
         span.term Term:
         p.currentStatus Status:
         p.time 00:00

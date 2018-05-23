@@ -2,6 +2,8 @@ extends layout
 
 block content
   include header
-  button#auth.btn.btn-center(type="button"): img(src="/images/google_signin_buttons/web/1x/btn_google_signin_dark_normal_web.png")
+  div.container
+    p#auth-description.text-center 登録するには、以下のボタンからGoogle認証
+    button#auth.btn.btn-center(type="button"): img(src="/images/google_signin_buttons/web/1x/btn_google_signin_dark_normal_web.png")
   include footer
   script(src='/javascripts/build/register.js')
