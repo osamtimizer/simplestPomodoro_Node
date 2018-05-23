@@ -19,8 +19,6 @@ router.get('/help', (req, res, next) => {
 router.get('/terms-of-use', (req, res, next) => {
   if (req.session.agreement) {
     res.redirect('/register');
-  } else if (req.session.user) {
-    res.redirect('/home');
   } else {
     next();
   }
