@@ -12,6 +12,7 @@ const auth = firebase.auth();
 const database = firebase.database();
 
 $(() => {
+  $("a.navbar-link").css("color", "white");
   $("a#logout").click((event) => {
     console.log("logout")
     let user = auth.currentUser;

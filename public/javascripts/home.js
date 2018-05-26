@@ -100,6 +100,7 @@ $(() => {
         refreshBackgroundColor();
         initTagsinput();
         initSlider();
+        refreshSlider();
         refreshTags();
         fadeOutLoadingImage();
       }).then(() => {
@@ -137,6 +138,7 @@ $(() => {
     });
 
     refreshButtonview();
+    refreshSlider();
   });
 
   $("div.popover").on('click', (event) => {
@@ -302,6 +304,18 @@ $(() => {
 //
 
 
+const refreshHeader = () => {
+  if (timerStatus) {
+    if (isWorking) {
+      $("nav.navbar-custom").css("background-color", "#E84B3C");
+    } else {
+      $("nav.navbar-custom").css("background-color", "#1C8BE2");
+    }
+  } else {
+      $("nav.navbar-custom").css("background-color", "#34485E");
+  }
+}
+
 const fadeOutLoadingImage = () => {
   console.log("fadeOutLoadingImage is called");
   $('#loader-bg').fadeOut(300);
@@ -314,7 +328,7 @@ const refreshBackgroundColor = () => {
   if (isWorking) {
     $("body").css("background-color", "rgba(255,0,0,0.1)");
   } else {
-    $("body").css("background-color", "rgba(0,0,255,0.1)");
+    $("body").css("background-color", "rgba(28,139,226,0.1)");
   }
 }
 
@@ -373,7 +387,9 @@ const refreshSlider = () => {
     const style_width =  (remain / WORKING_DURATION_MS) * 100;
     const template_slider = String.raw`left: ${style_width}%`;
     $("a.ui-slider-handle").attr("style",template_slider);
+    $("div.ui-slider-range").css("background", "#E84B3C");
   } else {
+    $("div.ui-slider-range").css("background", "#1C8BE2");
     if (terms === 0) {
       const style_width =  (remain / BREAK_LARGE_DURATION_MS) * 100;
       const template_slider = String.raw`left: ${style_width}%`;
@@ -565,24 +581,26 @@ const refreshTimer = () => {
     $("p.currentStatus").text("Status: Break");
   }
   refreshSlider();
+  refreshButtonview();
 }
 
 const refreshButtonview = () => {
   if (timerStatus) {
     $("button.start").prop("disabled", true);
-    $("button.start").removeClass("btn-primary");
+    $("button.start").removeClass("btn-inverse");
     $("button.start").addClass("btn-default");
     $("button.stop").prop("disabled", false);
     $("button.stop").removeClass("btn-default");
-    $("button.stop").addClass("btn-primary");
+    $("button.stop").addClass("btn-inverse");
   } else {
     $("button.start").prop("disabled", false);
     $("button.start").removeClass("btn-default");
-    $("button.start").addClass("btn-primary");
+    $("button.start").addClass("btn-inverse");
     $("button.stop").prop("disabled", true);
-    $("button.stop").removeClass("btn-primary");
+    $("button.stop").removeClass("btn-inverse");
     $("button.stop").addClass("btn-default");
   }
+  refreshHeader();
 }
 
 const buildSelectPicker = () => {
@@ -611,17 +629,17 @@ const initTagsinput = () => {
 
 const initSlider = () => {
   let max;
+  console.log("terms:initSlider:", terms);
   if (isWorking) {
     max = WORKING_DURATION_MS;
   } else {
-    console.log("terms:initSlider:", terms);
     if (terms === initialTerm) {
       max = BREAK_LARGE_DURATION_MS;
     } else {
       max = BREAK_SMALL_DURATION_MS;
     }
-
   }
+
   $("div.slider").slider({
     min: 0,
     max: max,

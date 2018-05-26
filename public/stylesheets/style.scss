@@ -7,7 +7,12 @@ body {
 
 a {
   color: #00B7FF;
+
+  &.navbar-link {
+    color: #000000;
+  }
 }
+
 
 span {
   &.close {
@@ -172,7 +177,7 @@ input {
 
 nav.navbar-custom {
   //background-color: #FF8C5B;
-  background-color: white;
+  background-color: #34485E;
   border-bottom: 1px solid;
   border-color: #888888;
   border-radius: 0px;
@@ -180,7 +185,7 @@ nav.navbar-custom {
 
 footer.footer-custom {
   //background-color: #FF8C5B;
-  background-color: white;
+  background-color: #34485E;
   border-top: 1px solid;
   border-color: #888888;
   border-radius: 0px;

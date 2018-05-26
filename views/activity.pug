@@ -15,7 +15,7 @@ block content
         div.col-lg-2.col-xs-4
           input.form-group(type="date")
         div.col-lg-2.col-xs-4.dropdown.show
-          button.btn.btn-primary.dropdown-toggle#duration(type="button" data-toggle="dropdown")
+          button.btn.btn-inverse.dropdown-toggle#duration(type="button" data-toggle="dropdown")
             |Select Duration
             span.caret
           ul.dropdown-menu(role="menu")
@@ -23,6 +23,6 @@ block content
             li: a.dropdown-item#month(href="#") Month
             li: a.dropdown-item#all(href="#") All
         div.col-lg-2.col-xs-4#downloader
-          button#download.btn.btn-primary Download CSV
+          button#download.btn.btn-inverse Download CSV
   include footer
   script(src='/javascripts/build/activity.js')

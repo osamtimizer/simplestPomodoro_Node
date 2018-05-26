@@ -123,6 +123,9 @@ $(() => {
     if (user) {
       const uid = user.uid;
       duration = getCurrentDuration();
+      if (duration === "All") {
+        return false;
+      }
       refreshActivityPage(uid, targetDate, duration);
     }
   });

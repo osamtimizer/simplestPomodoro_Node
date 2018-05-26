@@ -15,7 +15,7 @@ block content
       div.tagsinput-primary
         input.tagsinput(name="tagsinput" placeholder="Input tags up to 5.")
     div#remodal-buttons
-      button#remodal-confirm.btn.btn-primary(data-remodal-action="confirm") Select task
+      button#remodal-confirm.btn.btn-inverse(data-remodal-action="confirm") Select task
   div.remodal-tasks-delete.remodal(data-remodal-id="modal-delete" data-remodal-options="hashTracking: true, closeOnCOnfirm: false")
     button.remodal-close(data-remodal-action="close")
     div#remodal-delete-content
@@ -30,7 +30,7 @@ block content
     div.list.container-fluid
       h3.description Tasks
       div#addTasks.input-group
-        button#addTask.btn.btn-primary add Task
+        button#addTask.btn.btn-inverse Add Task
         input#newTask.form-control(placeholder="input task name..." data-toggle="popover" data-content="" data-placement="bottom" data-trigger="manual")
       div.input-group
         input#search-query.form-control(type='text' placeholder="Search...")
@@ -39,6 +39,6 @@ block content
             span#clear-search-query.fui-cross
       div.list-group#task-list.center-block
       div#deleteAll
-        button#btn-deleteAll.btn-danger Delete All Tasks
+        button#btn-deleteAll.btn.btn-danger Delete All Tasks
   include footer
   script(src='/javascripts/build/task_management.js')

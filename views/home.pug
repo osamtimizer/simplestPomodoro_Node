@@ -14,12 +14,12 @@ block content
     div#contents.pomodoro
       div.task
         div.selector
-          select.selectpicker(data-live-search="true" data-style="btn-primary")
+          select.selectpicker(data-live-search="true" data-style="btn-inverse")
         div.tagsinput-primary
           input.tagsinput(name="tagsinput" placeholder="Input tags up to 5.")
         div.newTask
           input#newTask.form-control(placeholder="input task name" data-toggle="popover" data-content="" data-placement="bottom" data-trigger="manual")
-          button#submitNewTask.btn.btn-primary Add Task
+          button#submitNewTask.btn.btn-inverse Add Task
       div.timer(data-intro='This is main timer.')
         span.term Term:
         p.currentStatus Status:
@@ -27,7 +27,7 @@ block content
         div.slider-container
           div.slider
       div#btn-timer
-        button.btn.btn-primary.btn-wide.start(disabled="true") start
+        button.btn.btn-inverse.btn-wide.start(disabled="true") start
         button.btn.btn-default.btn-wide.stop(disabled="true") stop
       div#btn-reset
         button.btn.btn-danger.reset reset Timer
