@@ -38,6 +38,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 //TODO:PRODUCTION:set SESSION_SECRET value in env
+//name also should be written in env
 var key = {
   secret: process.env.SESSION_SECRET,
   resave: false,

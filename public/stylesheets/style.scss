@@ -8,11 +8,7 @@ body {
 a {
   color: #00B7FF;
 
-  &.navbar-link {
-    color: #000000;
-  }
 }
-
 
 span {
   &.close {
@@ -36,6 +32,7 @@ span {
     font-size: 11px;
     color: gray;
   }
+
 
 
 }
@@ -205,6 +202,17 @@ nav.navbar-custom {
   border-bottom: 1px solid;
   border-color: #888888;
   border-radius: 0px;
+
+}
+
+.navbar-default {
+  .navbar-header {
+    .navbar-toggle {
+      .icon-bar {
+        background-color: #white;
+      }
+    }
+  }
 }
 
 footer.footer-custom {

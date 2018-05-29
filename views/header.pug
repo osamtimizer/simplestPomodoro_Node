@@ -1,33 +1,33 @@
 block content
   if user
-    nav.navbar.navbar-default.navbar-custom(role="navigation")
+    nav.navbar.navbar-inverse.navbar-custom(role="navigation")
       div.navbar-heder
         button.navbar-toggle.collapsed#hamburger(type="button" data-toggle="collapse" data-target="#navbarContents")
           span.icon-bar
           span.icon-bar
           span.icon-bar
-        a.navbar-link.navbar-brand(href='/home') SimplestPomodoro
+        a.navbar-brand(href='/home') SimplestPomodoro
       div.collapse.navbar-collapse#navbarContents
         ul.nav.navbar-nav.navbar-left
           li#active: a.navbar-link#username(href="#") Welcome, #{username}!
         ul.nav.navbar-nav.navbar-right
-          li: a.navbar-link#timer(href="/home") timer
-          li: a.navbar-link#atcitivy(href="/activity") activity
-          li: a.navbar-link#settings(href="/settings") settings
-          li: a.navbar-link#task_management(href="/task_management") task management
-          li: a.navbar-link#help(href="/help") help
-          li: a.navbar-link#logout(href="#") logout
+          li: a#timer(href="/home") timer
+          li: a#atcitivy(href="/activity") activity
+          li: a#settings(href="/settings") settings
+          li: a#task_management(href="/task_management") task management
+          li: a#help(href="/help") help
+          li: a#logout(href="#") logout
   else
-    nav.navbar.navbar-default.navbar-custom(role="navigation")
+    nav.navbar.navbar-inverse.navbar-custom(role="navigation")
       div.navbar-heder
         button.navbar-toggle.collapsed(type="button" data-toggle="collapse" data-target="#navbarContents")
           span.icon-bar
           span.icon-bar
           span.icon-bar
-        a.navbar-link.navbar-brand(href='/') SimplestPomodoro
+        a.navbar-brand(href='/') SimplestPomodoro
       div.collapse.navbar-collapse#navbarContents
         ul.nav.navbar-nav.navbar-right
-          li: a.navbar-link#help(href="/help") help
-          li: a.navbar-link#login(href="login") login
-          li: a.navbar-link#signup(href="/signup") signup
+          li: a#help(href="/help") help
+          li: a#login(href="login") login
+          li: a#signup(href="/signup") signup
   script(src="/javascripts/build/header.js")
