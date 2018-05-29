@@ -29,16 +29,20 @@ block content
     div.description
     div.list.container-fluid
       h3.description Tasks
-      div#addTasks.input-group
-        button#addTask.btn.btn-inverse Add Task
-        input#newTask.form-control(placeholder="input task name..." data-toggle="popover" data-content="" data-placement="bottom" data-trigger="manual")
-      div.input-group
-        input#search-query.form-control(type='text' placeholder="Search...")
-        span.input-group-btn
-          button#submitSearch.btn(type="submit")
-            span#clear-search-query.fui-cross
-      div.list-group#task-list.center-block
-      div#deleteAll
-        button#btn-deleteAll.btn.btn-danger Delete All Tasks
+      div.row
+        div#addTasks
+          div.addTask-button.col-lg-1.col-sm-2.col-xs-4
+            button#addTask.btn.btn-inverse Add Task
+          div.newTask-input.col-lg-2.col-sm-4.col-xs-8
+            input#newTask.form-control(type="hidden" placeholder="input task name..." data-toggle="popover" data-content="" data-placement="bottom" data-trigger="manual")
+      div.row
+        div.input-group
+          input#search-query.form-control(type='text' placeholder="Search...")
+          span.input-group-btn
+            button#submitSearch.btn(type="submit")
+              span#clear-search-query.fui-cross
+        div.list-group#task-list.center-block
+        div#deleteAll
+          button#btn-deleteAll.btn.btn-danger Delete All Tasks
   include footer
   script(src='/javascripts/build/task_management.js')

@@ -156,7 +156,11 @@ $(() => {
   });
 
   $("button#submitNewTask").on('click', (event) => {
-    addNewTaskEventHandler(event);
+    if ($("input#newTask").attr('type') === 'hidden') {
+      $("input#newTask").attr('type', '');
+    } else {
+      addNewTaskEventHandler(event);
+    }
   });
 
   //TODO:Add event handlers for selectpicker

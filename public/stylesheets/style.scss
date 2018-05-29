@@ -22,6 +22,11 @@ span {
   &.tag-list {
     margin: 0 2px;
   }
+
+  &.term {
+    font-size: 18px;
+  }
+
   &.fui-arrow-left {
     font-size: 11px;
     color: gray;
@@ -31,6 +36,7 @@ span {
     font-size: 11px;
     color: gray;
   }
+
 
 }
 
@@ -42,6 +48,14 @@ div {
 
   &#btn-reset {
     margin: 10px 0 0 0;
+  }
+
+  &#button-container {
+    padding: 1em 1em;
+    margin: 2em 0;
+    border: solid 3px #333333;
+    border-radius: 10px;
+    background: rgba(204, 204, 204, 0.5);
   }
 
   &#loader-bg {
@@ -71,6 +85,16 @@ div {
   }
 
   &.list {
+  }
+
+  &.index-background {
+    background-color: #ffbeaa;
+    background-position: center center;
+    background-attachment: fixed;
+    background-size: cover;
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
   }
 
   &.index {
@@ -133,12 +157,12 @@ button {
     width: 330px;
   }
   &#submitNewTask {
-    margin: 5px;
   }
 
   &#auth {
     display: block;
     margin: 0 auto;
+    padding: 0;
   }
 }
 
@@ -166,13 +190,13 @@ p {
 
 input {
   &#newTask {
-    margin: 5px;
   }
 
   &#confirmDeleteAllTasks {
     margin: 5px;
     width: 250px;
   }
+
 }
 
 nav.navbar-custom {

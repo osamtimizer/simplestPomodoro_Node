@@ -53,8 +53,11 @@ $(() => {
   });
 
   $("button#addTask").on('click', (event) => {
-    //validate input
-    addNewTaskEventHandler(event);
+    if ($("input#newTask").attr('type') === 'hidden') {
+      $("input#newTask").attr('type', '');
+    } else {
+      addNewTaskEventHandler(event);
+    }
   });
 
   $("input#search-query").on('keyup', (event) => {

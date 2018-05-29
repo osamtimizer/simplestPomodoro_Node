@@ -4,7 +4,8 @@ block content
   div.index
     include header
     div.container
-      p#auth-description.index.text-center ログインするには、以下のボタンからGoogle認証
-      button#auth.btn.btn-center(type="button"): img(src="/images/google_signin_buttons/web/1x/btn_google_signin_dark_normal_web.png")
+      div#button-container.center-block
+        p#auth-description.index.text-center ログインするには、以下のボタンからGoogle認証
+        button#auth: img(src="/images/google_signin_buttons/web/1x/btn_google_signin_dark_normal_web.png")
   include footer
   script(src="javascripts/build/login.js")

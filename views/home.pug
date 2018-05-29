@@ -13,24 +13,34 @@ block content
   div#main.wrap
     div#contents.pomodoro
       div.task
-        div.selector
-          select.selectpicker(data-live-search="true" data-style="btn-inverse")
-        div.tagsinput-primary
-          input.tagsinput(name="tagsinput" placeholder="Input tags up to 5.")
-        div.newTask
-          input#newTask.form-control(placeholder="input task name" data-toggle="popover" data-content="" data-placement="bottom" data-trigger="manual")
-          button#submitNewTask.btn.btn-inverse Add Task
+        div.row
+          div.selector.col-lg-2
+            select.selectpicker(data-live-search="true" data-style="btn-inverse")
+          div.tagsinput-primary.col-lg-4
+            input.tagsinput.col-lg-4(name="tagsinput" placeholder="Input tags up to 5.")
+        div.row
+          div.newTask
+            div.submitNewTask-input.col-lg-1
+              button#submitNewTask.btn.btn-inverse Add Task
+            div.newTask-Input.col-lg-2
+              input#newTask.form-control(type="hidden" placeholder="input task name" data-toggle="popover" data-content="" data-placement="bottom" data-trigger="manual")
       div.timer(data-intro='This is main timer.')
-        span.term Term:
-        p.currentStatus Status:
-        p.time 00:00
-        div.slider-container
-          div.slider
+        div.timer-container
+          div.row
+            div.timer-status.col-lg-2
+              span.term Term:
+              p.currentStatus Status:
+          div.row
+            p.time.col-lg-1 00:00
+            div.slider-container.col-lg-11
+              div.slider
       div#btn-timer
         button.btn.btn-inverse.btn-wide.start(disabled="true") start
         button.btn.btn-default.btn-wide.stop(disabled="true") stop
       div#btn-reset
-        button.btn.btn-danger.reset reset Timer
+        div.row
+          div.button-col.col-lg-2
+            button.btn.btn-danger.reset reset Timer
 
       div.modal.fade(tabindex="-1")
         div.modal-dialog
