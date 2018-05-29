@@ -132,7 +132,7 @@ $(() => {
     clearInterval(timer);
 
     //reset timer and send init value to realtimeDB
-    const content = "Are you sure want to reset this timer?";
+    const content = "タイマーの状態をリセットしますか?";
     confirmDialog(content, () => {
       reset();
     });
@@ -218,7 +218,7 @@ $(() => {
     refreshTags();
     refreshDBPomodoroStatus();
 
-    const content = "Do you want to reset timer?";
+    const content = "タイマーの状態をリセットしますか?";
     confirmDialog(content,() => {
       reset();
     });
@@ -662,12 +662,12 @@ const addNewTaskEventHandler = (event) => {
   event.stopPropagation();
   const task = $("input#newTask").val();
   if (task.length >= 20) {
-    const warning = "Warning: Length of task name must be less than 20.";
+    const warning = "Warning: タスク名は20文字以内で入力して下さい。";
     $('input[data-toggle="popover"]').attr("data-content", warning);
     $('input[data-toggle="popover"]').popover('show');
   }
   else if (!task.match(/\S/g)) {
-    const warning = "Warning: Task name must be some string, not empty";
+    const warning = "Warning: 空白以外の文字を入力して下さい。";
     $('input[data-toggle="popover"]').attr("data-content", warning);
     $('input[data-toggle="popover"]').popover('show');
   }
@@ -687,7 +687,7 @@ const addNewTaskEventHandler = (event) => {
         });
       }).then(() => {
         if (exists) {
-          const warning = "Warning: Task name already exists";
+          const warning = "Warning: このタスク名はすでに登録されています。";
           $('input[data-toggle="popover"]').attr("data-content", warning);
           $('input[data-toggle="popover"]').popover('show');
         } else {

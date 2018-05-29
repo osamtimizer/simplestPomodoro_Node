@@ -17,13 +17,13 @@ block content
           div.selector.col-lg-2
             select.selectpicker(data-live-search="true" data-style="btn-inverse")
           div.tagsinput-primary.col-lg-4
-            input.tagsinput.col-lg-4(name="tagsinput" placeholder="Input tags up to 5.")
+            input.tagsinput.col-lg-4(name="tagsinput" placeholder="タグを5個まで追加")
         div.row
           div.newTask
             div.submitNewTask-input.col-lg-1
-              button#submitNewTask.btn.btn-inverse Add Task
+              button#submitNewTask.btn.btn-inverse 新規タスクを追加
             div.newTask-Input.col-lg-2
-              input#newTask.form-control(type="hidden" placeholder="input task name" data-toggle="popover" data-content="" data-placement="bottom" data-trigger="manual")
+              input#newTask.form-control(type="hidden" placeholder="タスク名を入力" data-toggle="popover" data-content="" data-placement="bottom" data-trigger="manual")
       div.timer(data-intro='This is main timer.')
         div.timer-container
           div.row
@@ -40,7 +40,7 @@ block content
       div#btn-reset
         div.row
           div.button-col.col-lg-2
-            button.btn.btn-danger.reset reset Timer
+            button.btn.btn-danger.reset Reset Timer
 
       div.modal.fade(tabindex="-1")
         div.modal-dialog

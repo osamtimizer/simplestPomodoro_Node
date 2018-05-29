@@ -13,18 +13,18 @@ block content
         h3#taskName
         h4#count
       div.tagsinput-primary
-        input.tagsinput(name="tagsinput" placeholder="Input tags up to 5.")
+        input.tagsinput(name="tagsinput" placeholder="タグを5個まで登録")
     div#remodal-buttons
       button#remodal-confirm.btn.btn-inverse(data-remodal-action="confirm") Select task
   div.remodal-tasks-delete.remodal(data-remodal-id="modal-delete" data-remodal-options="hashTracking: true, closeOnCOnfirm: false")
     button.remodal-close(data-remodal-action="close")
     div#remodal-delete-content
-      h3#remodal-warning-header Warning!
-      p#remodal-warning-description This action cannot be undone. This function will delete all your tasks, tags, activities permanently.
-      p#remodal-delete-description To delete all tasks, please type "DeleteAllTasks" to confirm.
+      h3#remodal-warning-header 全タスクの削除
+      p#remodal-warning-description 全てのタスク、アクティビティ、タグを削除しようとしています。一度削除すると、取り消すことはできません。
+      p#remodal-delete-description 削除を実行するには、"DeleteAllTasks"と入力して下さい。
       div#remodal-delete-form
-        button#btn-deleteAllTasks.btn.btn-danger(data-remodal-action='close' disabled="disabled") Delete All Tasks
-        input#confirmDeleteAllTasks(placeholder='enter "DeleteAllTasks"')
+        button#btn-deleteAllTasks.btn.btn-danger(data-remodal-action='close' disabled="disabled") 削除を実行
+        input#confirmDeleteAllTasks(placeholder='"DeleteAllTasks"と入力...')
   div#main.wrap
     div.description
     div.list.container-fluid
@@ -32,9 +32,9 @@ block content
       div.row
         div#addTasks
           div.addTask-button.col-lg-1.col-sm-2.col-xs-4
-            button#addTask.btn.btn-inverse Add Task
+            button#addTask.btn.btn-inverse 新規タスクを追加
           div.newTask-input.col-lg-2.col-sm-4.col-xs-8
-            input#newTask.form-control(type="hidden" placeholder="input task name..." data-toggle="popover" data-content="" data-placement="bottom" data-trigger="manual")
+            input#newTask.form-control(type="hidden" placeholder="タスク名を入力" data-toggle="popover" data-content="" data-placement="bottom" data-trigger="manual")
       div.row
         div.input-group
           input#search-query.form-control(type='text' placeholder="Search...")
@@ -43,6 +43,6 @@ block content
               span#clear-search-query.fui-cross
         div.list-group#task-list.center-block
         div#deleteAll
-          button#btn-deleteAll.btn.btn-danger Delete All Tasks
+          button#btn-deleteAll.btn.btn-danger 全タスクを削除
   include footer
   script(src='/javascripts/build/task_management.js')

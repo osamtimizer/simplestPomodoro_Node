@@ -5,12 +5,12 @@ block content
     div.alert.alert-danger(role="alert")= message
   include header
   div#remodal-delete-account.remodal(data-remodal-id="modal-delete" data-remodal-options="hashTracking: true, closeOnCOnfirm: false")
-    h3#remodal-warning-header Warning!
-    p#remodal-warning-description This action cannot be undone. This function will delete your Account including Tasks, Tags, Activities and timer status.
-    p#remodal-delete-description To delete all tasks, please type "DeleteAccount" to confirm.
+    h3#remodal-warning-header アカウントの削除
+    p#remodal-warning-description アカウントを削除しようとしています。この操作を実行すると、タスク、アクティビティ、タグ、登録情報全てが削除されます。一度削除すると、取り消すことはできません。
+    p#remodal-delete-description 削除を実行するには、"DeleteAccount"と入力
     div#remodal-delete-form
-      button#btn-deleteAccount.btn.btn-danger(disabled="disabled") Delete Account
-      input#confirmDeleteAccount(placeholder='enter "DeleteAccount"')
+      button#btn-deleteAccount.btn.btn-danger(disabled="disabled") アカウントを削除
+      input#confirmDeleteAccount(placeholder='"DeleteAccount"と入力')
   div.container#main
     div.form-group
       button#delete-account.btn.btn-danger Delete Account
