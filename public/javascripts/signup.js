@@ -16,12 +16,12 @@ $(() => {
     const result = await firebase.auth().signInWithPopup(provider);
     const idToken = await result.user.getIdToken(true);
     if (idToken !== null) {
-      startRegister(result.user.uid, idToken);
+      startSignup(result.user.uid, idToken);
     }
   });
 });
 
-const startRegister = (uid, token) => {
+const startSignup = (uid, token) => {
 
   let form = document.createElement('form');
   form.method = 'POST';

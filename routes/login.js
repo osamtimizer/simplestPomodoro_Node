@@ -30,8 +30,8 @@ router.post('/', async(req, res, next) => {
     const snapshot = await ref.once("value");
 
     if (!snapshot.hasChild(uid)) {
-      console.log("no user found. redirect to register page.");
-      res.redirect('/register');
+      console.log("no user found. redirect to signup page.");
+      res.redirect('/signup');
     } else {
       console.log("add session to client");
       req.session.user = { token: token };

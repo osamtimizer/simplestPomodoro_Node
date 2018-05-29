@@ -24,7 +24,7 @@ router.get('/help', (req, res, next) => {
 
 router.get('/terms-of-use', (req, res, next) => {
   if (req.session.agreement) {
-    res.redirect('/register');
+    res.redirect('/signup');
   } else if (req.session.user) {
     res.redirect('/home');
   } else {
@@ -37,7 +37,7 @@ router.get('/terms-of-use', (req, res, next) => {
 router.post('/terms-of-use', (req, res, next) => {
   if (req.body.agreed === 'true') {
     req.session.agreement = { agreed: true };
-    res.redirect('/register');
+    res.redirect('/signup');
   } else {
     console.log('not agreed');
     res.redirect('/terms-of-use');

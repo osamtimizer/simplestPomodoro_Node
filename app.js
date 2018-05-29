@@ -12,7 +12,7 @@ const auth = admin.auth();
 const database = admin.database();
 
 var index = require('./routes/index');
-var register = require('./routes/register');
+var signup = require('./routes/signup');
 var users = require('./routes/users');
 var login = require('./routes/login');
 var logout = require('./routes/logout');
@@ -92,7 +92,7 @@ const accessLog = (req, res, next) => {
 app.use(accessLog);
 
 app.use('/', index);
-app.use('/register', register);
+app.use('/signup', signup);
 app.use('/login', login);
 app.use('/logout', logout);
 app.use('/users', users);

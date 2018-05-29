@@ -9,7 +9,7 @@ module.exports = {
     index: './public/javascripts/index.js',
     home: './public/javascripts/home.js',
     eula: './public/javascripts/eula.js',
-    register: './public/javascripts/register.js',
+    signup: './public/javascripts/signup.js',
     header: './public/javascripts/header.js',
     activity: './public/javascripts/activity.js',
     settings: './public/javascripts/settings.js',

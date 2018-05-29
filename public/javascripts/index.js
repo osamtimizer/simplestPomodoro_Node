@@ -1,6 +1,6 @@
 $(() => {
-  $("a.register").on('click', (event) => {
-    location.href='/register';
+  $("a.signup").on('click', (event) => {
+    location.href='/signup';
   });
   $("button#login").on('click', (event) => {
     location.href='/login';

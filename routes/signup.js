@@ -15,7 +15,7 @@ router.get('/', (req, res, next) => {
     res.redirect('/terms-of-use');
   }
 }, (req, res, next) => {
-  res.render('register');
+  res.render('signup');
 });
 
 module.exports = router;
