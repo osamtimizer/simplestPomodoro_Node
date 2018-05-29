@@ -20,7 +20,7 @@
     "connect-redis": "^3.3.3",
     "datatables.net-bs": "^1.10.16",
     "debug": "~2.6.9",
-    "express": "~4.15.5",
+    "express": "^4.16.3",
     "express-session": "^1.15.6",
     "firebase": "^4.11.0",
     "firebase-admin": "^5.10.0",
