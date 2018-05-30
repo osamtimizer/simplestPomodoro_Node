@@ -579,6 +579,7 @@ const resetTimer = () => {
 const refreshTimer = () => {
   const time = moment(remain).format("mm:ss");
   $("p.time").text(time);
+  console.log(typeof(initialTerm));
   const template = `Term: ${terms.toString()} /<span class="fui-arrow-left"/> ${initialTerm.toString()} <span class="fui-arrow-right"/>`;
   $("span.term").html(template);
   if (isWorking) {
@@ -711,7 +712,7 @@ const addNewTaskEventHandler = (event) => {
           const ref = database.ref('users/' + uid + '/tasks/' + task);
           ref.set("");
           tasks[task] = "";
-          const success = `${task} was added successfully.`;
+          const success = `${task} が追加されました`;
           $('input[data-toggle="popover"]').attr("data-content", success);
           $('input[data-toggle="popover"]').popover('show');
           $('input#newTask').val('');

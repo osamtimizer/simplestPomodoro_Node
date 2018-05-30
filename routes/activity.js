@@ -7,16 +7,13 @@ const database = admin.database();
 
 router.get('/', function(req, res, next) {
 
-  auth.verifyIdToken(req.session.user.token)
-    .then((decodedToken) => {
-      const username = decodedToken.name;
-      res.render('activity', {
-        username: username,
-        user: true
-      });
-    }).catch((err) => {
-      console.error(err);
+  if (req.session.user) {
+    res.render('activity', {
+      user: true
     });
+  } else {
+    res.redirect('/login');
+  }
 });
 
 module.exports = router;

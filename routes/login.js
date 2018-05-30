@@ -34,7 +34,7 @@ router.post('/', async(req, res, next) => {
       res.redirect('/signup');
     } else {
       console.log("add session to client");
-      req.session.user = { token: token };
+      req.session.user = { token: true };
       req.session.save((err) => {
         if(err) {
           next(err);

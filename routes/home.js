@@ -8,17 +8,13 @@ const database = admin.database();
 
 /* GET main page. */
 router.get('/', async(req, res, next) => {
-  const decodedToken = await auth.verifyIdToken(req.session.user.token)
-    .catch((err) => {
-      console.error(err);
-      res.redirect('/login');
-    });
-
-  const username = decodedToken.name;
+  if (req.session.user) {
   res.render('home', {
-    username: username,
     user: true
   });
+  } else {
+      res.redirect('/login');
+  }
 });
 
 module.exports = router;

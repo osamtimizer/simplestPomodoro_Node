@@ -415,7 +415,7 @@ const addNewTaskEventHandler = async(event) => {
         }).catch((err) => {
           console.error(err);
         });
-      const success = `${taskName} was added successfully.`;
+      const success = `${taskName} が追加されました`;
       $('input[data-toggle="popover"]').attr("data-content", success);
       $('input[data-toggle="popover"]').popover('show');
       $("input#newTask").val('');

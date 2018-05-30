@@ -4,14 +4,30 @@ block content
   div.index
     include header
     div.container
-      div#button-container.text-center
-        h3#title.light-text ヘルプ
-        h5.light-text ポモドーロタイマーって何ですか？
-        p.light-text a
-        h5.light-text test
-        p.light-text b
-        h5.light-text test
-        p.light-text c
-        h5.light-text test
-        p.light-text d
+      div#button-container
+        h1#title.light-text.text-center ヘルプ
+        section
+          h2.light-text ポモドーロテクニックとは何ですか？
+          p.light-text ポモドーロテクニックとは、Francesco Cirillo氏によって考案された、短いスパンで集中的に働くことで、日々の生産性を高めるためのテクニックです。具体的には、以下のような手順で実行します。
+          p.light-text 1. 25分を1ポモドーロとし、やるべきタスクを1ポモドーロ単位で分ける
+          p.light-text 2. 25分間はそのタスクのみに集中し、他のことは一切やらない
+          p.light-text 3. 1ポモドーロが終わったら5分の休憩を取る
+          p.light-text 4. 4ポモドーロ毎に30分の長い休憩を取る
+          p.light-text 5. 1-4を繰り返す
+        section
+          h2.light-text ポモドーロの回数を変更したい
+          p.light-text
+            | 最大ポモドーロ回数の左右にある
+            span.fui-arrow-left
+            span.fui-arrow-right
+            | をクリックすることで増減させることができます。(最小:1〜最大:9)
+            br
+            | 現在のポモドーロ回数より小さくすることはできません。
+        section
+          h2.light-text 別のタスクを追加したい
+          p.light-text "新規タスクを追加"ボタンを押すと、テキストボックスが表示されます。追加したいタスク名を入力してEnterキーを押すと、タスクを追加することができます。追加したタスクは、左上のドロップダウンから選択できます。
+        section
+          h2.light-text タグは何に使うものですか？
+          p.light-text タグをつけておくと、task managementページで同じタグが設定されているタスクを探しやすくなります。
+          p.light-text また、今後activityページでタグ毎のタスクを見られるように機能を追加していく予定です。
   include footer

@@ -143,6 +143,14 @@ h3 {
   }
 }
 
+h1 {
+  font-size: 32px;
+}
+
+h2{
+  font-size: 24px;
+}
+
 canvas#myChart {
 }
 
@@ -182,6 +190,10 @@ h1 {
 p {
   &.index {
     color: #FFF;
+  }
+
+  &.light-text {
+    font-size: 14px;
   }
 
 }

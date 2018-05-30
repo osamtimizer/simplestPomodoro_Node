@@ -58,15 +58,7 @@ app.use(session(key));
 const authentication = (req, res, next) => {
   if(req.session.user) {
     console.log("Middleware: authentication is called");
-    auth.verifyIdToken(req.session.user.token)
-      .then((decodedToken) => {
-        console.log("Middleware: token is valid");
-        console.log("username", decodedToken.name);
-        next();
-      }).catch((err) => {
-        console.error(err);
-        next(err);
-      });
+    next();
   } else {
     console.log("no session");
     res.redirect('/login');
