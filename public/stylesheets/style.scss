@@ -25,12 +25,12 @@ span {
 
   &.fui-arrow-left {
     font-size: 11px;
-    color: gray;
+    color: rgb(25,188,155);
   }
 
   &.fui-arrow-right {
     font-size: 11px;
-    color: gray;
+    color: rgb(25,188,155);
   }
 
 
@@ -40,7 +40,7 @@ span {
 div {
   &#main {
     padding: 10px;
-    padding-bottom: 60px;
+    padding-bottom: 120px;
   }
 
   &#btn-reset {
@@ -183,6 +183,11 @@ p {
   &.index {
     color: #FFF;
   }
+
+}
+
+.light-text {
+  color: white;
 }
 
 input {
@@ -221,6 +226,7 @@ footer.footer-custom {
   border-top: 1px solid;
   border-color: #888888;
   border-radius: 0px;
+  height: 50px;
   z-index: 0;
 }
 

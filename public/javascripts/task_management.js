@@ -387,13 +387,13 @@ const fadeOutLoadingImage = () => {
 const addNewTaskEventHandler = async(event) => {
   const taskName = $("input#newTask").val();
   if (taskName.length >= 20) {
-    const warning = "Warning: タスク名は20文字以内で入力して下さい。";
+    const warning = "タスク名は20文字以内で入力して下さい。";
     console.log(warning);
     $('input[data-toggle="popover"]').attr("data-content", warning);
     $('input[data-toggle="popover"]').popover('show');
     return;
   } else if (!taskName.match(/\S/g)) {
-    const warning = "Warning: 空白以外の文字を入力して下さい。";
+    const warning = "空白以外の文字を入力して下さい。";
     $('input[data-toggle="popover"]').attr("data-content", warning);
     $('input[data-toggle="popover"]').popover('show');
     return;
@@ -404,7 +404,7 @@ const addNewTaskEventHandler = async(event) => {
     const ref = database.ref('users/' + uid + '/tasks/');
     const result = await ref.once("value");
     if (result.hasChild(taskName)) {
-      const warning = "Warning: このタスク名はすでに登録されています。";
+      const warning = "このタスク名はすでに登録されています。";
       $('input[data-toggle="popover"]').attr("data-content", warning);
       $('input[data-toggle="popover"]').popover('show');
     } else {

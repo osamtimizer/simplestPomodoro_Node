@@ -10,6 +10,9 @@ const database = admin.database();
 router.post('/', async(req, res, next) => {
   console.log("Users POST");
 
+  if (req.body.uid === undefined || req.body.token === undefined) {
+    next(new Error('parameter is invalid'));
+  }
   const uid = req.body.uid;
   const token = req.body.token;
 
@@ -29,13 +32,9 @@ router.post('/', async(req, res, next) => {
 
       //uidが存在しなければthrow eとなる
       //既に登録されていたらメインページにリダイレクトしてやる
-
       const snapshot = await database.ref('users').once('value');
       if (snapshot.hasChild(uid)) {
         console.log("user found");
-        //generate new token to store in cookie.
-        //TODO:validate token
-
         req.session.user = {token: token};
         res.redirect('/home');
 
@@ -49,13 +48,14 @@ router.post('/', async(req, res, next) => {
         req.session.user = { token: token };
         res.redirect('/home');
       }
-
     }).catch((err) => {
+      console.error(err);
       next(err);
     });
 
 });
 
+//TODO:IMPL csrf middleware
 router.post('/delete', async(req, res, next) => {
   const token = req.body.token;
   const decodedToken = await auth.verifyIdToken(token).catch((err) => {
@@ -65,7 +65,6 @@ router.post('/delete', async(req, res, next) => {
     next(new Error("Token is invalid"));
   } else {
     //delete all information of user
-    //TODO:uncomment for deletion
     const uid = decodedToken.uid;
     auth.deleteUser(uid);
     database.ref('users/' + uid).remove()

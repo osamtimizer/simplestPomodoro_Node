@@ -13,7 +13,7 @@ const confirmDialog = (content, okCallback, cancelCallback) => {
   }
 
   $.confirm({
-    title: "Caution",
+    title: "",
     content: content,
     type: 'green',
     buttons: {

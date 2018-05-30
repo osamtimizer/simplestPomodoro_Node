@@ -21,7 +21,7 @@ $(() => {
 
   $("button#submit-eula").on('click', (event) => {
     const form = document.createElement("form");
-    form.setAttribute("action", '/terms-of-use');
+    form.setAttribute("action", '/eula');
     form.setAttribute("method", 'POST');
     form.style.display = "none";
     document.body.appendChild(form);

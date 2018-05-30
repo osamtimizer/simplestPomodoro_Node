@@ -12,7 +12,7 @@ router.get('/', (req, res, next) => {
   } else if (req.session.agreement) {
     next();
   } else {
-    res.redirect('/terms-of-use');
+    res.redirect('/eula');
   }
 }, (req, res, next) => {
   res.render('signup');

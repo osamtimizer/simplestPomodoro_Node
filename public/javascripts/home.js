@@ -251,6 +251,8 @@ $(() => {
           const template = `Term: ${terms.toString()} /<span class="fui-arrow-left"/> ${newInitialTerm.toString()} <span class="fui-arrow-right"/>`;
           $("span.term").html(template);
           initialTerm = newInitialTerm;
+        }).then(() => {
+          refreshSpanArrow();
         }).catch((err) => {
           console.error(err);
         });
@@ -270,6 +272,8 @@ $(() => {
           const template = `Term: ${terms.toString()} /<span class="fui-arrow-left"/> ${newInitialTerm.toString()} <span class="fui-arrow-right"/>`;
           $("span.term").html(template);
           initialTerm = newInitialTerm;
+        }).then(() => {
+          refreshSpanArrow();
         }).catch((err) => {
           console.error(err);
         });
@@ -285,8 +289,7 @@ $(() => {
   });
 
   $("span.term").on('mouseleave', 'span.fui-arrow-left', (event) => {
-    $(event.target).css("cursor", "auto");
-    $(event.target).css("color", "gray");
+    refreshSpanArrow();
   });
 
   $("span.term").on('mouseenter', 'span.fui-arrow-right', (event) => {
@@ -297,8 +300,7 @@ $(() => {
   });
 
   $("span.term").on('mouseleave', 'span.fui-arrow-right', (event) => {
-    $(event.target).css("cursor", "auto");
-    $(event.target).css("color", "gray");
+    refreshSpanArrow();
   });
 
 });
@@ -316,7 +318,7 @@ const refreshHeader = () => {
       $("nav.navbar-custom").css("background-color", "#1C8BE2");
     }
   } else {
-      $("nav.navbar-custom").css("background-color", "#34485E");
+    $("nav.navbar-custom").css("background-color", "#34485E");
   }
 }
 
@@ -435,7 +437,7 @@ const confirmDialog = (content, okCallback, cancelCallback) => {
   }
 
   $.confirm({
-    title: "Caution",
+    title: "タイマーのリセット",
     content: content,
     type: 'green',
     buttons: {
@@ -586,7 +588,22 @@ const refreshTimer = () => {
   }
   refreshSlider();
   refreshButtonview();
+  refreshSpanArrow();
 }
+
+const refreshSpanArrow = () => {
+  if (terms < initialTerm) {
+    $("span.fui-arrow-left").css("color", "rgb(25,188,155)");
+  } else {
+    $("span.fui-arrow-left").css("color", "gray");
+  }
+
+  if (initialTerm < INITIAL_TERM_LIMIT_UPPER) {
+    $("span.fui-arrow-right").css("color", "rgb(25,188,155)");
+  } else {
+    $("span.fui-arrow-right").css("color", "gray");
+  }
+};
 
 const refreshButtonview = () => {
   if (timerStatus) {
@@ -662,12 +679,12 @@ const addNewTaskEventHandler = (event) => {
   event.stopPropagation();
   const task = $("input#newTask").val();
   if (task.length >= 20) {
-    const warning = "Warning: タスク名は20文字以内で入力して下さい。";
+    const warning = "タスク名は20文字以内で入力して下さい。";
     $('input[data-toggle="popover"]').attr("data-content", warning);
     $('input[data-toggle="popover"]').popover('show');
   }
   else if (!task.match(/\S/g)) {
-    const warning = "Warning: 空白以外の文字を入力して下さい。";
+    const warning = "空白以外の文字を入力して下さい。";
     $('input[data-toggle="popover"]').attr("data-content", warning);
     $('input[data-toggle="popover"]').popover('show');
   }
@@ -687,7 +704,7 @@ const addNewTaskEventHandler = (event) => {
         });
       }).then(() => {
         if (exists) {
-          const warning = "Warning: このタスク名はすでに登録されています。";
+          const warning = "このタスク名はすでに登録されています。";
           $('input[data-toggle="popover"]').attr("data-content", warning);
           $('input[data-toggle="popover"]').popover('show');
         } else {
