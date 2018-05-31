@@ -3,14 +3,70 @@ extends layout
 block content
   div.index
     include header
-    div.content#main
-      div#eula
-      div#agreement.text-center
-        p#EULA.index
-          | we will correct your personal information only for using displaying.
+    div.container#main
+      div#button-container
+        h1#title.light-text.text-center 利用規約
+        section
+          h2.light-text 1.利用規約
+          p.light-text この利用規約(以下、本規約と言います)は、SimplestPomodoro(以下、本サービスといいます）の利用条件を定めるものです。登録ユーザのみなさま(以下、ユーザといいます)には、本規約に従って本サービスをご利用いただきます。
+        section
+          h2.light-text 2.概要
+          p.light-text 本規約は、ユーザと本サービスの利用に関わる一切の関係に適用されるものとします。
+            | 利用規約には、この利用規約に加え、プライバシーポリシーが適用されます。
+            | ユーザが当サービスへアクセス、または利用した場合には、本規約に拘束されることに同意したことになります。
+        section
+          h2.light-text 3.利用登録
+
+          p.light-text 登録を申請した場合、登録希望者はこの利用規約に同意したものとみなします。
+            | 登録の際、申請者に以下の理由があると判断した場合、利用登録の申請を承認また取り消す場合があり、その理由については一切の開示義務を負わないものとします。
+          ul
+            li.light-text 虚偽の事項を届けた場合
+            li.light-text 本規約に違反したことがあるユーザからの申請である場合
+            li.light-text その他、本サービスが利用登録を相当でないと判断した場合
+
+        section
+          h2.light-text 4.ログイン情報の管理
+          p.light-text ユーザは、自己の責任において、本サービスのログイン情報を管理するものとします。
+            | ユーザは、いかなる場合でも、ログイン情報を第三者に譲渡または貸与することはできません。
+            | 本サービスは、ユーザのログイン情報を用いてログインされた場合には、そのユーザを登録しているユーザ自身による利用とみなします。
+        section
+          h2.light-text 5.本サービス提供の停止など
+          p.light-text 本サービスは、以下の理由により、ユーザの承諾あるいは事前通告なしに、サービスあるいはサービスの一部を停止することがあります。
+          ul
+            li.light-text 本サービスにかかるシステムの保守点検または更新を行う場合
+            li.light-text 地震、落雷、火災、停電またはその他の天災などの不可抗力により、本サービスの提供が困難となった場合
+            li.light-text コンピュータまたは電気通信回線等が故障により停止した場合
+            li.light-text その他、本サービスの提供が困難であると判断した場合
+
+          p.light-text 本サービスの提供の停止または中断により、ユーザまたは第三者が被ったいかなる不利益または損害について、理由を問わず一切の責任を追わないものとします。
+        section
+          h2.light-text 6.禁止事項
+          p.light-text 本サービスでは、以下の行為を禁止しています。
+          ul
+            li.light-text アカウントの大量作成：同一ユーザによる、大量の複数アカウント作成を禁じます。
+            li.light-text 第三者になりすます行為
+            li.light-text システムに負荷をかける行為：本サービスが提供する方法以外で、意図的にネットワークやシステムに過度な負荷をかける行為を禁じます。
+            li.light-text 公序良俗に反する行為
+            li.light-text その他、本サービスが不適切と判断する行為
+
+        section
+          h2.light-text 7.利用の停止
+          p.light-text ユーザは、アカウントを削除することでサービスの利用をいつでも終了することができます。その際、ユーザ情報はプライバシーポリシーに基づき処理されます。
+            |また、本サービスが不適切と判断した場合や禁止事項に抵触した場合、事前通告なしにユーザのアカウントを停止または削除、あるいはサービスの一部を制限する場合があります。
+        section
+          h2.light-text 8.免責事項
+          p.light-text 本サービスより提供する情報およびリンクに設定された外部ウェブサイトによって生じた損害（コンピュータウイルス感染被害などによる損害を含む）や、利用者同士の紛争等に対し、運営主体はいかなる責任も負いません。
+            | 本サービスに掲載されている情報の変更、および本サービスの運用中断又は中止によって生じるいかなる損害も負わないものとします。
+        section
+          h2.light-text 9.規約の更新
+          p.light-text この規約は、サービス内容の変更、法律の変更などにより、変更する場合があります。
+            | その際、当サービスは事前あるいは直後に合理的な方法で通知を行います。
+            | 規約が変更された場合、ユーザはその条件を承諾するか判断する必要があります。
+            | 本サービスを引き続き利用される場合は、変更後の規約に同意したものと見なされます。
+      div.form.text-center
         input#agree-checkbox(type="checkbox")
-        label.index 使用条件に同意
+        label.index 利用規約に同意
       div#submit-eula.text-center
-        button#submit-eula.btn.btn-primary(disabled="true") 同意して次へ
+        button#submit-eula.btn.btn-inverse(disabled="true") 同意して次へ
   include footer
   script(src='/javascripts/build/eula.js')

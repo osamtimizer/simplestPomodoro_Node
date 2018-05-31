@@ -3,16 +3,53 @@ extends layout
 block content
   div.index
     include header
-    div.container
-      div#button-container
+    div.container.main
+      div#button-container.main
         h1#title.light-text.text-center プライバシーポリシー
         section
-          h2.light-text test
-          p.light-text a
+          p.light-text SimplestPomodoro(以下、本サービスといいます)では、利用者のみなさま(以下、ユーザといいます)から収集した個人情報およびユーザのコンテンツの保護に努めています。
         section
-          h2.light-text test
-          p.light-text a
+          h2.light-text 個人情報の収集と管理
+          h3.light-text アカウント情報
+          p.light-text 本サービスでは、ユーザのアカウント情報をGoogle Firebase Authentication上で管理しています。
+            | これらの情報は、ユーザ本人であることを識別しサービスを提供すること、また、ユーザとのコミュニケーション(重要なお知らせをユーザのメールアドレスに送信)を取るために利用されます。
+            | 本サービスからユーザのGoogleアカウントの情報を変更・削除することはありません。Firebaseのプライバシーポリシー詳細は、以下のページをご覧ください。
+          p
+            a(href="https://firebase.google.com/support/privacy/?hl=ja") Firebase(Googleのサイトにアクセスします)
         section
-          h2.light-text test
-          p.light-text a
+          h3.light-text トラッキング情報
+          p.light-text 本サービスでは、Google Analyticsを介してトラッキング情報を取得することがあります。トラッキング情報は、アクセスを統計的に分析し、本サービスの品質向上に役立てるために使用されます。Google Analyticsのプライバシーポリシー詳細については、以下のページをご覧ください。
+          p
+            a(href="https://www.google.com/analytics/terms/jp.html") Google Analytics(Googleのサイトにアクセスします)
+        section
+          h2.light-text 広告の配信
+          p.light-text 本サービスでは、Google Adsenseを利用しています。広告配信事業者は、ユーザに応じた適切な広告を表示するためにCookieを使用することがあります。Cookieを無効にする設定、およびGoogle Adsenseのプライバシーポリシー詳細は、以下のページをご覧ください。
+          p
+            a(href="https://policies.google.com/technologies/ads") Google Adsense(Googleのサイトにアクセスします)
+        section
+          h2.light-text 情報の開示
+          h3.light-text 第三者への提供
+          p.light-text 本サービスでは、以下の場合を除き、第三者に情報を提供・開示することはありません。
+
+          ul
+            li.light-text 情報を共有することへのユーザの同意がある場合
+            li.light-text 法令遵守のため、本サービスが必要と判断した場合
+            li.light-text 裁判所、検察庁、警察またはこれらに準じた権限を有する機関から、個人情報についての開示を求められた場合
+
+        section
+          h2.light-text ポリシーの見直し・変更
+          p.light-text 本サービスは、上記のポリシー内容を必要に応じて更新する場合があります。
+            | その際、事前あるいは直後に合理的な方法で通知を行います。
+            | ユーザが本サービスへアクセス、または利用した場合は、このポリシーに同意したことになります。
+        section
+          h2.light-text 免責事項
+          p.light-text 本サービスで掲載している画像の著作権・肖像権等は書く権利所有者に帰属いたします。
+            | 本サービスに存在する文章・画像等の著作物の情報を無断転載することを禁止いたします。
+            | 本サービスからリンクやバナーなどによって他のサイトに移動された場合、異動先のページ、サイトで提供される情報、サービス等について一切の責任を負いません。
+        section
+          h2.light-text お問い合わせ先
+          p.light-text お問い合わせには以下のメールアドレス、もしくはTwitterアカウントまでご連絡ください。
+          p.light-text email: simplestpomodoro01@gmail.com
+          p.light-text twitter: 
+            a(href="https://twitter.com/SimplestP") @SimplestP
   include footer

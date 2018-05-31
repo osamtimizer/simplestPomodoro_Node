@@ -40,7 +40,7 @@ span {
 div {
   &#main {
     padding: 10px;
-    padding-bottom: 120px;
+    padding-bottom: 160px;
   }
 
   &#btn-reset {
@@ -137,11 +137,6 @@ div {
   }
 }
 
-h3 {
-  &#remodal-warning-header {
-    color: red;
-  }
-}
 
 h1 {
   font-size: 32px;
@@ -149,6 +144,15 @@ h1 {
 
 h2{
   font-size: 24px;
+}
+
+h3 {
+  &#remodal-warning-header {
+    color: red;
+  }
+  &.light-text {
+    font-size: 18px;
+  }
 }
 
 canvas#myChart {
