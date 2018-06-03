@@ -85,7 +85,6 @@ $(() => {
   $("div.list-group#task-list").on('click', 'a.task', (event) => {
     selectedTask = $(event.target).attr("taskName");
     console.log(selectedTask);
-    //TODO: Show specific information of task as modal dialog.
     modal.open();
   });
 
@@ -93,7 +92,6 @@ $(() => {
     event.stopPropagation();
     const task = $(event.target).parent().attr("taskName");
     const content = "Are you sure want to delete this task?";
-    //TODO:check whether the task is current task.
     confirmDialog(content, () => {
       console.log("OK Clicked");
       console.log(task);
@@ -223,15 +221,12 @@ $(() => {
   });
 
   //event handlers for tagsinput
-  //TODO:keydown以外でのTag入力を防ぐ
 
   $("input.tagsinput").on('beforeItemAdd', (event) => {});
   $("input.tagsinput").on('beforeItemRemove', (event) => {});
 
   $("input.tagsinput").on('itemAdded', (event) => {
     console.log("input.tagsinput itemAdded");
-    //validate tag
-    //TODO:sanitize input text
     if (isRenderingModal) {
       return false;
     }
@@ -270,8 +265,6 @@ $(() => {
 
 const tagsinput_ItemAdded = (event) => {
   console.log("input.tagsinput itemAdded");
-  //validate tag
-  //TODO:sanitize input text
   const inputTags = $("input.tagsinput").tagsinput('items');
   const user = auth.currentUser;
   if (user) {

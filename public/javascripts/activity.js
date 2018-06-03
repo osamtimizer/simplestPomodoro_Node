@@ -328,17 +328,11 @@ const fetchCurrentTask = (uid) => {
   });
 }
 
-//TODO: refreshActivityPage must accept tasks as input value or fetch somehow to render them.
 const refreshActivityPage = (uid, targetDate, duration) => {
   console.log("refreshActivityPage");
-  //const startDate = moment(targetDate - duration);
-  //const endDate = moment(targetDate + DURATIONS.day);
-
-  //const chartType = duration === DURATIONS.year ? CANVAS_TYPES.line : CANVAS_TYPES.bar;
   const chartType = CANVAS_TYPES.bar;
 
 
-  //TODO:fetch selected tasks from selectpicker
   let selectedTasks = [];
 
   $('select.selectpicker option:selected').each((index, selected) => {
@@ -444,10 +438,8 @@ const parseResult = (result, targetDate, duration, taskName) => {
 
   console.log("Result of parsedResult", parsedResult);
   return parsedResult;
-
 }
 
-//TODO:Limit of data must be up to 5 or 10...
 const refreshCanvas = (results, canvas_type) => {
   console.log("refreshCanvas");
   console.log("input value results: ", results);

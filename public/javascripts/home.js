@@ -149,7 +149,6 @@ $(() => {
     if(event.keyCode === 13) {
       console.log("Enter pushed");
       addNewTaskEventHandler(event);
-      //TODO:Rebuild Selectpicker
     } else {
       $('input[data-toggle="popover"]').popover('hide');
     }
@@ -163,8 +162,6 @@ $(() => {
     }
   });
 
-  //TODO:Add event handlers for selectpicker
-
   $(window).on('beforeunload', (event) => {
     if (timerStatus) {
       refreshDBPomodoroStatus();
@@ -176,8 +173,6 @@ $(() => {
   });
   $("input.tagsinput").on('itemAdded', (event) => {
     console.log("input.tagsinput itemAdded");
-    //validate tag
-    //TODO:sanitize input text
     const inputTags = $(event.currentTarget).tagsinput('items');
     const user = auth.currentUser;
     if (user) {
@@ -377,7 +372,7 @@ const startCount = () => {
     }
   }
 
-  remain -= ONE_SEC_MS * 10;
+  remain -= ONE_SEC_MS;
   const remain_display = remain > 0 ? remain : 0;
   if (isWorking) {
     $("title").text("Working: " + moment(remain_display).format("mm:ss"));

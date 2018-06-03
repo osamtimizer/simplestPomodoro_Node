@@ -1,6 +1,7 @@
 **/node_modules/**
 */.*
 .simplestpomodoro.json
+.newrelic.json
 .db.js
 **/build/*.js
 **/build/*.css
