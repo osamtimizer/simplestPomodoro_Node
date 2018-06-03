@@ -18,6 +18,9 @@ router.get('/', (req, res, next) => {
 });
 
 router.post('/', async(req, res, next) => {
+  if (req.body.token === undefined) {
+    next(new Error('parameter is invalid'));
+  }
   const token = req.body.token;
   const decodedToken = await auth.verifyIdToken(token).catch((err) => {
     next(err);

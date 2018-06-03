@@ -21,9 +21,9 @@ describe('not-logged in user test', (done) => {
     });
   });
 
-  it('router "/signup" will return 200 response', (done) => {
+  it('router "/signup" will return 302 response', (done) => {
     user.get('/signup').end((err, res) => {
-      expect(res.statusCode).to.be.equal(200);
+      expect(res.statusCode).to.be.equal(302);
       done();
     });
   });

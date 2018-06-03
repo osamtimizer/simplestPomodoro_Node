@@ -32,7 +32,9 @@ router.post('/', async(req, res, next) => {
 
       //uidが存在しなければthrow eとなる
       //既に登録されていたらメインページにリダイレクトしてやる
-      const snapshot = await database.ref('users').once('value');
+      const snapshot = await database.ref('users').once('value').catch((err) => {
+        next(err);
+      });
       if (snapshot.hasChild(uid)) {
         console.log("user found");
         req.session.user = {token: token};
@@ -49,7 +51,7 @@ router.post('/', async(req, res, next) => {
         res.redirect('/home');
       }
     }).catch((err) => {
-      console.error(err);
+      //console.error(err);
       next(err);
     });
 
@@ -57,6 +59,9 @@ router.post('/', async(req, res, next) => {
 
 //TODO:IMPL csrf middleware
 router.post('/delete', async(req, res, next) => {
+  if (req.body.token === undefined) {
+    next(new Error('parameter is invalid'));
+  }
   const token = req.body.token;
   const decodedToken = await auth.verifyIdToken(token).catch((err) => {
     next(err);

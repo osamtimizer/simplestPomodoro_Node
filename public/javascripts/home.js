@@ -248,7 +248,7 @@ $(() => {
       const newInitialTerm = snapshot.val() - 1;
       if (newInitialTerm >= INITIAL_TERM_LIMIT_LOWER && newInitialTerm >= terms) {
         database.ref(uri).set(newInitialTerm).then(() => {
-          const template = `Term: ${terms.toString()} /<span class="fui-arrow-left"/> ${newInitialTerm.toString()} <span class="fui-arrow-right"/>`;
+          const template = `Pomodoro: ${terms.toString()} /<span class="fui-arrow-left"/> ${newInitialTerm.toString()} <span class="fui-arrow-right"/>`;
           $("span.term").html(template);
           initialTerm = newInitialTerm;
         }).then(() => {
@@ -269,7 +269,7 @@ $(() => {
       const newInitialTerm = snapshot.val() + 1;
       if (newInitialTerm <= INITIAL_TERM_LIMIT_UPPER) {
         database.ref(uri).set(newInitialTerm).then(() => {
-          const template = `Term: ${terms.toString()} /<span class="fui-arrow-left"/> ${newInitialTerm.toString()} <span class="fui-arrow-right"/>`;
+          const template = `Pomodoro: ${terms.toString()} /<span class="fui-arrow-left"/> ${newInitialTerm.toString()} <span class="fui-arrow-right"/>`;
           $("span.term").html(template);
           initialTerm = newInitialTerm;
         }).then(() => {
@@ -396,7 +396,7 @@ const refreshSlider = () => {
     $("div.ui-slider-range").css("background", "#E84B3C");
   } else {
     $("div.ui-slider-range").css("background", "#1C8BE2");
-    if (terms === 0) {
+    if (terms === initialTerm) {
       const style_width =  (remain / BREAK_LARGE_DURATION_MS) * 100;
       const template_slider = String.raw`left: ${style_width}%`;
       $("a.ui-slider-handle").attr("style",template_slider);
@@ -580,7 +580,7 @@ const refreshTimer = () => {
   const time = moment(remain).format("mm:ss");
   $("p.time").text(time);
   console.log(typeof(initialTerm));
-  const template = `Term: ${terms.toString()} /<span class="fui-arrow-left"/> ${initialTerm.toString()} <span class="fui-arrow-right"/>`;
+  const template = `Pomodoro: ${terms.toString()} /<span class="fui-arrow-left"/> ${initialTerm.toString()} <span class="fui-arrow-right"/>`;
   $("span.term").html(template);
   if (isWorking) {
     $("p.currentStatus").text("Status: Working");
