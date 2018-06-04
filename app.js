@@ -80,7 +80,6 @@ const authentication = (req, res, next) => {
 
 //middleware:logging
 const accessLog = (req, res, next) => {
-  const access = logger.access;
   const system = logger.system;
 
   const ip = req.ip;
@@ -89,7 +88,6 @@ const accessLog = (req, res, next) => {
   const params = JSON.stringify(req.params);
   let log = `IP:${ip}, Url:${url}, Method:${method}, Params:${params}`;
 
-  access.info(log);
   system.info(log);
 
   next();

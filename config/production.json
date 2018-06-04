@@ -8,10 +8,11 @@
       },
       "categories": {
         "system": {"appenders": ["console"],"level": "debug"},
-        "access": {"appenders": ["accessLogFile"],"level": "debug"},
+        "access": {"appenders": ["console"],"level": "debug"},
         "error": {"appenders": ["console"],"level": "debug"},
         "default": {"appenders": ["console"],"level": "debug"}
-      }
+      },
+      "replaceConsole": true
     }
   }
 }
