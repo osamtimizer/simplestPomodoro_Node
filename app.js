@@ -40,7 +40,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 let redis_store;
 
-if (process.env.WORKING_MODE=== 'debug') {
+if (process.env.NODE_ENV === 'development') {
   redis_store = new RedisStore();
 } else {
   //production
@@ -104,8 +104,8 @@ app.use('/login', login);
 app.use('/logout', logout);
 app.use('/users', users);
 
-if (process.env.WORKING_MODE=== 'debug') {
-  console.log("WORKING_MODE:", process.env.WORKING_MODE);
+if (process.env.NODE_ENV === 'development') {
+  console.log("NODE_ENV:", process.env.NODE_ENV);
   app.use('/debug', debug);
 }
 

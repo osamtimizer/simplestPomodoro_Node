@@ -39,79 +39,80 @@ let currentTask = INITIAL_TASK_NAME;
 let timer;
 let tasks;
 
+
+auth.onAuthStateChanged((user) => {
+  console.log("onAuthStateChanged is called");
+  if (user) {
+    const uid = user.uid;
+    console.log("user is logged in");
+    const ref = database.ref('users/' + uid);
+    $("button.start").prop("disabled", false);
+    $("button.stop").prop("disabled", true);
+    ref.once("value").then((snapshot) => {
+      //init pomodoro timer
+      if (snapshot.hasChild('pomodoro')) {
+        remain = snapshot.child('pomodoro').child('remain').val();
+        terms = snapshot.child('pomodoro').child('terms').val();
+        initialTerm = snapshot.child('pomodoro').child('initialTerm').val();
+        introduction_finish = snapshot.child('pomodoro').child('introduction_finish').val();
+        isWorking = snapshot.child('pomodoro').child('isWorking').val();
+        currentTask = snapshot.child('pomodoro').child('currentTask').val();
+        console.log(currentTask);
+        refreshTimer();
+      } else {
+        //create pomodoro node
+        database.ref('users/' + uid + '/pomodoro').set({
+          remain: remain,
+          terms: terms,
+          initialTerm: DEFAULT_TERM_COUNT,
+          introduction_finish: introduction_finish,
+          isWorking: isWorking,
+          currentTask: currentTask
+        });
+        refreshTimer();
+      }
+
+      if (snapshot.hasChild('tasks')) {
+        console.log("tasks found");
+        const fetchedTasks = snapshot.child('tasks').val();
+        tasks = fetchedTasks;
+        console.log("Fetched tasks: ", tasks);
+      } else {
+        console.log("create tasks on DB");
+        tasks = {
+          "Work": "",
+          "MyTask": "",
+          "Private": ""
+        };
+
+        database.ref('users/' + uid + '/tasks').set(tasks);
+        database.ref('users/' + uid + '/tags').set('');
+        database.ref('users/' + uid + '/results').set('');
+      }
+    }).then(() => {
+      buildSelectPicker();
+      refreshBackgroundColor();
+      initTagsinput();
+      initSlider();
+      refreshSlider();
+      refreshTags();
+      fadeOutLoadingImage();
+    }).then(() => {
+
+    }).catch((err) => {
+      console.error("Error: ", err);
+    });
+  } else {
+    //nothing to do
+  }
+});
+
 $(() => {
 
   $('[data-toggle="popover"]').popover();
   const window_height = $(window).height();
   $('#loader-bg , #loader').height(window_height).css('display', 'block');
   setTimeout(fadeOutLoadingImage, 10000);
-
-  auth.onAuthStateChanged((user) => {
-    console.log("onAuthStateChanged is called");
-    if (user) {
-      const uid = user.uid;
-      console.log("user is logged in");
-      const ref = database.ref('users/' + uid);
-      $("button.start").prop("disabled", false);
-      $("button.stop").prop("disabled", true);
-      ref.once("value").then((snapshot) => {
-        //init pomodoro timer
-        if (snapshot.hasChild('pomodoro')) {
-          remain = snapshot.child('pomodoro').child('remain').val();
-          terms = snapshot.child('pomodoro').child('terms').val();
-          initialTerm = snapshot.child('pomodoro').child('initialTerm').val();
-          introduction_finish = snapshot.child('pomodoro').child('introduction_finish').val();
-          isWorking = snapshot.child('pomodoro').child('isWorking').val();
-          currentTask = snapshot.child('pomodoro').child('currentTask').val();
-          console.log(currentTask);
-          refreshTimer();
-        } else {
-          //create pomodoro node
-          database.ref('users/' + uid + '/pomodoro').set({
-            remain: remain,
-            terms: terms,
-            initialTerm: DEFAULT_TERM_COUNT,
-            introduction_finish: introduction_finish,
-            isWorking: isWorking,
-            currentTask: currentTask
-          });
-          refreshTimer();
-        }
-
-        if (snapshot.hasChild('tasks')) {
-          console.log("tasks found");
-          const fetchedTasks = snapshot.child('tasks').val();
-          tasks = fetchedTasks;
-          console.log("Fetched tasks: ", tasks);
-        } else {
-          console.log("create tasks on DB");
-          tasks = {
-            "Work": "",
-            "MyTask": "",
-            "Private": ""
-          };
-
-          database.ref('users/' + uid + '/tasks').set(tasks);
-          database.ref('users/' + uid + '/tags').set('');
-          database.ref('users/' + uid + '/results').set('');
-        }
-      }).then(() => {
-        buildSelectPicker();
-        refreshBackgroundColor();
-        initTagsinput();
-        initSlider();
-        refreshSlider();
-        refreshTags();
-        fadeOutLoadingImage();
-      }).then(() => {
-
-      }).catch((err) => {
-        console.error("Error: ", err);
-      });
-    } else {
-      //nothing to do
-    }
-  });
 
   //event handlers
   $("button.start").click((event) => {
