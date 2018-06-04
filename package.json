@@ -5,7 +5,7 @@
   "scripts": {
     "start": "WORKING_MODE=production ./node_modules/.bin/nodemon ./bin/www",
     "webpack": "./node_modules/.bin/webpack --mode development",
-    "node-sass": "./node_modules/.bin/node-sass",
+    "node-sass": "./node_modules/.bin/node-sass ./public/stylesheets/style.scss ./public/stylesheets/build/style.css",
     "test": "WORKING_MODE=debug ./node_modules/.bin/mocha --reporter spec ./test/",
     "gulp": "gulp"
   },
