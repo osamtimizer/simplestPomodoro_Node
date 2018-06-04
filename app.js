@@ -2,7 +2,7 @@ var newrelic = require('newrelic');
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
-var logger = require('./logger');
+//var logger = require('./logger');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
@@ -79,6 +79,7 @@ const authentication = (req, res, next) => {
 };
 
 //middleware:logging
+/*
 const accessLog = (req, res, next) => {
   const system = logger.system;
 
@@ -94,6 +95,8 @@ const accessLog = (req, res, next) => {
 };
 
 app.use(accessLog);
+
+*/
 
 app.use('/', index);
 app.use('/signup', signup);
