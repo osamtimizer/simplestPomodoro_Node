@@ -38,6 +38,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+let redis_store;
+
+if (process.env.WORKING_MODE=== 'debug') {
+  redis_store = new RedisStore();
+} else {
+  //production
+  redis_store = new RedisStore({
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT
+  });
+}
+
 //TODO:PRODUCTION:set SESSION_SECRET value in env
 //name also should be written in env
 var key = {
