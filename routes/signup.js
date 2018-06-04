@@ -7,7 +7,7 @@ const auth = admin.auth();
 const database = admin.database();
 
 router.get('/', (req, res, next) => {
-  if (req.session.user) {
+  if (req.session.user !== undefined) {
     res.redirect('/home');
   } else if (req.session.agreement) {
     next();

@@ -57,7 +57,7 @@ app.use(session(key));
 
 //middleware:Auth session
 const authentication = (req, res, next) => {
-  if(req.session.user) {
+  if(req.session.user !== undefined) {
     console.log("Middleware: authentication is called");
     next();
   } else {

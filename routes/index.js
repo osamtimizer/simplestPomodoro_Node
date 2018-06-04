@@ -3,7 +3,7 @@ const router = express.Router();
 
 /* GET home page. */
 router.get('/', (req, res, next) => {
-  if (req.session.user) {
+  if (req.session.user !== undefined) {
     res.redirect('/home');
   } else {
     next();
@@ -13,7 +13,7 @@ router.get('/', (req, res, next) => {
 });
 
 router.get('/privacy-policy', (req, res, next) => {
-  if(req.session.user) {
+  if(req.session.user !== undefined) {
     res.render('privacy_policy', {
       user: true
     });
@@ -23,7 +23,7 @@ router.get('/privacy-policy', (req, res, next) => {
 });
 
 router.get('/terms-of-use', (req, res, next) => {
-  if(req.session.user) {
+  if(req.session.user !== undefined) {
     res.render('terms_of_use', {
       user: true
     });
@@ -33,7 +33,7 @@ router.get('/terms-of-use', (req, res, next) => {
 });
 
 router.get('/help', (req, res, next) => {
-  if(req.session.user) {
+  if(req.session.user !== undefined) {
     res.render('help', {
       user: true
     });
@@ -45,7 +45,7 @@ router.get('/help', (req, res, next) => {
 router.get('/eula', (req, res, next) => {
   if (req.session.agreement) {
     res.redirect('/signup');
-  } else if (req.session.user) {
+  } else if (req.session.user !== undefined) {
     res.redirect('/home');
   } else {
     next();

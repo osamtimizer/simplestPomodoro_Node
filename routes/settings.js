@@ -7,7 +7,7 @@ const database = admin.database();
 
 router.get('/', function(req, res, next) {
 
-  if (req.session.user) {
+  if (req.session.user !== undefined) {
     res.render('settings', {
         user: true
       });

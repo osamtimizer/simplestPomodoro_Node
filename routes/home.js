@@ -8,7 +8,7 @@ const database = admin.database();
 
 /* GET main page. */
 router.get('/', async(req, res, next) => {
-  if (req.session.user) {
+  if (req.session.user !== undefined) {
   res.render('home', {
     user: true
   });
