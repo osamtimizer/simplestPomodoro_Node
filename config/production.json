@@ -7,7 +7,7 @@
           "accessLogFile": {"type": "file", "filename": "./log/access.log"}
       },
       "categories": {
-        "system": {"appenders": ["console"],"level": "debug"},
+        "system": {"appenders": ["accessLogFile"],"level": "debug"},
         "access": {"appenders": ["console"],"level": "debug"},
         "error": {"appenders": ["console"],"level": "debug"},
         "default": {"appenders": ["console"],"level": "debug"}
