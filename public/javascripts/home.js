@@ -356,7 +356,7 @@ const startCount = () => {
       if (terms === initialTerm) {
         terms = 0;
       } else {
-        terms = initialTerm;
+        terms = terms + 1;
       }
       refreshTimer();
       refreshDBPomodoroStatus();
