@@ -13,11 +13,22 @@ $(() => {
 
   $("button#auth").click(async(event) => {
     let provider = new firebase.auth.GoogleAuthProvider();
-    const result = await firebase.auth().signInWithPopup(provider);
-    const idToken = await result.user.getIdToken(true);
-    if (idToken !== null) {
-      startSignup(result.user.uid, idToken);
-    }
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      .then(() => {
+        return firebase.auth().signInWithPopup(provider);
+      }).then((result) => {
+        return result;
+      }).then((result) => {
+        return result.user.getIdToken(true);
+      }).then((idToken) => {
+        if (idToken !== null) {
+          const user = auth.currentUser;
+          const uid = user.uid;
+          startSignup(uid, idToken);
+        }
+      }).catch((err) => {
+        console.error(err);
+      });
   });
 });
 

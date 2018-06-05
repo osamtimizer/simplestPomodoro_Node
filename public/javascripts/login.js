@@ -11,24 +11,22 @@ const auth = firebase.auth();
 
 $(() => {
 
-  $("button#auth").click(async(event) => {
+  $("button#auth").click((event) => {
     let provider = new firebase.auth.GoogleAuthProvider();
-    const result = await firebase.auth().signInWithPopup(provider);
-    const idToken = await result.user.getIdToken(true);
-    if (idToken !== null) {
-      startAuth(idToken);
-    }
-  });
-
-  $("button#login").click((event) => {
-    console.log("Login clicked");
-    auth.currentUser.getIdToken(true)
-      .then((idToken) => {
-        startAuth(idToken);
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      .then(() => {
+        return firebase.auth().signInWithPopup(provider);
+      }).then((result) => {
+        return result.user.getIdToken(true);
+      }).then((idToken) => {
+        if (idToken !== null) {
+          startAuth(idToken);
+        }
       }).catch((err) => {
-        console.error("Error: ", err);
+        console.error(err);
       });
   });
+
 });
 
 const startAuth = (token) => {

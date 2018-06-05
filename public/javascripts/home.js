@@ -324,6 +324,7 @@ const fadeOutLoadingImage = () => {
   $('#loader').fadeOut(300);
   $('div.wrap').fadeIn(300);
   $('div#header-home').fadeIn(300);
+  console.log("currentUser", auth.currentUser);
 }
 
 const refreshBackgroundColor = () => {
