@@ -25,14 +25,17 @@ $(() => {
 
   //fetch tasks
   auth.onAuthStateChanged(async (user) => {
+    if (user) {
     const uid = user.uid;
     const ref = database.ref('users/' + uid + '/pomodoro/currentTask');
     currentTask = (await ref.once('value')).val();
     console.log("currentTask:", currentTask);
     renderList();
-    fadeOutLoadingImage();
+    } else {
+      location.href = '/task_management';
+    }
   });
-
+  fadeOutLoadingImage();
   initTagsinput();
 
   //initialization for FlatUI elem

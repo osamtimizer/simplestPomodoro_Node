@@ -71,7 +71,7 @@ $(() => {
           console.error(err);
         });
     } else {
-      location.href = '/login';
+      location.href = '/activity';
     }
   });
 
