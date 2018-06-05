@@ -105,7 +105,7 @@ auth.onAuthStateChanged((user) => {
       console.error("Error: ", err);
     });
   } else {
-    location.href = '/home';
+    //nothing to do
   }
 });
 

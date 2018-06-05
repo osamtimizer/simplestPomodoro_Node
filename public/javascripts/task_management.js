@@ -32,7 +32,7 @@ $(() => {
     console.log("currentTask:", currentTask);
     renderList();
     } else {
-      location.href = '/task_management';
+      //nothing to do
     }
   });
   fadeOutLoadingImage();
