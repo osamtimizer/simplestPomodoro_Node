@@ -70,6 +70,8 @@ $(() => {
         }).catch((err) => {
           console.error(err);
         });
+    } else {
+      location.href = '/login';
     }
   });
 

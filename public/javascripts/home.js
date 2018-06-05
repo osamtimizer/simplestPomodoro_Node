@@ -318,6 +318,15 @@ const refreshHeader = () => {
   }
 }
 
+const getCurrentUser = (auth) => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      unsubscribe();
+      resolve(user);
+    }, reject);
+  });
+};
+
 const fadeOutLoadingImage = () => {
   console.log("fadeOutLoadingImage is called");
   $('#loader-bg').fadeOut(300);
