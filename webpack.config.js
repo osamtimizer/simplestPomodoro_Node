@@ -26,17 +26,15 @@ module.exports = {
       $: './public/dist/js/vendor/jquery.min.js'
     }
   },
-  /*
   optimization: {
     minimizer: [
       new UglifyJSPlugin({
         uglifyOptions: {
           compress: {
-            drop_console:false,
+            drop_console: true,
           }
         }
       })
     ]
   }
-  */
 }
