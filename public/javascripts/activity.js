@@ -71,7 +71,7 @@ $(() => {
           console.error(err);
         });
     } else {
-      //nothing to do
+      location.href = "/login";
     }
   });
 

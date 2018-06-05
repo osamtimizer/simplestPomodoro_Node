@@ -1,5 +1,9 @@
 extends layout
 
+block headers
+  link(rel='stylesheet' href='/dist/css/jquery-confirm.min.css')
+  script(src='/dist/js/jquery-confirm.min.js')
+
 block content
   if message
     div.alert.alert-danger(role="alert")= message

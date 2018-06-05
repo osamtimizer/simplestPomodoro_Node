@@ -32,7 +32,7 @@ $(() => {
     console.log("currentTask:", currentTask);
     renderList();
     } else {
-      //nothing to do
+      location.href = "/login";
     }
   });
   fadeOutLoadingImage();
