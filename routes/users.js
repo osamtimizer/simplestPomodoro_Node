@@ -71,6 +71,7 @@ router.post('/delete', async(req, res, next) => {
   } else {
     //delete all information of user
     const uid = decodedToken.uid;
+    req.session.destroy();
     auth.deleteUser(uid);
     database.ref('users/' + uid).remove()
       .then(() => {
