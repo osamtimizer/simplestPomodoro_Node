@@ -60,7 +60,7 @@ var key = {
   cookie: {
     maxAge: 30 * 60 * 1000
   },
-  store: new RedisStore()
+  store: redis_store
 };
 
 app.use(session(key));
