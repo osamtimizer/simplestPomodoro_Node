@@ -9,8 +9,9 @@ router.get('/', function(req, res, next) {
 
   if (req.session.user !== undefined) {
     res.render('settings', {
-        user: true
-      });
+      title: "Settings",
+      user: true
+    });
   } else {
     res.redirect('/login');
   }

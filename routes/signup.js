@@ -15,7 +15,7 @@ router.get('/', (req, res, next) => {
     res.redirect('/eula');
   }
 }, (req, res, next) => {
-  res.render('signup');
+  res.render('signup', { title: "SignUp" });
 });
 
 module.exports = router;

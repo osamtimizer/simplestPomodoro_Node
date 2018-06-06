@@ -15,6 +15,7 @@ router.get('/', (req, res, next) => {
 router.get('/privacy-policy', (req, res, next) => {
   if(req.session.user !== undefined) {
     res.render('privacy_policy', {
+      title: "プライバシーポリシー",
       user: true
     });
   } else{
@@ -25,6 +26,7 @@ router.get('/privacy-policy', (req, res, next) => {
 router.get('/terms-of-use', (req, res, next) => {
   if(req.session.user !== undefined) {
     res.render('terms_of_use', {
+      title: "利用規約",
       user: true
     });
   } else{
@@ -35,6 +37,7 @@ router.get('/terms-of-use', (req, res, next) => {
 router.get('/help', (req, res, next) => {
   if(req.session.user !== undefined) {
     res.render('help', {
+      title: "ヘルプ",
       user: true
     });
   } else{
@@ -51,7 +54,7 @@ router.get('/eula', (req, res, next) => {
     next();
   }
 },(req, res, next) => {
-  res.render('eula.pug');
+  res.render('eula.pug', { title: "利用規約" });
 });
 
 router.post('/eula', (req, res, next) => {

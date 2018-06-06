@@ -9,6 +9,7 @@ router.get('/', function(req, res, next) {
 
   if (req.session.user !== undefined) {
     res.render('task_management', {
+      title: "Task Management",
       user: true
     });
   } else {

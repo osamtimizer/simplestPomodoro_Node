@@ -8,7 +8,7 @@ const database = admin.database();
 
 /* GET login page. */
 router.get('/', (req, res, next) => {
-  res.render('login', { title: 'login page' });
+  res.render('login', { title: 'Login' });
 });
 
 router.post('/', async(req, res, next) => {

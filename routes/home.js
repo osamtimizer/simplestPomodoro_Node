@@ -10,6 +10,7 @@ const database = admin.database();
 router.get('/', async(req, res, next) => {
   if (req.session.user !== undefined) {
   res.render('home', {
+    title: "SimplestPomodoro",
     user: true
   });
   } else {
