@@ -11,6 +11,7 @@ module.exports = {
     eula: './public/javascripts/eula.js',
     signup: './public/javascripts/signup.js',
     header: './public/javascripts/header.js',
+    footer: './public/javascripts/footer.js',
     activity: './public/javascripts/activity.js',
     settings: './public/javascripts/settings.js',
     task_management: './public/javascripts/task_management.js',
