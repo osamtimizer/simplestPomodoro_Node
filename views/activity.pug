@@ -14,19 +14,22 @@ block content
       div.task.container
         select.task.selectpicker(multiple title="Select Task" data-max-options="5" data-live-search="true" data-style="btn-inverse")
       div.container
-        div.col-lg-12.col-xs-12
-          canvas#myChart
-        div.col-lg-2.col-xs-4
-          input.form-group(type="date")
-        div.col-lg-2.col-xs-4.dropdown.show
-          button.btn.btn-inverse.dropdown-toggle#duration(type="button" data-toggle="dropdown")
-            |表示期間を選択
-            span.caret
-          ul.dropdown-menu(role="menu")
-            li: a.dropdown-item#week(href="#") Week
-            li: a.dropdown-item#month(href="#") Month
-            li: a.dropdown-item#all(href="#") All
-        div.col-lg-2.col-xs-4#downloader
-          button#download.btn.btn-inverse Download CSV
+        div.row
+          div.col-lg-12.col-xs-12
+            canvas#myChart
+        div.row
+          div.col-lg-2.col-xs-6
+            input.form-group(type="date")
+          div.col-lg-2.col-xs-6.dropdown.show
+            button.btn.btn-inverse.dropdown-toggle#duration(type="button" data-toggle="dropdown")
+              |表示期間を選択
+              span.caret
+            ul.dropdown-menu(role="menu")
+              li: a.dropdown-item#week(href="#") Week
+              li: a.dropdown-item#month(href="#") Month
+              li: a.dropdown-item#all(href="#") All
+        div.row
+          div.col-lg-2.col-xs-4#downloader
+            button#download.btn.btn-inverse Download CSV
   include footer
   script(src='/javascripts/build/activity.js')

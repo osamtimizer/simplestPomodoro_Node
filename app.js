@@ -56,7 +56,7 @@ var key = {
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  name: 'simplestpomodoro',
+  name: process.env.SESSION_NAME,
   cookie: {
     maxAge: 30 * 60 * 1000
   },

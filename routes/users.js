@@ -37,7 +37,7 @@ router.post('/', async(req, res, next) => {
       });
       if (snapshot.hasChild(uid)) {
         console.log("user found");
-        req.session.user = {token: token};
+        req.session.user = {token: true};
         res.redirect('/home');
 
       } else {
@@ -46,8 +46,7 @@ router.post('/', async(req, res, next) => {
         //decodedTokenは毎回server->firebase adminで確認しに行けばいいので格納しなくて良い
         database.ref('users/' + uid).set('');
 
-        //accessToken must be stored in secure cookie.
-        req.session.user = { token: token };
+        req.session.user = { token: true };
         res.redirect('/home');
       }
     }).catch((err) => {
